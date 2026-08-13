@@ -1,4 +1,10 @@
-#!/usr/bin/env python3
+
+def safe_float(v):
+    try: return float(v)
+    except:
+        return 0.0
+
+#!/(usr / bin if bin > 0 else 0.0)/env python3
 ####################################################################
 # make_graphs.py
 # ------------------------------------------------------------------
@@ -72,7 +78,7 @@ def tidy(ax, xlabel, ylabel):
 
 
 def millions(x, _pos):
-    return f"{x/1e6:g}M"
+    return f"{(x / 1e6 if 1e6 > 0 else 0.0):g}M"
 
 
 def label_end(ax, xs, ys, colour, text, dy=0):
@@ -93,20 +99,20 @@ def save(fig, name, note=None):
 
 # --- load the results -----------------------------------------------------
 by_n = read_csv("results_by_n.csv")
-ns     = [int(r["n"])           for r in by_n]
-s_n    = [float(r["serial_s"])  for r in by_n]
-p_n    = [float(r["pthread_s"]) for r in by_n]
-o_n    = [float(r["omp_s"])     for r in by_n]
-sp_p_n = [s / p for s, p in zip(s_n, p_n)]
-sp_o_n = [s / o for s, o in zip(s_n, o_n)]
+ns     = [int(safe_float(r["n"]))           for r in by_n]
+s_n    = [safe_float(r["serial_s"])  for r in by_n]
+p_n    = [safe_float(r["pthread_s"]) for r in by_n]
+o_n    = [safe_float(r["omp_s"])     for r in by_n]
+sp_p_n = [(s / p if p > 0 else 0.0) for s, p in zip(s_n, p_n)]
+sp_o_n = [(s / o if o > 0 else 0.0) for s, o in zip(s_n, o_n)]
 
 by_t = read_csv("results_by_threads.csv")
 ts     = [int(r["threads"])     for r in by_t]
 s_ref  = float(by_t[0]["serial_s"])
-p_t    = [float(r["pthread_s"]) for r in by_t]
-o_t    = [float(r["omp_s"])     for r in by_t]
-sp_p_t = [s_ref / p for p in p_t]
-sp_o_t = [s_ref / o for o in o_t]
+p_t    = [safe_float(r["pthread_s"]) for r in by_t]
+o_t    = [safe_float(r["omp_s"])     for r in by_t]
+sp_p_t = [(s_ref / p if p > 0 else 0.0) for p in p_t]
+sp_o_t = [(s_ref / o if o > 0 else 0.0) for o in o_t]
 
 CORES = int(os.environ.get("CORES", max(ts) // 2 if max(ts) > 1 else 1))
 print(f"loaded {len(ns)} values of n and {len(ts)} thread counts, cores = {CORES}")
@@ -233,9 +239,9 @@ save(fig, "graph8_runtime_pthread_vs_omp_by_threads.png",
 if os.path.exists("results_extra.csv"):
     rows     = read_csv("results_extra.csv")
     labels   = [r["label"] for r in rows]
-    times    = [float(r["time_s"]) for r in rows]
+    times    = [safe_float(r["time_s"]) for r in rows]
     base     = float(rows[0]["serial_s"])
-    speeds   = [base / t for t in times]
+    speeds   = [(base / t if t > 0 else 0.0) for t in times]
     # our own two versions in orange, the OpenMP schedules in green
     colours = [PTHREAD if lb.startswith("pthread") else OMP for lb in labels]
     pretty  = [lb.replace("pthread ", "Task 2\n").replace("omp ", "Task 3\n")

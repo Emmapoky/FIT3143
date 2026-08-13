@@ -35,7 +35,7 @@ echo ""
 echo "--- Building ---"
 gcc -O2 task1.c -o task1 -lm || exit 1
 gcc -O2 task2.c -o task2 -lm -lpthread || exit 1
-gcc -O2 task3.c -o task3 -lm -fopenmp || exit 1
+clang -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -L/opt/homebrew/opt/libomp/lib -lomp task3.c -o task3 -lm
 gcc -O2 -DUSE_BLOCK task2.c -o task2_block -lm -lpthread || exit 1
 echo "Build OK"
 echo ""
@@ -45,7 +45,7 @@ echo ""
 echo "--- Correctness check at n = 10000000 ---"
 ./task1 10000000 > /dev/null
 ./task2 10000000 "$CORES" > /dev/null
-./task3 10000000 "$CORES" > /dev/null
+clang -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -L/opt/homebrew/opt/libomp/lib -lomp task3.c -o task3 -lm
 if ! diff -q primes_serial.txt primes_pthread.txt > /dev/null; then
 	echo "FAIL: pthread output does not match serial"; exit 1
 fi
@@ -69,7 +69,7 @@ echo "n,serial_s,pthread_s,omp_s" > results_by_n.csv
 for n in $(seq $N_MIN $N_STEP $N_MAX); do
 	s=$(gettime ./task1 "$n")
 	p=$(gettime ./task2 "$n" "$CORES")
-	o=$(gettime ./task3 "$n" "$CORES")
+clang -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -L/opt/homebrew/opt/libomp/lib -lomp task3.c -o task3 -lm
 	echo "$n,$s,$p,$o" >> results_by_n.csv
 	echo "  n = $n   serial $s   pthread $p   omp $o"
 done
@@ -81,7 +81,7 @@ echo "  serial reference time: $SERIAL_REF"
 echo "threads,serial_s,pthread_s,omp_s" > results_by_threads.csv
 for t in $(seq 1 $T_MAX); do
 	p=$(gettime ./task2 "$N_FIXED" "$t")
-	o=$(gettime ./task3 "$N_FIXED" "$t")
+clang -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -L/opt/homebrew/opt/libomp/lib -lomp task3.c -o task3 -lm
 	echo "$t,$SERIAL_REF,$p,$o" >> results_by_threads.csv
 	echo "  threads = $t   pthread $p   omp $o"
 done
@@ -99,13 +99,13 @@ echo "  pthread one block per thread: $b"
 echo "  pthread chunks:               $c"
 
 for sched in static dynamic guided; do
-	sed "s/schedule(dynamic, CHUNK)/schedule($sched, CHUNK)/" task3.c > task3_tmp.c
-	gcc -O2 task3_tmp.c -o task3_tmp -lm -fopenmp
-	v=$(gettime ./task3_tmp "$N_FIXED" "$CORES")
+clang -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -L/opt/homebrew/opt/libomp/lib -lomp task3.c -o task3 -lm
+clang -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -L/opt/homebrew/opt/libomp/lib -lomp task3.c -o task3 -lm
+clang -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -L/opt/homebrew/opt/libomp/lib -lomp task3.c -o task3 -lm
 	echo "omp $sched,$v,$SERIAL_REF" >> results_extra.csv
 	echo "  omp schedule($sched): $v"
 done
-rm -f task3_tmp.c task3_tmp
+clang -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -L/opt/homebrew/opt/libomp/lib -lomp task3.c -o task3 -lm
 echo ""
 
 echo "=== Done ==="

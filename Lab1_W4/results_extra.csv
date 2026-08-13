@@ -1,6 +1,6 @@
 label,time_s,serial_s
-pthread block,4.707514,7.425422
-pthread chunk,3.805331,7.425422
-omp static,3.856182,7.425422
-omp dynamic,3.936375,7.425422
-omp guided,3.767879,7.425422
+pthread block,0.086756,0.519364
+pthread chunk,0.058093,0.519364
+omp static,,0.519364
+omp dynamic,,0.519364
+omp guided,,0.519364
