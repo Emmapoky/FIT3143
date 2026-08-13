@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FIT3143 Lab 1 — Slide Text for Canva</title>
+<style>
+:root{
+  --bg:#fbfaf8; --card:#fff; --ink:#111; --ink2:#4a4a4a; --ink3:#7a7873;
+  --line:#e4e1da; --navy:#10243D;
+  --ery:#2a78d6; --ery-bg:#e8f1fb;
+  --taa:#eb6834; --taa-bg:#fdf0e9;
+  --both:#5b4a86; --both-bg:#efedf6;
+  --warn:#b0480f; --warn-bg:#fdf3e6;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Helvetica,Arial,sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:32px 20px 90px}
+header{border-bottom:3px solid var(--navy);padding-bottom:20px;margin-bottom:14px}
+h1{font-size:29px;margin:0 0 6px;letter-spacing:-.02em}
+.sub{color:var(--ink3);font-size:14px}
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 6px}
+.who{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.04em;
+  padding:4px 11px;border-radius:20px;white-space:nowrap}
+.w-ery{background:var(--ery-bg);color:var(--ery)}
+.w-taa{background:var(--taa-bg);color:var(--taa)}
+.w-both{background:var(--both-bg);color:var(--both)}
+.banner{background:var(--warn-bg);border:1px solid #f0cdb2;border-radius:10px;
+  padding:15px 19px;margin:18px 0 8px;font-size:14px}
+.banner b{color:var(--warn)}
+.slide{background:var(--card);border:1px solid var(--line);border-radius:12px;
+  margin:16px 0;overflow:hidden}
+.shead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:15px 20px;border-bottom:1px solid var(--line);background:#faf9f6}
+.num{background:var(--navy);color:#fff;font-weight:700;font-size:13px;
+  width:30px;height:30px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;flex:0 0 auto}
+.stitle{font-weight:700;font-size:17px;flex:1;min-width:190px}
+.time{font-size:12px;color:var(--ink3);font-family:var(--mono)}
+.sbody{padding:6px 20px 18px}
+.lbl{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);
+  font-weight:700;margin:16px 0 7px;display:flex;align-items:center;gap:8px}
+.copy{border:1px solid var(--line);background:#fff;color:var(--ink2);font-size:10.5px;
+  padding:2px 9px;border-radius:5px;cursor:pointer;font-weight:600;letter-spacing:0}
+.copy:hover{background:#f2efe9}
+.copy.done{background:#e9f3ec;color:#2c6e3f;border-color:#c3ddca}
+.block{background:#f7f6f2;border:1px solid var(--line);border-radius:8px;
+  padding:13px 16px;white-space:pre-wrap;font-size:14.5px;line-height:1.6}
+.block.head{font-size:19px;font-weight:700;line-height:1.35}
+.bul{margin:0;padding-left:19px}
+.bul li{margin:5px 0}
+.notes{background:#f4f6f9;border-left:3px solid var(--navy);border-radius:0 8px 8px 0;
+  padding:13px 16px;font-size:14px;color:var(--ink2);white-space:pre-wrap;line-height:1.65}
+.img{display:inline-block;font-family:var(--mono);font-size:12.5px;background:#eef4fb;
+  color:#1c5cab;border:1px solid #cde2fb;border-radius:6px;padding:5px 11px;margin:3px 5px 3px 0}
+.num-hl{background:#fff3cd;border-bottom:1.5px solid #e0b93a;padding:0 2px;border-radius:2px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:4px 0}
+th{text-align:left;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink3);border-bottom:2px solid var(--line);padding:7px 9px}
+td{border-bottom:1px solid var(--line);padding:7px 9px}
+tr:last-child td{border-bottom:none}
+code{font-family:var(--mono);font-size:.9em;background:#f2efe9;padding:1.5px 5px;border-radius:4px}
+.foot{text-align:center;color:var(--ink3);font-size:12.5px;margin-top:34px}
+@media print{.copy{display:none} .slide{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>FIT3143 Lab #1 — slide text for Canva</h1>
+  <div class="sub">Threads &amp; OpenMP · 7 minutes presenting + 1 to 2 minutes Q&amp;A · 11 slides</div>
+  <div class="legend">
+    <span class="who w-ery">ERWYNA presents</span>
+    <span class="who w-taa">TAABISH presents</span>
+    <span class="who w-both">BOTH</span>
+  </div>
+</header>
+
+<div class="banner">
+  <b>Two things to do before you build the deck.</b><br>
+  1. Every <span class="num-hl">highlighted number</span> came from a 2 core test machine. Run
+  <code>./run_benchmarks.sh</code> then <code>python3 make_graphs.py</code> on your own laptop and
+  swap in your own figures, because the Q&amp;A will ask how many cores you have.<br>
+  2. The graphs regenerate into the <code>graphs</code> folder. Upload those PNGs to Canva and place
+  them where each slide says.
+</div>
+
+<div class="banner" style="background:#eef4fb;border-color:#cde2fb">
+  <b style="color:#1c5cab">Who does what.</b>
+  Erwyna wrote Task 1 and did Task 4, so she opens, covers the serial code, presents the head to head
+  comparison and closes. Taabish wrote Task 2 and Task 3, so he presents both parallel versions.
+  That gives Taabish about 5 minutes and Erwyna about 2, plus the intro and conclusion.
+</div>
+
+
+<!-- 1 -->
+<div class="slide">
+  <div class="shead"><div class="num">1</div><div class="stitle">Title</div>
+    <span class="who w-both">BOTH</span><span class="time">~10 sec</span></div>
+  <div class="sbody">
+    <div class="lbl">Heading <button class="copy" data-c="FIT3143 Lab #1
+Threads &amp; OpenMP">copy</button></div>
+    <div class="block head">FIT3143 Lab #1
+Threads &amp; OpenMP</div>
+
+    <div class="lbl">Subheading <button class="copy" data-c="Finding prime numbers with POSIX Threads and OpenMP">copy</button></div>
+    <div class="block">Finding prime numbers with POSIX Threads and OpenMP</div>
+
+    <div class="lbl">Names <button class="copy" data-c="Erwyna Soo Wen Xin (36555789)
+Taabish Farooq Bhat (35473932)
+Semester 2, 2026">copy</button></div>
+    <div class="block">Erwyna Soo Wen Xin (36555789)
+Taabish Farooq Bhat (35473932)
+Semester 2, 2026</div>
+
+    <div class="lbl">Three numbers across the bottom <button class="copy" data-c="664,579 primes found below 10 million, the same from all three programs
+1.95x speedup on 2 cores
+30 values of n tested">copy</button></div>
+    <div class="block"><span class="num-hl">664,579</span> primes found below 10 million, the same from all three programs
+<span class="num-hl">1.95x</span> speedup on <span class="num-hl">2</span> cores
+<span class="num-hl">30</span> values of n tested</div>
+
+    <div class="lbl">What to say</div>
+    <div class="notes">ERWYNA: Hi, we are Erwyna and Taabish. Our lab was to find every prime number below some limit n, three different ways, and compare how fast they run. I wrote the serial version and did the benchmarking, Taabish wrote the two parallel versions.</div>
+  </div>
+</div>
+
+
+<!-- 2 -->
+<div class="slide">
+  <div class="shead"><div class="num">2</div><div class="stitle">What we built</div>
+    <span class="who w-ery">ERWYNA</span><span class="time">~30 sec</span></div>
+  <div class="sbody">
+    <div class="lbl">Heading <button class="copy" data-c="What we built">copy</button></div>
+    <div class="block head">What we built</div>
+
+    <div class="lbl">Three columns <button class="copy" data-c="Task 1 — Serial (Erwyna)
+Plain C, one thread. This is the baseline we measure everything else against.
+
+Task 2 — POSIX Threads (Taabish)
+We create the threads ourselves and decide how to split the numbers between them.
+
+Task 3 — OpenMP (Taabish)
+Same job, but OpenMP splits the loop for us using one pragma.">copy</button></div>
+    <div class="block"><b>Task 1 · Serial</b> (Erwyna)
+Plain C, one thread. This is the baseline we measure everything else against.
+
+<b>Task 2 · POSIX Threads</b> (Taabish)
+We create the threads ourselves and decide how to split the numbers between them.
+
+<b>Task 3 · OpenMP</b> (Taabish)
+Same job, but OpenMP splits the loop for us using one pragma.</div>
+
+    <div class="lbl">Box along the bottom <button class="copy" data-c="How we checked we got it right: all three programs have to produce the exact same sorted list. We diff the output files against each other every time before we time anything. There are 664,579 primes below ten million, so if we do not see that number, something is broken.">copy</button></div>
+    <div class="block">How we checked we got it right: all three programs have to produce the exact same sorted list. We diff the output files against each other every time before we time anything. There are <span class="num-hl">664,579</span> primes below ten million, so if we do not see that number, something is broken.</div>
+
+    <div class="lbl">What to say</div>
+    <div class="notes">ERWYNA: All three programs run the exact same prime test, so when we compare the times we are only measuring the effect of splitting the work up, not a different algorithm. Before we time anything we diff the three output files against each other. They have to match exactly, and the count has to be 664,579, which is the known number of primes below ten million.</div>
+  </div>
+</div>
+
+
+<!-- 3 -->
+<div class="slide">
+  <div class="shead"><div class="num">3</div><div class="stitle">Task 1 · Serial code</div>
+    <span class="who w-ery">ERWYNA</span><span class="time">1 min</span></div>
+  <div class="sbody">
+    <div class="lbl">Heading <button class="copy" data-c="Task 1 — Serial code">copy</button></div>
+    <div class="block head">Task 1 · Serial code</div>
+
+    <div class="lbl">Left side, the main idea <button class="copy" data-c="The obvious way to check if k is prime is to try dividing it by everything from 2 up to k minus 1. That is really slow for big numbers.
+
+If k is not prime then k = m x p. Those two cannot both be bigger than the square root of k, because then multiplying them would overshoot k. So if there is a factor at all, one of them has to be at or below the square root.
+
+That means we can stop at the square root instead of going all the way to k minus 1. We also handle 2 separately so the loop can skip every even divisor and step by 2.">copy</button></div>
+    <div class="block">The obvious way to check if k is prime is to try dividing it by everything from 2 up to k minus 1. That is really slow for big numbers.
+
+If k is not prime then k = m x p. Those two cannot both be bigger than the square root of k, because then multiplying them would overshoot k. So if there is a factor at all, one of them has to be at or below the square root.
+
+That means we can stop at the square root instead of going all the way to k minus 1. We also handle 2 separately so the loop can skip every even divisor and step by 2.</div>
+
+    <div class="lbl">Code snippet to show <button class="copy" data-c="limit = (long)sqrt((double)k);
+for(d = 3; d &lt;= limit; d += 2)
+{
+	if(k % d == 0)
+		return 0;
+}
+return 1;">copy</button></div>
+    <div class="block" style="font-family:var(--mono);font-size:13px">limit = (long)sqrt((double)k);
+for(d = 3; d &lt;= limit; d += 2)
+{
+	if(k % d == 0)
+		return 0;
+}
+return 1;</div>
+
+    <div class="lbl">Right side, how we store the answers <button class="copy" data-c="We keep one byte per number in an array and flag the primes as we find them. Reading that array back from the front gives us the primes in ascending order automatically, so we never have to sort anything. That turns out to matter a lot in Task 2 and Task 3.
+
+Small n prints to the terminal, large n goes to a text file, as the spec asks.">copy</button></div>
+    <div class="block">We keep one byte per number in an array and flag the primes as we find them. Reading that array back from the front gives us the primes in ascending order automatically, so we never have to sort anything. That turns out to matter a lot in Task 2 and Task 3.
+
+Small n prints to the terminal, large n goes to a text file, as the spec asks.</div>
+
+    <div class="lbl">Small note <button class="copy" data-c="We stop the timer before writing the file. Writing 664,579 lines to disk is not part of the calculation we are trying to speed up, and no amount of threads makes the disk faster.">copy</button></div>
+    <div class="block">We stop the timer before writing the file. Writing <span class="num-hl">664,579</span> lines to disk is not part of the calculation we are trying to speed up, and no amount of threads makes the disk faster.</div>
+
+    <div class="lbl">What to say</div>
+    <div class="notes">ERWYNA: For the serial version the main thing is the prime test itself. Instead of dividing by everything up to k minus one, we only go up to the square root of k. The reason is that if k is not prime it factorises into m times p, and those two cannot both be above the square root, because multiplying them would give something bigger than k. So if a factor exists, one of them is at or below the square root, and if we get that far with nothing, k is prime. We also deal with 2 on its own so the loop only tries odd divisors.
+
+For storing results we use a flag array, one byte per number. We just mark the primes as we find them, and reading it back from the front gives us ascending order without sorting. That sounds like a small thing but it is what lets the parallel versions avoid locking later.
+
+One deliberate choice: the timer stops before the file write, because writing out the list is disk work, not calculation, and threads cannot speed that up.</div>
+  </div>
+</div>
+
+
+<!-- 4 -->
+<div class="slide">
+  <div class="shead"><div class="num">4</div><div class="stitle">Task 2 · How we split the work</div>
+    <span class="who w-taa">TAABISH</span><span class="time">~1 min 15</span></div>
+  <div class="sbody">
+    <div class="lbl">Heading <button class="copy" data-c="Task 2 — How we split the work between threads">copy</button></div>
+    <div class="block head">Task 2 · How we split the work between threads</div>
+
+    <div class="lbl">Attempt 1 <button class="copy" data-c="Attempt 1: one block each
+
+We copied the approach from the vector cell product example in the Week 3 lab prep. Work out the start point and end point for each thread, and give each one a solid block of numbers.
+
+Thread 0 gets 2 to 5 million, thread 1 gets 5 to 10 million, and so on.">copy</button></div>
+    <div class="block"><b>Attempt 1: one block each</b>
+
+We copied the approach from the vector cell product example in the Week 3 lab prep. Work out the start point and end point for each thread, and give each one a solid block of numbers.
+
+Thread 0 gets 2 to 5 million, thread 1 gets 5 to 10 million, and so on.</div>
+
+    <div class="lbl">Why it was not great <button class="copy" data-c="It worked, but it only got us 1.58x on 2 cores when we were hoping for close to 2x.
+
+The reason is that our work is not the same size for every number. IsPrime checks divisors up to the square root of k, so checking 9 million takes far more divisions than checking 100. The thread holding the big half is still going long after the other one has finished, and the program has to wait for it at the join.">copy</button></div>
+    <div class="block">It worked, but it only got us <span class="num-hl">1.58x</span> on 2 cores when we were hoping for close to 2x.
+
+The reason is that our work is not the same size for every number. IsPrime checks divisors up to the square root of k, so checking 9 million takes far more divisions than checking 100. The thread holding the big half is still going long after the other one has finished, and the program has to wait for it at the join.</div>
+
+    <div class="lbl">Attempt 2, what we shipped <button class="copy" data-c="Attempt 2: small chunks, taken in turn
+
+Instead of one big block each, we hand out blocks of 1000 numbers in rotation. Thread 0 takes the first chunk, thread 1 the next, then it wraps back around.
+
+Every thread ends up with a mix of small and big numbers, so they all finish at about the same time.
+
+This got us to 1.95x on the same machine.">copy</button></div>
+    <div class="block"><b>Attempt 2: small chunks, taken in turn</b>
+
+Instead of one big block each, we hand out blocks of 1000 numbers in rotation. Thread 0 takes the first chunk, thread 1 the next, then it wraps back around.
+
+Every thread ends up with a mix of small and big numbers, so they all finish at about the same time.
+
+This got us to <span class="num-hl">1.95x</span> on the same machine.</div>
+
+    <div class="lbl">Box: no locks needed <button class="copy" data-c="We did not need a mutex anywhere. Each thread only ever writes to the positions it was handed, so no two threads touch the same element of the array. No shared counter, no critical section, no race condition. The list also comes out sorted on its own, so there is nothing to merge at the end.">copy</button></div>
+    <div class="block">We did not need a mutex anywhere. Each thread only ever writes to the positions it was handed, so no two threads touch the same element of the array. No shared counter, no critical section, no race condition. The list also comes out sorted on its own, so there is nothing to merge at the end.</div>
+
+    <div class="lbl">Image</div>
+    <div><span class="img">graphs/graph9_workload_distribution.png</span> (first two bars are Task 2)</div>
+
+    <div class="lbl">What to say</div>
+    <div class="notes">TAABISH: The interesting part of Task 2 was deciding how to split the numbers up.
+
+We started with the approach from the vector cell product example in the lab prep, where you work out a start point and end point and give each thread one block. That worked, but we only got 1.58x on two cores and we expected closer to 2.
+
+Once we thought about it, the reason is that the work is not the same size for every number. IsPrime goes up to the square root of k, so a big number needs far more divisions than a small one. If one thread gets the low half and one gets the high half, the high one is still going long after the other has finished, and the whole program waits for it at the join.
+
+So we changed it to hand out chunks of a thousand numbers in rotation instead. Each thread gets a mix of small and big numbers, they finish at about the same time, and that took us from 1.58 to 1.95.
+
+The other thing worth mentioning is that we never needed a mutex. Each thread only writes to the slots it was given, so no two threads ever touch the same element, which means no race condition and nothing to lock.</div>
+  </div>
+</div>
+
+
+<!-- 5 -->
+<div class="slide">
+  <div class="shead"><div class="num">5</div><div class="stitle">Task 2 · Results as n grows</div>
+    <span class="who w-taa">TAABISH</span><span class="time">~50 sec</span></div>
+  <div class="sbody">
+    <div class="lbl">Heading <button class="copy" data-c="Task 2 — Results as n grows">copy</button></div>
+    <div class="block head">Task 2 · Results as n grows</div>
+
+    <div class="lbl">Images, side by side</div>
+    <div><span class="img">graphs/graph1_runtime_serial_vs_pthread_by_n.png</span>
+    <span class="img">graphs/graph2_speedup_pthread_by_n.png</span></div>
+
+    <div class="lbl">Caption <button class="copy" data-c="We tested 30 different values of n from 500 thousand up to 15 million.
+
+Both lines curve upwards rather than going straight, because bigger numbers cost more to check. The speedup line is the useful one though: it sits flat at about 1.9x the whole way across. That tells us the threading does not get worse as the problem gets bigger, which is what we wanted to know.">copy</button></div>
+    <div class="block">We tested <span class="num-hl">30</span> different values of n from <span class="num-hl">500 thousand</span> up to <span class="num-hl">15 million</span>.
+
+Both lines curve upwards rather than going straight, because bigger numbers cost more to check. The speedup line is the useful one though: it sits flat at about <span class="num-hl">1.9x</span> the whole way across. That tells us the threading does not get worse as the problem gets bigger, which is what we wanted to know.</div>
+
+    <div class="lbl">What to say</div>
+    <div class="notes">TAABISH: These are graphs 1 and 2, run time and speedup as n increases across 30 values.
+
+Both run time curves bend upwards instead of being straight lines, and that is the square root thing again, bigger numbers cost more each.
+
+The speedup graph on the right is the one that answers the question. It is basically flat at about 1.9 across the whole range. So the threading holds up as the problem grows, there is no point where the overhead starts eating the gain.</div>
+  </div>
+</div>
+
+
+<!-- 6 -->
+<div class="slide">
+  <div class="shead"><div class="num">6</div><div class="stitle">Task 2 · Results as threads increase</div>
+    <span class="who w-taa">TAABISH</span><span class="time">~55 sec</span></div>
+  <div class="sbody">
+    <div class="lbl">Heading <button class="copy" data-c="Task 2 — What happens when we add more threads">copy</button></div>
+    <div class="block head">Task 2 · What happens when we add more threads</div>
+
+    <div class="lbl">Images, side by side</div>
+    <div><span class="img">graphs/graph3_runtime_serial_vs_pthread_by_threads.png</span>
+    <span class="img">graphs/graph4_speedup_pthread_by_threads.png</span></div>
+
+    <div class="lbl">Caption <button class="copy" data-c="Here n stays at 10 million and we change the thread count. We deliberately went past the number of cores instead of stopping at it.
+
+The speedup climbs up to the core count and then goes flat. Past that point there is no extra hardware to use, so the extra threads just take turns on the same cores. They do not help and they do not really hurt either, they just do nothing.">copy</button></div>
+    <div class="block">Here n stays at <span class="num-hl">10 million</span> and we change the thread count. We deliberately went past the number of cores instead of stopping at it.
+
+The speedup climbs up to the core count and then goes flat. Past that point there is no extra hardware to use, so the extra threads just take turns on the same cores. They do not help and they do not really hurt either, they just do nothing.</div>
+
+    <div class="lbl">Small table (optional, if there is room) <button class="copy" data-c="Threads	POSIX Threads	Speedup
+1	7.55s	0.98x
+2	3.84s	1.93x
+3	3.80s	1.95x
+4	3.79s	1.96x">copy</button></div>
+    <table>
+      <tr><th>Threads</th><th>POSIX Threads</th><th>Speedup</th></tr>
+      <tr><td>1</td><td class="num-hl">7.55s</td><td class="num-hl">0.98x</td></tr>
+      <tr><td>2</td><td class="num-hl">3.84s</td><td class="num-hl">1.93x</td></tr>
+      <tr><td>3</td><td class="num-hl">3.80s</td><td class="num-hl">1.95x</td></tr>
+      <tr><td>4</td><td class="num-hl">3.79s</td><td class="num-hl">1.96x</td></tr>
+    </table>
+
+    <div class="lbl">What to say</div>
+    <div class="notes">TAABISH: Graphs 3 and 4. This time n stays at ten million and we change how many threads we ask for. We went up to double the core count on purpose, because the spec asks what happens if you use more threads than cores.
+
+The answer is on graph 4. Speedup rises up to the core count, then it flattens out completely. Once every core already has a thread there is nothing left to hand work to, so extra threads just share the same cores. On our machine it stayed flat rather than getting worse, but the point is you stop gaining anything.
+
+The other thing to notice is at one thread the parallel version is very slightly slower than serial, and that is the cost of creating and joining the thread for no benefit.</div>
+  </div>
+</div>
+
+
+<!-- 7 -->
+<div class="slide">
+  <div class="shead"><div class="num">7</div><div class="stitle">Task 3 · OpenMP</div>
+    <span class="who w-taa">TAABISH</span><span class="time">~1 min</span></div>
+  <div class="sbody">
+    <div class="lbl">Heading <button class="copy" data-c="Task 3 — OpenMP">copy</button></div>
+    <div class="block head">Task 3 · OpenMP</div>
+
+    <div class="lbl">The whole parallel bit <button class="copy" data-c="#pragma omp parallel for schedule(dynamic, 1000)
+for(k = 2; k &lt; n; k++)
+{
+	if(IsPrime(k))
+		pFlags[k] = 1;
+}">copy</button></div>
+    <div class="block" style="font-family:var(--mono);font-size:13px">#pragma omp parallel for schedule(dynamic, 1000)
+for(k = 2; k &lt; n; k++)
+{
+	if(IsPrime(k))
+		pFlags[k] = 1;
+}</div>
+
+    <div class="lbl">Point to make <button class="copy" data-c="That one pragma replaces about forty lines of thread creating, argument passing and joining from Task 2. We did not have to work out start points and end points at all, OpenMP does the splitting.
+
+The schedule clause is doing the same job as our chunks in Task 2. With static, the split is decided before the loop starts, so the thread with the big numbers finishes last again. With dynamic, a thread comes back for another chunk as soon as it finishes one.">copy</button></div>
+    <div class="block">That one pragma replaces about forty lines of thread creating, argument passing and joining from Task 2. We did not have to work out start points and end points at all, OpenMP does the splitting.
+
+The schedule clause is doing the same job as our chunks in Task 2. With static, the split is decided before the loop starts, so the thread with the big numbers finishes last again. With dynamic, a thread comes back for another chunk as soon as it finishes one.</div>
+
+    <div class="lbl">Being honest about the schedules <button class="copy" data-c="We timed static, dynamic and guided. On our machine they all landed within about 5 percent of each other, which is close enough that we cannot claim one really won. We kept dynamic because the reasoning still holds and the gap should open up on a machine with more cores.">copy</button></div>
+    <div class="block">We timed static, dynamic and guided. On our machine they all landed within about <span class="num-hl">5 percent</span> of each other, which is close enough that we cannot claim one really won. We kept dynamic because the reasoning still holds and the gap should open up on a machine with more cores.</div>
+
+    <div class="lbl">Warning box <button class="copy" data-c="Watch out: if you forget the -fopenmp flag it still compiles and still runs, it just quietly ignores the pragma and uses one thread. We got a speedup of exactly 1.00 and spent a while confused before we spotted it.">copy</button></div>
+    <div class="block">Watch out: if you forget the <code>-fopenmp</code> flag it still compiles and still runs, it just quietly ignores the pragma and uses one thread. We got a speedup of exactly 1.00 and spent a while confused before we spotted it.</div>
+
+    <div class="lbl">Image</div>
+    <div><span class="img">graphs/graph9_workload_distribution.png</span> (last three bars are Task 3)</div>
+
+    <div class="lbl">What to say</div>
+    <div class="notes">TAABISH: Task 3 is the same search again but with OpenMP. This pragma is the entire parallel part. It replaces about forty lines of thread management from Task 2, and I did not have to work out start and end points at all.
+
+The schedule clause is doing exactly the job our chunks were doing in Task 2. Static decides the split up front, so you get the same problem where one thread has all the expensive numbers. Dynamic lets a thread come back for more work as soon as it is free.
+
+To be honest about it, we timed all three schedules and they came out within about five percent of each other on our machine, which is close enough to be noise. So we cannot say dynamic won on our numbers. We kept it because the reasoning still holds and it should matter more on a machine with more cores.
+
+One thing that caught us out: if you forget the dash f openmp flag it still compiles and runs perfectly, it just ignores the pragma. Our speedup was exactly 1.00 and it took us a while to work out why.</div>
+  </div>
+</div>
+
+
+<!-- 8 -->
+<div class="slide">
+  <div class="shead"><div class="num">8</div><div class="stitle">Task 3 · Results</div>
+    <span class="who w-taa">TAABISH</span><span class="time">~45 sec</span></div>
+  <div class="sbody">
+    <div class="lbl">Heading <button class="copy" data-c="Task 3 — OpenMP results">copy</button></div>
+    <div class="block head">Task 3 · OpenMP results</div>
+
+    <div class="lbl">Images, side by side</div>
+    <div><span class="img">graphs/graph5_runtime_serial_vs_omp_by_n.png</span>
+    <span class="img">graphs/graph6_speedup_omp_by_n.png</span></div>
+
+    <div class="lbl">Caption <button class="copy" data-c="Same shape as Task 2. Average speedup 1.95x across the 30 values of n.
+
+The dip at the small end of graph 6 is the cost of starting the threads up. It is a fixed cost, so when there is barely any work to do it takes a bigger share of the total, and it disappears once n gets large.">copy</button></div>
+    <div class="block">Same shape as Task 2. Average speedup <span class="num-hl">1.95x</span> across the <span class="num-hl">30</span> values of n.
+
+The dip at the small end of graph 6 is the cost of starting the threads up. It is a fixed cost, so when there is barely any work to do it takes a bigger share of the total, and it disappears once n gets large.</div>
+
+    <div class="lbl">What to say</div>
+    <div class="notes">TAABISH: Graphs 5 and 6, OpenMP against serial. Very similar picture to Task 2, averaging about 1.95 across the thirty values.
+
+The one thing worth pointing at is the dip on the left of graph 6, at the small values of n. That is the cost of spinning the threads up. It is a fixed cost, so when there is hardly any work to do it eats a bigger share of the total time, and it washes out as n gets bigger.</div>
+  </div>
+</div>
+
+
+<!-- 9 -->
+<div class="slide">
+  <div class="shead"><div class="num">9</div><div class="stitle">Task 2 vs Task 3, head to head</div>
+    <span class="who w-ery">ERWYNA</span><span class="time">~45 sec</span></div>
+  <div class="sbody">
+    <div class="lbl">Heading <button class="copy" data-c="POSIX Threads vs OpenMP, head to head">copy</button></div>
+    <div class="block head">POSIX Threads vs OpenMP, head to head</div>
+
+    <div class="lbl">Images, side by side</div>
+    <div><span class="img">graphs/graph7_runtime_pthread_vs_omp_by_n.png</span>
+    <span class="img">graphs/graph8_runtime_pthread_vs_omp_by_threads.png</span></div>
+
+    <div class="lbl">Caption <button class="copy" data-c="The two lines sit almost on top of each other. Averaged over all 30 values, POSIX Threads came out at 1.92x and OpenMP at 1.95x, which is basically the same.
+
+So performance is not what decides between them here. What decides it is how much code you have to write, and OpenMP won that easily.">copy</button></div>
+    <div class="block">The two lines sit almost on top of each other. Averaged over all <span class="num-hl">30</span> values, POSIX Threads came out at <span class="num-hl">1.92x</span> and OpenMP at <span class="num-hl">1.95x</span>, which is basically the same.
+
+So performance is not what decides between them here. What decides it is how much code you have to write, and OpenMP won that easily.</div>
+
+    <div class="lbl">What to say</div>
+    <div class="notes">ERWYNA: These are graphs 7 and 8, the two parallel versions against each other.
+
+The lines sit almost on top of each other. Over all thirty values POSIX Threads averaged 1.92 and OpenMP 1.95, so there is nothing meaningful between them on our hardware.
+
+What that means practically is that speed is not the thing that decides which one to use here. The difference is how much code you write, and OpenMP got the same result from one pragma versus roughly forty lines of thread handling.</div>
+  </div>
+</div>
+
+
+<!-- 10 -->
+<div class="slide">
+  <div class="shead"><div class="num">10</div><div class="stitle">Conclusion and recommendations</div>
+    <span class="who w-ery">ERWYNA</span><span class="time">1 min</span></div>
+  <div class="sbody">
+    <div class="lbl">Heading <button class="copy" data-c="Conclusion and recommendations">copy</button></div>
+    <div class="block head">Conclusion and recommendations</div>
+
+    <div class="lbl">Column 1, what went well <button class="copy" data-c="What went well
+
+Both parallel versions got close to the core count, 1.92x and 1.95x on 2 cores.
+Splitting the numbers into chunks instead of blocks took us from 1.58x to 1.95x.
+Using a flag array meant no mutex anywhere and no sorting at the end.">copy</button></div>
+    <div class="block"><b>What went well</b>
+
+Both parallel versions got close to the core count, <span class="num-hl">1.92x</span> and <span class="num-hl">1.95x</span> on <span class="num-hl">2</span> cores.
+Splitting the numbers into chunks instead of blocks took us from <span class="num-hl">1.58x</span> to <span class="num-hl">1.95x</span>.
+Using a flag array meant no mutex anywhere and no sorting at the end.</div>
+
+    <div class="lbl">Column 2, limitations <button class="copy" data-c="Limitations
+
+We never hit exactly the core count. Allocating the array, starting the threads and writing the file are all serial, and no number of threads speeds those up.
+Adding threads past the core count gains nothing.
+We only had 2 cores to test on, so we cannot say for sure the trend holds at 8 or 16.">copy</button></div>
+    <div class="block"><b>Limitations</b>
+
+We never hit exactly the core count. Allocating the array, starting the threads and writing the file are all serial, and no number of threads speeds those up.
+Adding threads past the core count gains nothing.
+We only had <span class="num-hl">2</span> cores to test on, so we cannot say for sure the trend holds at 8 or 16.</div>
+
+    <div class="lbl">Column 3, future work <button class="copy" data-c="Future work
+
+Use a Sieve of Eratosthenes instead of trial division. It does far less work overall, though splitting it between threads is harder.
+Test on a machine with more cores to see whether the schedules start to separate.
+Try timing the file writing separately to see how much of the total it really is.">copy</button></div>
+    <div class="block"><b>Future work</b>
+
+Use a Sieve of Eratosthenes instead of trial division. It does far less work overall, though splitting it between threads is harder.
+Test on a machine with more cores to see whether the schedules start to separate.
+Try timing the file writing separately to see how much of the total it really is.</div>
+
+    <div class="lbl">Recommendation line <button class="copy" data-c="Our recommendation: for a loop like this one, use OpenMP. Same speed, far less code, and you get the serial version back just by leaving the flag off. We would reach for POSIX Threads when the work is not a simple loop, or when we need control over what each individual thread is doing.">copy</button></div>
+    <div class="block">Our recommendation: for a loop like this one, use OpenMP. Same speed, far less code, and you get the serial version back just by leaving the flag off. We would reach for POSIX Threads when the work is not a simple loop, or when we need control over what each individual thread is doing.</div>
+
+    <div class="lbl">What to say</div>
+    <div class="notes">ERWYNA: To wrap up. Both parallel versions got close to the core count, 1.92 and 1.95 on two cores. The biggest single improvement we made was changing how the numbers were split, from one block each to chunks taken in turn, which moved us from 1.58 to 1.95. And using the flag array meant we never needed a mutex and never needed to sort.
+
+On limitations, we never quite hit the core count exactly, and that is because parts of the program cannot be parallel at all. Allocating the array, starting the threads and writing the file are all serial, so no matter how many threads we add those stay the same. Adding threads past the core count gains nothing. And we only had two cores to test on, so we are careful about claiming the trend continues at eight or sixteen.
+
+If we carried on, the obvious next step is a Sieve of Eratosthenes instead of trial division, because it does far less work overall, though it is harder to split between threads.
+
+Our recommendation for a loop like this is OpenMP. Same speed, much less code, and you can get the serial version back just by dropping the flag. POSIX Threads makes more sense when the work is not a simple loop.</div>
+  </div>
+</div>
+
+
+<!-- 11 -->
+<div class="slide">
+  <div class="shead"><div class="num">11</div><div class="stitle">Q&amp;A</div>
+    <span class="who w-both">BOTH</span><span class="time">1 to 2 min</span></div>
+  <div class="sbody">
+    <div class="lbl">Heading <button class="copy" data-c="Questions?">copy</button></div>
+    <div class="block head">Questions?</div>
+
+    <div class="lbl">Numbers to keep on the slide so you can point at them <button class="copy" data-c="664,579 primes below 10 million, identical from all three
+1.92x POSIX Threads, 1.95x OpenMP
+1.58x to 1.95x after changing how we split the work
+30 values of n, threads swept to double the core count">copy</button></div>
+    <div class="block"><span class="num-hl">664,579</span> primes below 10 million, identical from all three
+<span class="num-hl">1.92x</span> POSIX Threads, <span class="num-hl">1.95x</span> OpenMP
+<span class="num-hl">1.58x</span> to <span class="num-hl">1.95x</span> after changing how we split the work
+<span class="num-hl">30</span> values of n, threads swept to double the core count</div>
+
+    <div class="lbl">Likely questions and answers, rehearse these</div>
+    <div class="notes"><b>Is the speedup exactly the number of threads you used? Why not?</b> (this one is almost certain, the spec names it)
+No. Two reasons. First, parts of the program cannot be split up at all, allocating the array, creating the threads and writing the file are all serial, so they take the same time no matter how many threads we use, and that puts a ceiling on the speedup. Second, the threads do not all finish at exactly the same moment, and creating and joining them costs time that is not doing any actual work.
+
+<b>Would you recommend OpenMP over POSIX Threads?</b> (the other one the spec names)
+For this problem yes. We got the same speed from one pragma that took us about forty lines of thread code to get in Task 2, and if we leave the flag off we get the serial version back for free. We would use POSIX Threads if the work was not a simple loop, for example if different threads had to do completely different jobs, or if we needed to control individual threads.
+
+<b>How did you split the work, and is it a good approach?</b>
+We hand out chunks of a thousand numbers in rotation rather than one block each. It suits this problem because the cost per number rises steadily with the number, so rotating chunks gives everyone a fair mix. It would be less suitable if the expensive parts were scattered randomly, in which case letting threads grab work on demand would adapt better.
+
+<b>Where is your critical section?</b>
+There is not one, on purpose. Each thread only writes to the array positions it was given, so no two threads ever touch the same element. Adding a mutex would just slow it down without making it any more correct.
+
+<b>What happens if you use more threads than cores?</b>
+The speedup stops improving. Once every core has a thread there is nothing left to give the extra ones, so they just take turns on the same cores. Graph 4 shows it going flat after the core count.
+
+<b>Why do you stop the timer before writing the file?</b>
+Because writing the list to disk is not the part we are trying to speed up, and threads cannot make the disk faster. If we included it, it would hide how much the parallel part actually improved.
+
+<b>Why only check divisors up to the square root?</b>
+If k is not prime then k is m times p, and those two cannot both be bigger than the square root, because multiplying them would overshoot k. So if there is a factor, one of them is at or below the square root, and if we find nothing by then, k is prime.
+
+<b>Why chunk size 1000?</b>
+We tried a few sizes and 1000 was comfortably in the range where it stopped making a difference. Too small and the threads spend time swapping between chunks, too big and you drift back towards the one block problem.</div>
+  </div>
+</div>
+
+<p class="foot">
+Erwyna Soo Wen Xin (36555789) · Taabish Farooq Bhat (35473932) · FIT3143 Semester 2 2026<br>
+Highlighted numbers come from a 2 core reference run. Re-run the harness on your own laptop and replace them.
+</p>
+
+</div>
+<script>
+document.querySelectorAll(".copy").forEach(function(b){
+  b.addEventListener("click", function(){
+    var txt = b.getAttribute("data-c");
+    var done = function(){
+      var old = b.textContent; b.textContent = "copied"; b.classList.add("done");
+      setTimeout(function(){ b.textContent = old; b.classList.remove("done"); }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(done, function(){});
+    } else {
+      var ta = document.createElement("textarea");
+      ta.value = txt; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); done(); } catch(e) {}
+      document.body.removeChild(ta);
+    }
+  });
+});
+</script>
+</body>
+</html>
