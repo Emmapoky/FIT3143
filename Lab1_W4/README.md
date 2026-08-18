@@ -15,15 +15,16 @@ Finding every prime number strictly below n, three ways, and comparing how fast 
 
 ## Before submitting
 
-1. **Run the benchmarks on your own laptop.** The numbers currently in the CSVs and in
-   `Slides_Reference.html` came from a 2 core test machine. The Q&A will ask about your
-   hardware, so the figures should be yours.
+1. **The benchmarks were re-run on the submission machine on 18 Aug 2026** (Apple M3 Max,
+   14 cores: 10 performance and 4 efficiency, macOS 26.6.1). Every number in the CSVs,
+   the graphs and the Canva deck now comes from that run. To repeat it:
    ```bash
    chmod +x run_benchmarks.sh
-   ./run_benchmarks.sh          # takes a while, raise N_MAX if your machine is fast
-   python3 make_graphs.py       # redraws all nine graphs from your CSVs
+   ./run_benchmarks.sh          # 30 values of n up to 30M, threads 1 to 28, best of 3
+   CORES=14 N_FIXED=30000000 python3 make_graphs.py
    ```
-   Then update every highlighted number in `Slides_Reference.html` before building the deck.
+   Note: `Slides_Reference.html` still shows the numbers from the old 2 core draft run.
+   The Canva deck is the live copy, so treat the HTML as superseded.
 
 2. **Fill in `AI_Declaration.md`**, including the tool name, then export it to PDF and attach
    your prompt records as `AI_Prompt_Records.pdf`.
@@ -87,23 +88,28 @@ each thread only writes to the positions it was handed, no two threads ever touc
 element, so there is no race condition and no mutex anywhere.
 
 **Splitting the work in Task 2.** We first gave each thread one big block, like the vector cell
-product example from the Week 3 lab prep. That only reached 1.58x on 2 cores, because checking a
+product example from the Week 3 lab prep. That reached 8.70x on 14 threads, because checking a
 big number takes more divisions than checking a small one, so the thread holding the high numbers
 finishes long after the others. Handing out chunks of 1000 numbers in rotation instead gives every
-thread a mix of cheap and expensive numbers, and that took us to 1.95x.
+thread a mix of cheap and expensive numbers, and that took us to 9.75x.
 
-**Splitting the work in Task 3.** `schedule(dynamic, 1000)` does the same job automatically. We
-timed static, dynamic and guided and they came out within about 5 percent of each other on our
-machine, so we cannot claim one won. We kept dynamic because the reasoning still holds and the
-difference should grow on a machine with more cores.
+**Splitting the work in Task 3.** `schedule(dynamic, 1000)` does the same job automatically, and
+adapts at run time instead of following a fixed rotation. On 14 threads dynamic beat static by
+about 9 percent (10.44x against 9.55x), with guided level with dynamic, so the choice of dynamic
+is now backed by our own measurement rather than reasoning alone.
 
-## Reference numbers, 2 core machine, n = 10,000,000
+## Reference numbers, Apple M3 Max (14 cores), n = 30,000,000, 14 threads
 
 | Version | Time | Speedup |
 |---|---|---|
-| Serial | 7.43s | 1.00x |
-| POSIX Threads, 2 threads | 3.84s | 1.93x |
-| OpenMP, 2 threads | 3.79s | 1.96x |
-| POSIX Threads, one block per thread | 4.71s | 1.58x |
+| Serial | 2.62s | 1.00x |
+| POSIX Threads, chunks | 0.27s | 9.75x |
+| OpenMP, schedule(dynamic, 1000) | 0.25s | 10.44x |
+| POSIX Threads, one block per thread | 0.30s | 8.70x |
+| OpenMP, schedule(static, 1000) | 0.27s | 9.55x |
+| OpenMP, schedule(guided, 1000) | 0.25s | 10.42x |
 
-Averaged over 30 values of n: POSIX Threads 1.92x, OpenMP 1.95x.
+Averaged over 30 values of n at 14 threads: POSIX Threads 8.09x, OpenMP 9.37x.
+Thread sweep at n = 30M: near linear to 8 threads, then a plateau around 9.7x to 10.4x.
+The plateau sits below 14 because 4 of the 14 cores are efficiency cores, and past 14
+threads there is no more hardware so extra threads only add scheduling overhead.

@@ -82,12 +82,12 @@ int main(int argc, char **argv)
 	// back for another chunk as soon as it finishes one, so the slow parts get
 	// shared out as the loop runs.
 	//
-	// We did time all three. On our machine static, dynamic and guided came out
-	// within about 5 percent of each other, which is close enough to be noise,
-	// so we cannot claim dynamic won on our results. We kept it because the
-	// reason above still holds and the gap between them should open up on a
-	// machine with more cores, where an unlucky static split costs more. The
-	// timings are in results_extra.csv and on the slides.
+	// We did time all three at n = 30,000,000 with 14 threads. Dynamic came
+	// out about 9 percent faster than static (10.44x against 9.55x speedup),
+	// with guided in between (10.42x). That matches the reasoning above: with
+	// this many threads an unlucky static split leaves whole cores idle near
+	// the end of the loop, and dynamic fills them with the remaining chunks.
+	// The timings are in results_extra.csv and on the slides.
 	//
 	// Like in task2.c each element of pFlags is only written by one thread, so
 	// there is no race and we do not need a critical section here.

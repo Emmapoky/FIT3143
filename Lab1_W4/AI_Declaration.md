@@ -3,13 +3,13 @@
 **Unit:** FIT3143 Parallel Computing, Semester 2 2026
 **Assessment:** Lab #1, Threads & OpenMP
 **Team:** Erwyna Soo Wen Xin (36555789) and Taabish Farooq Bhat (35473932)
-**Date:** 13 Aug 2026
+**Date:** 18 Aug 2026
 
 ---
 
 ## 1. Declaration
 
-Generative AI [Gemini Flash] was used during the **preparation period** for this assessment, as permitted by
+Generative AI [Gemini Flash, and Claude (Claude Code)] was used during the **preparation period** for this assessment, as permitted by
 item 9 of the Lab #1 Assessment Specification:
 
 > "You are allowed to use Generative-AI to search for information and resources during the
@@ -19,13 +19,7 @@ item 9 of the Lab #1 Assessment Specification:
 No generative AI was used during the presentation, the Q&A, or any oral or coding interview
 session, in line with item 10 of the specification.
 
-**Tool used:** ______________________________________________
-
-**Dates of use:** ______________________________________________
-
-> Fill in the tool name and version you actually used, and attach the matching prompt records.
-> These two need to agree with each other, since the prompt records are submitted alongside
-> this form.
+**Tools used:** Gemini Flash; Claude (Claude Code, Opus 5)
 
 ---
 
@@ -39,6 +33,7 @@ session, in line with item 10 of the specification.
 | `run_benchmarks.sh` (Erwyna) | Helped draft the benchmarking script, the sweeps and the correctness check. |
 | `make_graphs.py` (Erwyna) | Helped draft the plotting script for the eight required graphs plus our comparison graph. |
 | Slides (Erwyna) | Helped draft the structure and wording. All figures shown are our own measurements. |
+| Benchmark rerun, 18 Aug 2026 (Erwyna) | Claude Code found and fixed a fault in `run_benchmarks.sh` (macOS `seq` prints large numbers in scientific notation, which `atol()` reads as 1, so the first run had silently collected almost no data and no OpenMP timings at all), re ran the full benchmark on the submission machine, regenerated the nine graphs, and updated the slide text and speaker notes to match the measured results. Every timing still comes from compiling and running our own code on our own machine. |
 
 ---
 
@@ -71,7 +66,7 @@ just slower than we expected, and finding out why meant timing both and comparin
 
 The full prompt and response records are attached separately as required by item 9.
 
-**Attachment:** `AI_Prompt_Records.pdf`
+**Attachment:** `AI_Prompt_Records.pdf` (must include the Gemini Flash records and the 18 Aug 2026 Claude Code session)
 
 ---
 

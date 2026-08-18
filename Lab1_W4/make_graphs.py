@@ -1,10 +1,5 @@
 
-def safe_float(v):
-    try: return float(v)
-    except:
-        return 0.0
-
-#!/(usr / bin if bin > 0 else 0.0)/env python3
+#!/usr/bin/env python3
 ####################################################################
 # make_graphs.py
 # ------------------------------------------------------------------
@@ -65,7 +60,30 @@ os.makedirs(OUT, exist_ok=True)
 
 def read_csv(path):
     with open(path) as f:
-        return list(csv.DictReader(f))
+        rows = list(csv.DictReader(f))
+    if not rows:
+        raise SystemExit(f"{path} has no data rows. Run ./run_benchmarks.sh first.")
+    return rows
+
+
+def column(rows, path, key, cast=float):
+    """Read one column, refusing to continue if any cell is blank.
+
+    An earlier version of this script quietly turned blanks into 0.0. That drew
+    a flat line at zero instead of failing, so a benchmark run that had not
+    actually collected the OpenMP timings still produced graphs that looked
+    finished. Blank data is a broken run, so say so and stop."""
+    out = []
+    for i, r in enumerate(rows, start=2):
+        raw = (r.get(key) or "").strip()
+        if not raw:
+            raise SystemExit(
+                f"{path} line {i}: column '{key}' is empty. "
+                f"The benchmark run did not collect this series, so the graphs "
+                f"would be wrong. Re-run ./run_benchmarks.sh and check it "
+                f"finishes without errors.")
+        out.append(cast(raw))
+    return out
 
 
 def tidy(ax, xlabel, ylabel):
@@ -78,7 +96,7 @@ def tidy(ax, xlabel, ylabel):
 
 
 def millions(x, _pos):
-    return f"{(x / 1e6 if 1e6 > 0 else 0.0):g}M"
+    return f"{x / 1e6:g}M"
 
 
 def label_end(ax, xs, ys, colour, text, dy=0):
@@ -98,23 +116,27 @@ def save(fig, name, note=None):
 
 
 # --- load the results -----------------------------------------------------
-by_n = read_csv("results_by_n.csv")
-ns     = [int(safe_float(r["n"]))           for r in by_n]
-s_n    = [safe_float(r["serial_s"])  for r in by_n]
-p_n    = [safe_float(r["pthread_s"]) for r in by_n]
-o_n    = [safe_float(r["omp_s"])     for r in by_n]
-sp_p_n = [(s / p if p > 0 else 0.0) for s, p in zip(s_n, p_n)]
-sp_o_n = [(s / o if o > 0 else 0.0) for s, o in zip(s_n, o_n)]
+BY_N = "results_by_n.csv"
+by_n   = read_csv(BY_N)
+ns     = column(by_n, BY_N, "n", int)
+s_n    = column(by_n, BY_N, "serial_s")
+p_n    = column(by_n, BY_N, "pthread_s")
+o_n    = column(by_n, BY_N, "omp_s")
+sp_p_n = [s / p for s, p in zip(s_n, p_n)]
+sp_o_n = [s / o for s, o in zip(s_n, o_n)]
 
-by_t = read_csv("results_by_threads.csv")
-ts     = [int(r["threads"])     for r in by_t]
+BY_T = "results_by_threads.csv"
+by_t   = read_csv(BY_T)
+ts     = column(by_t, BY_T, "threads", int)
 s_ref  = float(by_t[0]["serial_s"])
-p_t    = [safe_float(r["pthread_s"]) for r in by_t]
-o_t    = [safe_float(r["omp_s"])     for r in by_t]
-sp_p_t = [(s_ref / p if p > 0 else 0.0) for p in p_t]
-sp_o_t = [(s_ref / o if o > 0 else 0.0) for o in o_t]
+p_t    = column(by_t, BY_T, "pthread_s")
+o_t    = column(by_t, BY_T, "omp_s")
+sp_p_t = [s_ref / p for p in p_t]
+sp_o_t = [s_ref / o for o in o_t]
 
 CORES = int(os.environ.get("CORES", max(ts) // 2 if max(ts) > 1 else 1))
+N_FIXED = int(os.environ.get("N_FIXED", 30000000))
+FIXED_LABEL = f"n held at {N_FIXED:,}."
 print(f"loaded {len(ns)} values of n and {len(ts)} thread counts, cores = {CORES}")
 
 
@@ -160,7 +182,7 @@ ax.set_ylim(0, s_ref * 1.15)
 ax.set_title("Graph 3: Run time, serial vs POSIX Threads, increasing threads", pad=26)
 ax.legend(loc="upper right", bbox_to_anchor=(1, 1.02))
 save(fig, "graph3_runtime_serial_vs_pthread_by_threads.png",
-     "n held at 10,000,000. Lower is better.")
+     f"{FIXED_LABEL} Lower is better.")
 
 # --- Graph 4: speedup of POSIX Threads, increasing threads ---------------
 fig, ax = plt.subplots(figsize=(7.2, 4.3))
@@ -177,7 +199,7 @@ ax.set_xticks(ts)
 ax.set_ylim(0, max(ts) * 1.08)
 ax.set_title("Graph 4: Speedup of POSIX Threads, increasing threads", pad=26)
 save(fig, "graph4_speedup_pthread_by_threads.png",
-     "n held at 10,000,000. Speedup stops improving once threads pass the core count.")
+     f"{FIXED_LABEL} Speedup stops improving once threads pass the core count.")
 
 # --- Graph 5: run time serial vs OpenMP, increasing n --------------------
 fig, ax = plt.subplots(figsize=(7.2, 4.3))
@@ -233,15 +255,15 @@ ax.set_xticks(ts)
 ax.set_title("Graph 8: Run time, POSIX Threads vs OpenMP, increasing threads", pad=26)
 ax.legend(loc="upper right", bbox_to_anchor=(1, 1.02))
 save(fig, "graph8_runtime_pthread_vs_omp_by_threads.png",
-     "n held at 10,000,000. Lower is better.")
+     f"{FIXED_LABEL} Lower is better.")
 
 # --- Graph 9 (extra): the two workload distribution comparisons ---------
 if os.path.exists("results_extra.csv"):
     rows     = read_csv("results_extra.csv")
     labels   = [r["label"] for r in rows]
-    times    = [safe_float(r["time_s"]) for r in rows]
+    times    = column(rows, "results_extra.csv", "time_s")
     base     = float(rows[0]["serial_s"])
-    speeds   = [(base / t if t > 0 else 0.0) for t in times]
+    speeds   = [base / t for t in times]
     # our own two versions in orange, the OpenMP schedules in green
     colours = [PTHREAD if lb.startswith("pthread") else OMP for lb in labels]
     pretty  = [lb.replace("pthread ", "Task 2\n").replace("omp ", "Task 3\n")
@@ -262,6 +284,6 @@ if os.path.exists("results_extra.csv"):
     ax.set_ylim(0, max(speeds) * 1.28)
     ax.set_title("Extra: how we shared the work out, measured", pad=26)
     save(fig, "graph9_workload_distribution.png",
-         f"n = 10,000,000, {CORES} threads. Same search every time, only the sharing changes.")
+         f"n = {N_FIXED:,}, {CORES} threads. Same search every time, only the sharing changes.")
 
 print("\nAll graphs are in the graphs folder.")
