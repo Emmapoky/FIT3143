@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 	// One byte per candidate. We flag the primes as we find them instead of
 	// appending to a list, so the numbers stay in order automatically when we
 	// read the array back from the front.
-	pFlags = (char*)calloc(n, sizeof(char));	// Heap array
+	pFlags = (char*)calloc((size_t)n, sizeof(*pFlags));	// Heap array
 	if(pFlags == NULL)
 	{
 		printf("Error: Cannot allocate memory\n");
