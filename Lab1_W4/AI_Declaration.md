@@ -30,6 +30,3 @@ The full prompt and response records for both tools are attached separately as `
 | Taabish Farooq Bhat| 35473932 | 
 
 We declare that the above is a complete and accurate account of generative AI use in this assessment, and that we understand and can explain all of the submitted work.
-
-**Below is our official chat with gemini which we did together in a shared account:**
-https://gemini.google.com/share/d/1gLFZXvhFY2Em9jo_MrLRG8EP_A6icAoo?usp=sharing
