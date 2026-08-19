@@ -9,6 +9,10 @@
 //
 // Written by: Taabish Farooq Bhat (35473932)
 //
+// Team:
+//   Erwyna Soo Wen Xin  (36555789)  esoo0013@student.monash.edu
+//   Taabish Farooq Bhat (35473932)  ttaa0006@student.monash.edu
+//
 // Compile: gcc task2.c -o task2 -lm -lpthread
 // Run:     ./task2 <n> <threads>
 ////////////////////////////////////////////////////////////////////////////

@@ -8,6 +8,10 @@
 //
 // Written by: Taabish Farooq Bhat (35473932)
 //
+// Team:
+//   Erwyna Soo Wen Xin  (36555789)  esoo0013@student.monash.edu
+//   Taabish Farooq Bhat (35473932)  ttaa0006@student.monash.edu
+//
 // Compile: gcc task3.c -o task3 -lm -fopenmp
 // Run:     ./task3 <n> <threads>
 //
