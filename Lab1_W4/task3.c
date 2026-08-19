@@ -28,6 +28,14 @@
 #define STDOUT_LIMIT 100
 #define CHUNK        1000	// same chunk size we settled on in task2.c
 
+// Taabish: kept the same 1000 as task2.c on purpose. The two versions are
+// doing the same thing, mine by hand and this one through the schedule clause,
+// so using the same chunk size means the comparison in graphs 7 and 8 is about
+// pthreads against OpenMP and not about one of them having a better tuned
+// number. The difference that is left comes from dynamic scheduling handing
+// out chunks as threads free up, while my rotation in task2.c is fixed before
+// the threads even start.
+
 // Function prototypes
 int IsPrime(long k);
 void WriteToFile(char *pFilename, char *pFlags, long inN, long inCount);
@@ -95,6 +103,13 @@ int main(int argc, char **argv)
 	//
 	// Like in task2.c each element of pFlags is only written by one thread, so
 	// there is no race and we do not need a critical section here.
+	//
+	// Taabish: k is the loop variable of the parallel for, so OpenMP makes it
+	// private to each thread on its own and I do not have to declare that. n
+	// and pFlags stay shared, which is what I want: n is only read, and the
+	// threads write to different slots of pFlags. If I had needed a running
+	// total inside this loop it would be a reduction clause rather than a
+	// critical section, because a critical section would serialise the loop.
 	#pragma omp parallel for schedule(dynamic, CHUNK)
 	for(k = 2; k < n; k++)
 	{

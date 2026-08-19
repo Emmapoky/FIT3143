@@ -56,10 +56,16 @@ int main(int argc, char **argv)
 	// Get current clock time.
 	clock_gettime(CLOCK_MONOTONIC, &start);
 
-	// One byte per candidate. We flag the primes as we find them instead of
-	// appending to a list, so the numbers stay in order automatically when we
-	// read the array back from the front.
-	pFlags = (char*)calloc((size_t)n, sizeof(*pFlags));	// Heap array
+	// Erwyna: one byte per candidate. I flag the primes as I find them instead
+	// of appending to a list, so the numbers stay in order automatically when I
+	// read the array back from the front. A list would need sorting afterwards,
+	// and calloc already zeroes everything so nothing starts out marked.
+	//
+	// The cost is n bytes of memory even for the numbers that are not prime.
+	// At n = 30 million that is 30 MB, which is fine on a laptop. If memory
+	// were tight I would use a bit per number instead of a byte and pay for it
+	// with extra masking work on every access.
+	pFlags = (char*)calloc(n, sizeof(char));	// Heap array
 	if(pFlags == NULL)
 	{
 		printf("Error: Cannot allocate memory\n");
@@ -77,8 +83,13 @@ int main(int argc, char **argv)
 
 	// Get the clock current time again
 	// Subtract end from start to get the CPU time used.
-	// We stop the timer here, before writing the file, because writing is disk
-	// work and not part of the calculation we are trying to speed up.
+	//
+	// Erwyna: I stop the timer here, before writing the file, on purpose.
+	// Writing 664,579 lines to disk is serial work that no amount of threads
+	// can speed up, so leaving it inside the timer would drag every speedup
+	// number down and make the parallel versions look worse than they are.
+	// CLOCK_MONOTONIC rather than CLOCK_REALTIME so the measurement cannot be
+	// thrown off if the system clock adjusts mid run.
 	clock_gettime(CLOCK_MONOTONIC, &end);
 	time_taken = (end.tv_sec - start.tv_sec) * 1e9;
 	time_taken = (time_taken + (end.tv_nsec - start.tv_nsec)) * 1e-9;
@@ -121,6 +132,15 @@ int main(int argc, char **argv)
 //
 // We also deal with 2 on its own so that the loop can skip every even divisor
 // and step by 2, which halves the number of divisions again.
+//
+// Erwyna: worth knowing that the work here is not the same for every k. The
+// loop runs about sqrt(k) times, so a candidate near 30 million costs roughly
+// 55 times more divisions than one near 10,000. That uneven cost is the whole
+// reason Taabish had to think about how to split the range in task2.c.
+//
+// Taabish: I use this exact function in task2.c and task3.c without changing
+// it. If the three versions used different prime tests the timing comparison
+// would be meaningless, so keeping it identical is deliberate.
 int IsPrime(long k)
 {
 	long d;

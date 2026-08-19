@@ -69,6 +69,16 @@ def read_csv(path):
 def column(rows, path, key, cast=float):
     """Read one column, refusing to continue if any cell is blank.
 
+    Erwyna: this is the most important safety check in the script and it exists
+    because of a real failure. An earlier version of the benchmark script was
+    not collecting the OpenMP timings at all, so that column came through empty.
+    The plotting code quietly turned the blanks into 0.0, and out came eight
+    finished looking graphs with a flat line along the bottom and a speedup of
+    0.00x. Nothing errored, so there was no sign anything was wrong until I
+    looked at the pictures properly. Blank data means the run is broken, so now
+    it stops and says which file and which line rather than drawing something
+    that looks plausible and is not.
+
     An earlier version of this script quietly turned blanks into 0.0. That drew
     a flat line at zero instead of failing, so a benchmark run that had not
     actually collected the OpenMP timings still produced graphs that looked
@@ -80,7 +90,7 @@ def column(rows, path, key, cast=float):
             raise SystemExit(
                 f"{path} line {i}: column '{key}' is empty. "
                 f"The benchmark run did not collect this series, so the graphs "
-                f"would be wrong. Re-run ./run_benchmarks.sh and check it "
+                f"would be wrong. Run ./run_benchmarks.sh again and check it "
                 f"finishes without errors.")
         out.append(cast(raw))
     return out

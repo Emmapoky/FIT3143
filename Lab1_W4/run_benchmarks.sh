@@ -88,8 +88,14 @@ echo "PASS: all three gave the same sorted list of 664579 primes"
 echo ""
 
 # Pulls the number out of "Computational time only(s): 3.906362", runs the
-# program REPS times and keeps the fastest. The fastest run is the one least
-# disturbed by other things happening on the laptop at the time.
+# program REPS times and keeps the fastest.
+#
+# Erwyna: I keep the fastest of three rather than the average on purpose.
+# Background processes can only ever make a run slower, never faster, so the
+# spread is one sided. An average drags in whatever else the laptop happened to
+# be doing, while the fastest run is the closest I can get to the program with
+# the machine to itself. It is the standard way to time this sort of thing and
+# it is why the curves in graphs 3 and 4 come out smooth.
 gettime () {
 	local best="" t i
 	for i in $(seq 1 "$REPS"); do
