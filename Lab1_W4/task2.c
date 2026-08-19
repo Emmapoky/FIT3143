@@ -26,6 +26,17 @@
 #define MAX_THREADS  64
 #define CHUNK        1000	// how many numbers a thread takes at a time
 
+// Taabish: on why 1000 and not something else. There is a trade off both ways.
+// Make the chunk too small, say 1, and every thread spends its time on loop
+// bookkeeping and the threads keep landing on the same cache lines when they
+// write their flags. Make it too big, say a million, and we are back to the
+// block version, because one thread ends up holding a long run of expensive
+// candidates and finishes late. 1000 is large enough that the bookkeeping is
+// nothing next to the actual divisions, and small enough that with 14 threads
+// at n = 30 million there are still 30,000 chunks going around, so the work
+// evens out. I tried a few sizes and anything from a few hundred to a few
+// thousand behaved about the same, so the exact number is not delicate.
+
 // Global variables so every thread can reach them, same idea as the vector
 // cell product example from the Week 3 lab prep
 long  g_n = 0;
@@ -44,6 +55,15 @@ int main(int argc, char **argv)
 	int i = 0;
 	pthread_t tid[MAX_THREADS];		// Stores the POSIX thread IDs
 	int threadNum[MAX_THREADS];		// Pass a unique thread ID
+
+	// Taabish: threadNum needs to be its own array, one slot per thread.
+	// My first version passed &i straight into pthread_create, which looked
+	// fine but is a bug: every thread receives a pointer to the same variable,
+	// and the loop keeps incrementing it while the threads are starting. Some
+	// threads then read the wrong rank and two of them do the same chunks.
+	// Giving each thread its own slot means the value cannot change underneath
+	// it. That is a data race on i, and it is the one race in this program I
+	// had to actually fix.
 	struct timespec start, end;
 	double time_taken;
 
@@ -104,6 +124,13 @@ int main(int argc, char **argv)
 
 	// Count and output. The flag array is already in order so we do not need to
 	// sort anything or merge separate lists together.
+	//
+	// Taabish: this is the payoff from Erwyna's flag array in task1.c. If each
+	// thread had built its own list I would have to merge and sort them all
+	// here, which is serial work that grows with n and would eat into the
+	// speedup. Counting after the join instead of during it also means the
+	// threads never touch a shared counter, so there is no need for a mutex or
+	// an atomic add in the hot loop.
 	for(k = 2; k < g_n; k++)
 	{
 		if(g_pFlags[k])
@@ -202,6 +229,16 @@ void *ThreadFunc(void *pArg)
 	// Each thread only ever writes to the positions it was given, so no two
 	// threads touch the same element. That means there is no race condition
 	// here and we do not need a mutex around this loop.
+	//
+	// Taabish: to be exact, threads do share cache lines at the chunk borders,
+	// since one cache line covers 64 of these bytes. That is false sharing, so
+	// it can cost a little speed, but it is not a correctness problem because
+	// the bytes themselves are never written by two threads. Chunks of 1000
+	// keep the borders rare enough that it does not show up in the timings.
+	//
+	// If I did need the threads to update something shared, a running count for
+	// instance, then this is where a mutex would go, and it would be a genuine
+	// critical section. I avoided that by counting after the join instead.
 
 	return NULL;
 }
