@@ -5,7 +5,7 @@
 # ------------------------------------------------------------------
 # FIT3143 Lab #1 Task 4: draws the eight graphs the spec asks for,
 # plus one extra showing the two workload distribution comparisons
-# we talk about in the slides.
+# from results_extra.csv.
 #
 # Written by: Erwyna Soo Wen Xin (36555789)
 #

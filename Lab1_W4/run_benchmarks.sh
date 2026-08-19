@@ -128,7 +128,7 @@ for t in $(seq 1 $T_MAX); do
 done
 echo ""
 
-# The two comparisons we talk about in the slides. First one is our block
+# The two workload distribution comparisons. First one is our block
 # version against our chunk version, second is the three OpenMP schedules.
 echo "--- Sweep 3: our two workload distribution comparisons ---"
 echo "label,time_s,serial_s" > results_extra.csv

@@ -147,7 +147,7 @@ int main(int argc, char **argv)
 // wraps back around. Every thread ends up with a mix of small and big numbers,
 // so they all finish at about the same time.
 //
-// We compared both versions and put the numbers in the slides. Compiling with
+// We compared both versions and put the numbers in results_extra.csv. Compiling with
 // -DUSE_BLOCK builds the first attempt so the comparison can be repeated.
 void *ThreadFunc(void *pArg)
 {
