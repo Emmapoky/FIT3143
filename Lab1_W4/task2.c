@@ -9,6 +9,10 @@
 //
 // Written by: Taabish Farooq Bhat (35473932)
 //
+// Team:
+//   Erwyna Soo Wen Xin  (36555789)  esoo0013@student.monash.edu
+//   Taabish Farooq Bhat (35473932)  ttaa0006@student.monash.edu
+//
 // Compile: gcc task2.c -o task2 -lm -lpthread
 // Run:     ./task2 <n> <threads>
 ////////////////////////////////////////////////////////////////////////////
@@ -147,7 +151,7 @@ int main(int argc, char **argv)
 // wraps back around. Every thread ends up with a mix of small and big numbers,
 // so they all finish at about the same time.
 //
-// We compared both versions and put the numbers in the slides. Compiling with
+// We compared both versions and put the numbers in results_extra.csv. Compiling with
 // -DUSE_BLOCK builds the first attempt so the comparison can be repeated.
 void *ThreadFunc(void *pArg)
 {

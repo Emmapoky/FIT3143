@@ -10,6 +10,10 @@
 //
 // Written by: Erwyna Soo Wen Xin (36555789)
 //
+// Team:
+//   Erwyna Soo Wen Xin  (36555789)  esoo0013@student.monash.edu
+//   Taabish Farooq Bhat (35473932)  ttaa0006@student.monash.edu
+//
 // Compile: gcc task1.c -o task1 -lm
 // Run:     ./task1 <n>
 ////////////////////////////////////////////////////////////////////////////

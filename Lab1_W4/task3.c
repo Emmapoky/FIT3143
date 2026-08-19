@@ -8,6 +8,10 @@
 //
 // Written by: Taabish Farooq Bhat (35473932)
 //
+// Team:
+//   Erwyna Soo Wen Xin  (36555789)  esoo0013@student.monash.edu
+//   Taabish Farooq Bhat (35473932)  ttaa0006@student.monash.edu
+//
 // Compile: gcc task3.c -o task3 -lm -fopenmp
 // Run:     ./task3 <n> <threads>
 //
@@ -87,7 +91,7 @@ int main(int argc, char **argv)
 	// with guided in between (10.42x). That matches the reasoning above: with
 	// this many threads an unlucky static split leaves whole cores idle near
 	// the end of the loop, and dynamic fills them with the remaining chunks.
-	// The timings are in results_extra.csv and on the slides.
+	// The timings are in results_extra.csv.
 	//
 	// Like in task2.c each element of pFlags is only written by one thread, so
 	// there is no race and we do not need a critical section here.
