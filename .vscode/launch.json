@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "C/C++ Runner: Debug Session",
+      "name": "C/C++ Runner: Debug Session (Taabish, Windows)",
       "type": "cppdbg",
       "request": "launch",
       "args": [],
@@ -19,6 +19,18 @@
           "ignoreFailures": true
         }
       ]
+    },
+    {
+      "name": "Debug active file (Mac, lldb)",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": false,
+      "cwd": "${fileDirname}",
+      "program": "${fileDirname}/${fileBasenameNoExtension}",
+      "MIMode": "lldb",
+      "preLaunchTask": "C/C++: gcc build active file"
     }
   ]
 }
