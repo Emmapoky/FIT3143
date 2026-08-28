@@ -1,6 +1,6 @@
 # Applied #1 Task 3 prep: transmission delay graphs.
-# AI-written prep scaffolding (Claude, 2026-08-25). Adjust parameters to match
-# your own architecture before using any output in the submission, and declare AI use.
+# Adjust parameters to match
+# your own architecture before using any output in the submission
 #
 # Model: t = L / B + t_other per link (course convention: 1 MB = 1e6 bytes, 1 Gbps = 1e9 bps)
 # Message types follow the guide: neighbour query/reply (O(1) in n),
