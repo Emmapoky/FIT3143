@@ -1,10 +1,5 @@
 # Applied #1 - Taabish's part (Task 2 messages, Task 3, conclusion; slides 7-12, last 3:30)
 
-NOTE: This content is AI-assisted prep (Claude, 2026-08-28). The team's AI declaration
-and prompt records must cover it. Rewrite in your own words where you can, and be
-ready to defend every line verbally: Q&A is 40 percent of the mark, answered
-individually, and AI tools are banned during the session.
-
 ====================================================================
 SECTION A - WHAT YOU WRITE INTO THE SUBMISSION DOCUMENT
 ====================================================================

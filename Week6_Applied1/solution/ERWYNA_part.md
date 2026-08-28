@@ -1,14 +1,5 @@
 # Applied #1 - Erwyna's part (Tasks 1 + Task 2 structure, slides 1-7, first 3:30 of the talk)
 
-NOTE: This content is AI-assisted prep (Claude, 2026-08-28). The spec allows this ONLY
-with an AI declaration and full prompt records uploaded as PDF. Rewrite in your own
-words where you can, and make sure you can defend every line verbally - Q&A is 40%
-and AI tools are banned in the room.
-
-Submission is via MOODLE BEFORE THE START OF CLASS: slides (pptx + PDF), this content
-as the design documentation, the two graphs, AI declaration + prompt records.
-Put both names, student IDs and Monash emails on the title slide and every file.
-
 ====================================================================
 SECTION A - WHAT YOU WRITE INTO THE SUBMISSION DOCUMENT
 ====================================================================
