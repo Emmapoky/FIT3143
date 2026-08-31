@@ -20,7 +20,7 @@ We used Gemini to assist with technical research, code drafting, data verificati
 
 ## Prompt records
 
-Attached separately as `AI_Prompt_Records.pdf`, as required by item 9.
+Attached separately as `AI_Prompt_Records.pdf`, as required.
 
 ## Signatures
 
