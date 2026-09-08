@@ -3,13 +3,13 @@
 **Unit:** FIT3143 Parallel Computing, Semester 2 2026
 **Assessment:** Lab 1, Threads and OpenMP
 **Team:** Erwyna Soo Wen Xin (36555789) and Taabish Farooq Bhat (35473932)
-**Date:** 19 August 2026
+**Date:** 19 August 2026 [last touched]
 
 ## Declaration
 
-We used Generative AI (Google Gemini Flash) during the preparation period for this lab, as allowed under item 9 of the assessment specification. We did not use any AI tools during the presentation, the Q&A, or any oral or coding interview session, in line with item 10.
+We used generative AI during the preparation period for this lab, as allowed under item 9 of the assessment specification. We used two tools:
 
-## What we used it for
+* **Google Gemini Flash**, on 11 August, to help draft the first versions of the three programs, on 15 and 17 August, to help fix our benchmarking script and tweak our graphs to show correct result.
 
 We used Gemini to assist with technical research, code drafting, data verification, and slide quality auditing. Specifically, the tool was used to:
 
@@ -20,11 +20,17 @@ We used Gemini to assist with technical research, code drafting, data verificati
 
 ## Prompt records
 
+<<<<<<< HEAD
 Attached separately as `AI_Prompt_Records.pdf`, as required.
+=======
+The full prompt and response records for both tools are attached separately as `AI_Prompt_Records.pdf`, as required by item 9.
+>>>>>>> 5f1e92de3321d103187e2f3e05b12beb239b9659
 
 ## Signatures
 
-| Name                | Student ID |
-| ------------------- | ---------- |
-| Erwyna Soo Wen Xin  | 36555789   |
-| Taabish Farooq Bhat | 35473932   |
+| Name               |Student ID| 
+|--------------------|----------|
+| Erwyna Soo Wen Xin | 36555789 | 
+| Taabish Farooq Bhat| 35473932 | 
+
+We declare that the above is a complete and accurate account of generative AI use in this assessment, and that we understand and can explain all of the submitted work.
