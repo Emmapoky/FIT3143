@@ -1,3 +1,25 @@
+////////////////////////////////////////////////////////////////////////////
+// task_1.c
+// -------------------------------------------------------------------------
+// FIT3143 Lab #2 Task 1: prime number search using Open MPI.
+//
+// Finds every prime strictly less than an integer n given on the command
+// line, and writes them in ascending order to primes_task1.txt.
+//
+// The candidates are split cyclically: rank r takes 3 + 2r and then steps
+// by 2p. The primes come back to the root with MPI_Gather of the counts
+// followed by MPI_Gatherv into a displacement array, and the root sorts
+// before writing.
+//
+// Written by: Taabish Farooq Bhat (35473932)
+//
+// Team:
+//   Erwyna Soo Wen Xin  (36555789)  esoo0013@student.monash.edu
+//   Taabish Farooq Bhat (35473932)  ttaa0006@student.monash.edu
+//
+// Compile: mpicc -O2 task_1.c -o task_1 -lm
+// Run:     mpirun -np <procs> ./task_1 <n>
+////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>

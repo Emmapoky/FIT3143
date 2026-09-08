@@ -32,8 +32,10 @@ What it was used for, by task:
   running `./run_benchmarks.sh`.
 
 - **Task 4 (slides).** AI was used to draft the slide text and to check the deck
-  against the Lab 2 marking rubric for coverage of all seven required graphs. All
-  graphs were generated from our own measured CSV data.
+  against the Lab 2 marking rubric for coverage of all seven required graphs, and
+  to write `make_diagrams.py`, which draws the three explanatory diagrams on
+  slides 3, 4 and 8. All graphs were generated from our own measured CSV data, and
+  the diagrams are drawings of our own code and our own measured numbers.
 
 Content in the slides and in `Task3_Performance_Evaluation.md` that is AI drafted
 synthesis rather than a direct report of our own measurements is written as such

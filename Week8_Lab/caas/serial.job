@@ -1,0 +1,23 @@
+#!/bin/bash
+#SBATCH --job-name=fit3143_serial
+#SBATCH --time=00:20:00
+#SBATCH --mem=16G
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --partition=defq
+#SBATCH --output=serial.%j.out
+####################################################################
+# FIT3143 Lab #2 - serial baseline on CAAS.
+#
+# Team: Erwyna Soo Wen Xin (36555789), Taabish Farooq Bhat (35473932)
+#
+# This is the denominator for every speedup figure, so it has to run
+# on the same machine as the parallel jobs. Numbers measured on a
+# laptop cannot be compared against numbers measured on the cluster.
+#
+# Submit: sbatch serial.job
+####################################################################
+N=${N:-130000000}
+
+gcc -O2 ../../Lab1_W4/task1.c -o serial -lm || exit 1
+./serial $N

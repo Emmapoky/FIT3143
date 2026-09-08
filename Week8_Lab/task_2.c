@@ -1,3 +1,26 @@
+////////////////////////////////////////////////////////////////////////////
+// task_2.c
+// -------------------------------------------------------------------------
+// FIT3143 Lab #2 Task 2: prime number search using a hybrid of Open MPI
+// and OpenMP.
+//
+// Same search as task_1.c, but each MPI process now runs a team of OpenMP
+// threads. The MPI stride selects the process's share; schedule(dynamic,
+// 1000) then splits that share across threads, so a thread that draws a
+// cheap chunk comes back for another. Each thread fills its own buffer, so
+// there is no lock on the hot path. Output goes to primes_task2.txt.
+//
+// Written by: Taabish Farooq Bhat (35473932)
+//
+// Team:
+//   Erwyna Soo Wen Xin  (36555789)  esoo0013@student.monash.edu
+//   Taabish Farooq Bhat (35473932)  ttaa0006@student.monash.edu
+//
+// Compile: mpicc -O2 task_2.c -o task_2 -lm -fopenmp
+//          (on macOS: -Xpreprocessor -fopenmp -I$(brew --prefix libomp)/include
+//                     -L$(brew --prefix libomp)/lib -lomp)
+// Run:     OMP_NUM_THREADS=<t> mpirun -np <procs> ./task_2 <n>
+////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>

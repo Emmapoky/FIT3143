@@ -1,0 +1,33 @@
+#!/bin/bash
+#SBATCH --job-name=fit3143_mpi
+#SBATCH --time=00:20:00
+#SBATCH --mem=16G
+#SBATCH --ntasks=8
+#SBATCH --ntasks-per-node=4
+#SBATCH --cpus-per-task=1
+#SBATCH --partition=defq
+#SBATCH --output=mpi.%j.out
+####################################################################
+# FIT3143 Lab #2 Task 1 - Open MPI on CAAS.
+#
+# Team: Erwyna Soo Wen Xin (36555789), Taabish Farooq Bhat (35473932)
+#
+# ntasks 8 with ntasks-per-node 4 puts four ranks on one compute node
+# and four on another, on purpose. That is the whole point of running
+# here rather than on a laptop: MPI_Gatherv stops being a shared
+# memory copy and becomes real network traffic, so kappa becomes
+# measurable instead of negligible.
+#
+# Erwyna: pick a process count that is a power of two if you want the
+# partition to be balanced. See Task3_Performance_Evaluation.md
+# section 1 - at any p with an odd prime factor d, one rank in d sits
+# idle. 8 is clean, 6 and 12 are not.
+#
+# Submit: sbatch mpi.job
+####################################################################
+N=${N:-130000000}
+
+module load openmpi || module load gcc/openmpi || true
+
+mpicc -O2 ../task_1.c -o task_1_caas -lm || exit 1
+srun ./task_1_caas $N

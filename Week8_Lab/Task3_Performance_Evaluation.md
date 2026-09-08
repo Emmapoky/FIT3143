@@ -1,4 +1,4 @@
-# Task 3 — Performance evaluation with Amdahl's Law
+# Task 3, Performance evaluation with Amdahl's Law
 
 **Unit:** FIT3143 Parallel Computing, Semester 2 2026
 **Assessment:** Lab 2 (Week 8), Message Passing Interface
@@ -6,9 +6,9 @@
 and Taabish Farooq Bhat (35473932, ttaa0006@student.monash.edu)
 **Task 3 by:** Erwyna Soo Wen Xin
 
-> Supporting document for Task 3, submitted under the "Task 3 (Optional) — any
-> additional notes/documents to support your calculations and experimental design"
-> line of the submission checklist. Every number here is produced by
+> Supporting document for Task 3, submitted under the "Task 3 (Optional)" line of
+> the submission checklist, which asks for any additional notes or documents that
+> support the calculations and the experimental design. Every number here is produced by
 > `run_benchmarks.sh`, `run_phases.py` and `make_graphs.py` on the machine below
 > and is reproducible by re-running them. Some prose was drafted with AI
 > assistance; see `AI_Declaration.md`.
@@ -110,7 +110,7 @@ the wall clock of the entire command as the shell sees it, `mpirun` included. Th
 rubric asks for an overall speedup including communication, computation, sorting
 and file writing, and launching 14 processes is time a user genuinely waits for.
 Using the program's internal timer instead would hand Open MPI a free
-**0.184 s** that the serial version never gets — that is the paired
+**0.184 s** that the serial version never gets, that is the paired
 measurement from `measure_launch.py`, and it is a fixed cost that does not shrink
 with n, which is exactly why Open MPI loses to OpenMP at small n in Graph 1.
 
@@ -150,7 +150,7 @@ seconds, which was obviously not the cost of a shared-memory copy. Idle ranks we
 sitting inside `MPI_Gather` waiting for the busy ones, and that waiting was being
 billed as communication. The barrier drains the wait into its own phase, `imbal_s`.
 After the change, `gather` fell to 0.0051 s at p = 1 and
-0.0361 s at p = 28 — the real cost — while `imbal_s` carries the
+0.0361 s at p = 28, the real cost, while `imbal_s` carries the
 seconds. **Load imbalance and communication want completely different fixes, so a
 measurement that confuses them is worse than useless.**
 
@@ -158,13 +158,13 @@ measurement that confuses them is worse than useless.**
 
 | Phase | Scales with p? | Role |
 |---|---|---|
-| `bcast` — n out to every rank | grows slightly | communication, kappa |
-| `comp` — the search loop | **yes** | parallel fraction, r_p |
-| `merge` (hybrid only) — thread buffers into one rank buffer | grows with threads | charged to kappa |
-| `imbal` — barrier wait after the search | grows with imbalance | diagnostic, not additive |
-| `gather` — `MPI_Gather` + `MPI_Gatherv` | grows with p | communication, kappa |
-| `sort` — `qsort` on the root | no | serial fraction, r_s |
-| `write` — 7,378,187 lines of `fprintf` | no | serial fraction, r_s |
+| `bcast`, n out to every rank | grows slightly | communication, kappa |
+| `comp`, the search loop | **yes** | parallel fraction, r_p |
+| `merge` (hybrid only), thread buffers into one rank buffer | grows with threads | charged to kappa |
+| `imbal`, barrier wait after the search | grows with imbalance | diagnostic, not additive |
+| `gather`, `MPI_Gather` + `MPI_Gatherv` | grows with p | communication, kappa |
+| `sort`, `qsort` on the root | no | serial fraction, r_s |
+| `write`, 7,378,187 lines of `fprintf` | no | serial fraction, r_s |
 
 `imbal` is deliberately not added into the total. The elapsed time from the start
 of the search to the barrier release is `comp_max`; for the fastest rank that is
@@ -204,7 +204,7 @@ become the dominant term.
 
 ## 5. Measured parameters
 
-### Task 1 — Open MPI
+### Task 1, Open MPI
 
 | Parameter | Value |
 |---|---|
@@ -236,7 +236,7 @@ become the dominant term.
 | 24 | 3 | 16.0 | 1.467 | 0.002 | 0.00397 | 13.65 | 10.70 | 6.01 |
 | 28 | 7 | 24.0 | 1.485 | 0.003 | 0.00388 | 14.84 | 13.67 | 5.99 |
 
-### Task 2 — hybrid Open MPI + OpenMP
+### Task 2, hybrid Open MPI + OpenMP
 
 | Parameter | Value |
 |---|---|
@@ -295,7 +295,7 @@ Plain Amdahl at *p* overshoots badly, because it assumes the partition divides t
 work into *p* equal shares and it does not. Amdahl evaluated at `p_eff` reproduces
 the saw tooth in the measurement, which tells us the imbalance is the dominant
 error term rather than noise. The residual gap that `p_eff` still does not explain
-is core heterogeneity and, past p = 14, oversubscription — neither of which is in
+is core heterogeneity and, past p = 14, oversubscription, neither of which is in
 the model, and both of which are properties of the machine rather than the code.
 
 **Will more MPI processes always increase the speedup?**
@@ -306,12 +306,12 @@ kappa(p) grows with p, from 0.00036 at p = 1 to 0.00388 at p = 28,
 because every extra rank is another participant in the collective. Third and
 largest here, `p_eff` does not grow monotonically with p. Going from p = 2 to
 p = 3 adds a process but leaves the number of ranks doing real work at 2, so the
-run gets *slower*, not faster — the extra rank contributes nothing while still
+run gets *slower*, not faster, the extra rank contributes nothing while still
 joining every collective. The same happens at every step onto a multiple of 3.
 
 **How would the workload distribution affect the speedup?**
 It is the dominant factor in this implementation, which is the whole of section 1.
-Cyclic partitioning was the right instinct — the cost of `is_prime(k)` grows like
+Cyclic partitioning was the right instinct, the cost of `is_prime(k)` grows like
 sqrt(k), so a block split would give the last rank the most expensive numbers and
 every other rank would wait for it. But a stride of exactly 2p locks each rank into
 a residue class, and that interacts with the trial-division fast rejection to idle
