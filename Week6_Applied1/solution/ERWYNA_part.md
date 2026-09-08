@@ -98,53 +98,130 @@ UML class diagram, three boxes:
              ChargingNode 1 --- K ChargingPort (composition, shared memory)
              ChargingNode --- ChargingNode (adjacent only, MPI messages, mesh)
 
+====================================================================================================================
+SECTION B - SPEAKING NOTES (bullets, rewritten 2026-09-02)
 ====================================================================
-SECTION B - YOUR SPOKEN SCRIPT (0:00 to 3:30, rehearse to under 3:30)
-====================================================================
 
-[Slide 1, title, 0:00-0:15]
-"Hi, we're Erwyna and Taabish, and this is our design for the EV charging wireless
-sensor network simulator. I'll cover the topology choice and the structure of our
-MPI architecture, and Taabish will cover the message passing and the communication
-analysis."
+Deck is 15 slides. Slide 15 is blank, see the checklist.
+Erwyna slides 1-6. Taabish slides 7-13. Slide 14 is Questions.
 
-[Slide 2, problem recap, 0:15-0:40]
-"The system we're simulating is a grid of EV charging nodes. Each node has charging
-ports; when a node passes its utilisation threshold it asks its neighbours, and if
-the whole neighbourhood is saturated it alerts a base station, which finds the
-closest free node and redirects incoming vehicles."
+Target 6:50, hard ceiling 7:00. These are BULLETS, not a script: say each
+point in your own words and stop. Written short on purpose because we both
+speak slowly. Do not read the slide bullets aloud as well, that is what
+makes teams overrun.
 
-[Slide 3, topology table, 0:40-1:40]
-"For Task 1 we compared seven topologies from Week 5 on diameter, link count, fault
-tolerance and scalability. Line and tree fail immediately on fault tolerance: cut
-any link and the network splits. A ring survives one cut but its path length grows
-linearly, so it doesn't scale. Fully connected has perfect fault tolerance but needs
-n squared links, which no wireless deployment can provide. A star matches the
-base-station traffic but makes the hub a single point of failure for everything."
+The same bullets are in the Canva speaker notes, so present from there.
 
-[Slide 4, chosen topology, 1:40-2:10]
-"So we chose a hybrid: a 2-D mesh between charging nodes, because the spec places
-nodes in a Cartesian grid talking only to adjacent neighbours, which is also what
-real radio range gives you, plus a star overlay to the base station for logging and
-redirection. The mesh gives redundant paths if a node dies, and its degree is capped
-at four, so it scales incrementally."
+--------------------------------------------------------------------
+ERWYNA - slides 1 to 6  (0:00 - 2:55)
+--------------------------------------------------------------------
 
-[Slide 5, architecture overview + class diagram, 2:10-3:00]
-"For Task 2, each charging node is one MPI process. The node ranks form a Cartesian
-communicator built with MPI_Cart_create, so every process finds its four neighbours
-with MPI_Cart_shift instead of us hard-coding a mapping. The base station is a
-dedicated rank holding the global availability table and doing a Manhattan-distance
-search for the closest free node. Inside each node process, every charging port is a
-POSIX thread updating shared port state under a mutex, so we combine shared-memory
-parallelism inside each multi-core machine with message passing between machines."
+[1] Title  0:00-0:12
+  - Names, unit, topic
+  - MPI simulator for a wireless sensor network of EV charging nodes
+  - I take Tasks 1 and 2, Taabish takes Task 3
 
-[Slide 6, deployment numbers, 3:00-3:30]
-"A 3 by 3 grid needs ten processes; two 8-core machines cover that with cores to
-spare for the port threads. An alert struct is under 512 bytes, so worst-case
-base-station traffic is tens of kilobits per second, and 1 Gbps Ethernet is ample.
-Taabish will now take you through the messages themselves and how the delays scale."
+[2] Context  0:12-0:35
+  - Grid of charging nodes, each with ports
+  - Over threshold, node queries its 4 neighbours
+  - All neighbours saturated, node alerts the base station
+  - Base station finds the closest free node and redirects
 
-====================================================================
+[3] Topology table  0:35-1:20
+  - Compared 7 Week 5 topologies: diameter, links, fault tolerance, scalability
+  - Line and binary tree: one cut splits the network
+  - Ring: survives one cut, but path length grows linearly
+  - Fully connected: best diameter, but n(n-1)/2 links, no radio can build that
+  - Star: diameter 2, but the hub is a single point of failure and a bottleneck
+
+[4] Our choice  1:20-1:50
+  - Hybrid: 2-D mesh between nodes, star overlay to the base station
+  - Spec puts nodes in a Cartesian grid, adjacent only. That is a mesh
+  - Same shape as real radio range
+  - Redundant paths, degree capped at 4, so it scales incrementally
+
+[5] MPI architecture + class diagram  1:50-2:30
+  - 1 charging node = 1 MPI process. Base station is its own rank
+  - MPI_Cart_create builds the grid, MPI_Cart_shift gives the 4 neighbours
+  - Edge nodes get MPI_PROC_NULL, so no special case at the borders
+  - Base station holds the global table, Manhattan distance search
+  - Each port is a POSIX thread, mutex on shared state
+  - Threads inside a machine, MPI between machines
+
+[6] Deployment  2:30-2:55
+  - 3x3 grid plus base station = 10 processes
+  - 2 x 8-core machines, cores spare for the port threads
+  - Alert struct under 512 B, about 37 kbit/s worst case
+  - 1 Gbps Ethernet is far more than we need
+  - Hand over to Taabish
+
+--------------------------------------------------------------------
+TAABISH - slides 7 to 13  (2:55 - 6:50)
+--------------------------------------------------------------------
+
+[7] Message passing + communication diagram  2:55-3:30
+  - 4 message types plus an optional heartbeat
+  - Neighbour query and reply use MPI_Isend, non-blocking
+  - Why: two adjacent nodes can query each other in the same cycle.
+    Blocking would deadlock
+  - Alert is a packed struct, MPI_Type_create_struct
+  - Redirect uses MPI_Send. Blocking is safe: many-to-one is not a cycle
+
+[8] Delay model  3:30-4:00
+  - Td = T overhead + message bits / bandwidth
+  - T overhead about 20 us: propagation, switch and NIC, MPI stack
+  - All 4 message types are 32 to 64 B, so the size term is under 1 us
+  - Every single hop is about 20 us
+  - Point: overhead dominates, not payload
+
+[9] Delay vs charging nodes  4:00-4:40
+  - Neighbour traffic is O(1), flat. Degree capped at 4, more nodes adds
+    no neighbours
+  - Alerts all converge on one base station, serialised by MPI_ANY_SOURCE
+  - Queue delay is O(N), about +5 us per extra simultaneous alert
+  - At 100 nodes, over 500 us
+  - The mesh scales, the star hub does not
+
+[10] Delay vs base stations  4:40-5:20
+  - Per-message time does not improve: no B term in the formula, still 20 us
+  - Queueing does improve: N/B alerts per station instead of all N
+  - Sharp early gain, then diminishing returns
+  - Cost: split tables must synchronise to answer closest free node
+  - That sync is a serial fraction, so it bounds the speed-up
+
+[11] Extension: other growing factors  5:20-5:55
+  - More ports per node: delay is flat. 4 to 64 ports adds 60 B, about 0.5 us
+  - More EVs / higher charging frequency: linear, 20 us up to over 500 us
+  - The three port curves sit on top of each other, which confirms it
+  - Queueing, not payload, is the constraint
+
+[12] Conclusion and limitations  5:55-6:25
+  - Mesh keeps neighbour traffic O(1) at any network size
+  - Hybrid MPI plus threads: cheap port updates in shared memory, real
+    messages on the network
+  - One bottleneck: the single base station, O(N)
+  - Limits: single point of failure; fixed 80 percent threshold; regular
+    grid assumed; latency constants are assumptions, not measurements
+
+[13] Future work  6:25-6:50
+  - Replicate and partition the base station, measure the sync overhead
+    we predicted
+  - Fault injection to prove the mesh survives failures
+  - Real EV demand traces instead of synthetic occupancy
+  - Acks and timeouts to port onto lossy wireless
+  - Thank you, we will take questions
+
+--------------------------------------------------------------------
+DELIVERY
+--------------------------------------------------------------------
+- Slides 5, 7, 9, 10 and 11 carry a diagram or a graph. Point at it while
+  you talk. The timings already allow for that.
+- The rubric rewards parallel computing terminology over general computing
+  terms. Keep the specific words: rank, communicator, non-blocking,
+  serialise, serial fraction, O(1), O(N), shared memory versus message
+  passing.
+
+====================
 SECTION C - YOUR Q&A PREP (asked individually, no AI allowed)
 ====================================================================
 
@@ -176,8 +253,22 @@ our limitations."
 ====================================================================
 CHECKLIST BEFORE CLASS
 ====================================================================
-- [ ] Your sections written into the shared doc + slides 1-6 built
-- [ ] Class diagram drawn (legible from the back of the room)
-- [ ] Rehearsed your 3:30 twice, with a timer
-- [ ] Names, IDs, Monash emails on the title slide and every file
-- [ ] AI declaration + prompt-record PDFs exported and in the Moodle zip
+Deck is 15 slides as of 2026-09-02. Slides 1-6 Erwyna, 7-13 Taabish,
+14 Questions, 15 blank.
+
+Done:
+- [x] Title slide typo, floor(n/2) render fix, capybara off the 3b graph
+- [x] Slide 11 Task 3 extension (graph now placed) and slide 13 Future work
+- [x] Slide 7 attribution is Taabish (he fixed it himself)
+- [x] All speaker notes rewritten as short bullets, timed, in Canva
+- [x] Both UML diagrams (class on 5, communication on 7), all three graphs
+- [x] Submission folder built at ../submission/
+
+Still on you:
+- [ ] SLIDE 15 IS BLANK. Ask Taabish whether it is deliberate. If not,
+      delete it before exporting, a blank trailing slide looks careless.
+- [ ] Class diagram on slide 5 is small. Check it reads from the back.
+- [ ] Rehearse twice with a timer. Target 6:50, hard ceiling 7:00.
+- [ ] AI declaration: Taabish adds Section 3, plus the slide-edit line
+      quoted at the bottom of submission/README_SUBMISSION.txt
+- [ ] Export the deck to PDF into ../submission/, then zip that folder

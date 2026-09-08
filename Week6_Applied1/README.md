@@ -22,8 +22,8 @@ declarations (if AI was used) to Moodle BEFORE the start of class (5%/day late).
 | Task | Owner | Deliverable |
 |---|---|---|
 | Task 1: topology comparison + choice | Erwyna | Comparison table + justification, slides |
-| Task 2a: architecture structure | Erwyna | Design writeup + UML class diagram |
-| Task 2b: message-passing design | Taabish | Message types writeup + UML communication diagram |
+| Task 2 (a) base station, (b) charging nodes, (c) charging ports | Erwyna | Design writeup + UML class diagram |
+| Task 2 message passing + interactions | Taabish | Message types writeup + UML communication diagram |
 | Task 3: communication analysis | Taabish | Delay analysis + graphs (vs nodes, vs base stations) |
 | Task 4: slides | Both | Erwyna slides 1-6, Taabish slides 7 onward + conclusion |
 | Rehearsal | Both | Full run under 7:00, twice, before class |
