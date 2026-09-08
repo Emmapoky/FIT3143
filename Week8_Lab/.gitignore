@@ -1,0 +1,4 @@
+# Generated output. The prime lists total about 470 MB, so they stay out of git.
+# Regenerate any of them by running the corresponding program.
+primes_*.txt
+build/
