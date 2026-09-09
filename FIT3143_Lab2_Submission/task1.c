@@ -1,15 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////
-// task_1.c
+// task1.c
 // -------------------------------------------------------------------------
-// FIT3143 Lab #2 Task 1: prime number search using Open MPI.
+// FIT3143 Lab #2 Task 1: prime search with Open MPI.
 //
-// Finds every prime strictly less than an integer n given on the command
-// line, and writes them in ascending order to primes_task1.txt.
-//
-// The candidates are split cyclically: rank r takes 3 + 2r and then steps
-// by 2p. The primes come back to the root with MPI_Gather of the counts
-// followed by MPI_Gatherv into a displacement array, and the root sorts
-// before writing.
+// Finds every prime strictly below n, taken from the command line, and writes
+// them in order to primes_task1.txt.
 //
 // Written by: Taabish Farooq Bhat (35473932)
 //
@@ -17,8 +12,8 @@
 //   Erwyna Soo Wen Xin  (36555789)  esoo0013@student.monash.edu
 //   Taabish Farooq Bhat (35473932)  ttaa0006@student.monash.edu
 //
-// Compile: mpicc -O2 task_1.c -o task_1 -lm
-// Run:     mpirun -np <procs> ./task_1 <n>
+// Compile: mpicc -O2 task1.c -o task1 -lm
+// Run:     mpirun -np <procs> ./task1 <n>
 ////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,6 +49,8 @@ int compare_uint64(const void *a, const void *b) {
 int main(int argc, char *argv[]) {
     int rank, size;
     uint64_t n = 0;
+    // start/end bracket the whole run, comp_start/comp_end just the search,
+    // so we can report both and see what the sort and the write are costing.
     double start_time, comp_start, comp_end, end_time;
 
     MPI_Init(&argc, &argv);
@@ -85,18 +82,25 @@ int main(int argc, char *argv[]) {
 
     comp_start = MPI_Wtime();
 
-    // Rank 0 handles the prime number 2 if n > 2
+    // 2 is the only even prime and the stride below only walks odd numbers,
+    // so rank 0 tacks it on by hand.
     if (rank == 0 && n > 2) {
         local_primes[local_count++] = 2;
     }
 
-    // Cyclic/Stride Partitioning over odd numbers strictly less than n
-    // Process 'rank' handles numbers: 3 + 2*(rank + k*size)
+    // Cyclic stride over the odd numbers below n. Rank r gets 3 + 2r and then
+    // jumps by 2p, so the ranks interleave.
+    //
+    // Taabish: went cyclic instead of block because is_prime gets slower the
+    // bigger the number. Split it into blocks and the last rank is stuck with
+    // all the expensive ones while everyone else sits waiting.
     uint64_t start_val = 3 + (2 * rank);
     uint64_t step = 2 * size;
 
     for (uint64_t i = start_val; i < n; i += step) {
         if (is_prime(i)) {
+            // Double the buffer when it fills. No way to know the prime count
+            // up front without doing the search twice.
             if (local_count >= capacity) {
                 capacity *= 2;
                 local_primes = (uint64_t *)realloc(local_primes, capacity * sizeof(uint64_t));
@@ -107,7 +111,8 @@ int main(int argc, char *argv[]) {
 
     comp_end = MPI_Wtime();
 
-    // Gather local counts to Root
+    // Counts first, so the root knows how big each rank's block is before it
+    // tries to receive anything.
     int *recv_counts = NULL;
     int *displacements = NULL;
     int local_cnt_int = (int)local_count;
@@ -122,6 +127,8 @@ int main(int argc, char *argv[]) {
     int total_primes = 0;
 
     if (rank == 0) {
+        // Each rank's block starts where the previous one ended, so the
+        // offsets are just a running total of the counts.
         displacements = (int *)malloc(size * sizeof(int));
         displacements[0] = 0;
         total_primes += recv_counts[0];
@@ -134,12 +141,15 @@ int main(int argc, char *argv[]) {
         all_primes = (uint64_t *)malloc(total_primes * sizeof(uint64_t));
     }
 
-    // Gather all local prime arrays into root's global array
+    // Taabish: Gatherv rather than Gather because the ranks find different
+    // numbers of primes, so the blocks are uneven. The displacement array is
+    // what tells it where each one lands.
     MPI_Gatherv(local_primes, local_cnt_int, MPI_UNSIGNED_LONG_LONG,
                 all_primes, recv_counts, displacements, MPI_UNSIGNED_LONG_LONG,
                 0, MPI_COMM_WORLD);
 
-    // Root process sorts and writes output
+    // The cyclic split means these arrive interleaved, not sorted, so the
+    // root has to qsort before writing.
     if (rank == 0) {
         qsort(all_primes, total_primes, sizeof(uint64_t), compare_uint64);
 
@@ -151,6 +161,8 @@ int main(int argc, char *argv[]) {
             fclose(fout);
         }
 
+        // Stopped after the write, so this covers everything the user waits
+        // for apart from mpirun starting up.
         end_time = MPI_Wtime();
 
         printf("Task 1 (Open MPI) Summary:\n");

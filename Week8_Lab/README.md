@@ -18,19 +18,23 @@ Against the checklist in the assessment specification:
 
 | Required | File | Status |
 |---|---|---|
-| Task 1 code | `task_1.c` | done, compiles, output verified against the serial reference |
-| Task 2 code | `task_2.c` | done, compiles, output verified against the serial reference |
+| Task 1 code | `task1.c` | done, compiles, output verified against the serial reference |
+| Task 2 code | `task2.c` | done, compiles, output verified against the serial reference |
 | Task 4 slides | `Presentation_Slides.pdf` | export from Canva once the last image is placed |
 | Task 3 supporting notes | `Task3_Performance_Evaluation.md` | done |
 | AI declaration | `AI_Declaration.md` | done, also Appendix A4 of the deck |
 | AI prompt records | `AI_Prompt_Records.pdf` | **outstanding, Taabish** |
-| CAAS or cluster analysis | `caas/` | **outstanding, Taabish.** Job files are written and ready to submit |
+| CAAS or cluster analysis | `caas/results/` | **done.** Job 39361, 8 ranks across 2 nodes, 9 Sep 2026 |
 
-Two things are still open, and both are listed above rather than buried:
+One thing is still open, listed above rather than buried:
 
 1. **`AI_Prompt_Records.pdf`** has not been produced. Item 9 of the spec requires it.
-2. **The CAAS run has not been done.** Both the Task 1 and the Task 2 rubric rows
-   ask for it by name in their D and HD bands. Everything needed is in `caas/`.
+
+The CAAS run is done. Job 39361 ran 8 MPI ranks across `student-caas-n01` and
+`student-caas-n02` on 9 September 2026, reaching **10.31x speedup over the serial
+baseline at 86.4% parallel efficiency**, with Amdahl predicting the measurement to
+within 2%. See `caas/results/caas_analysis.md`, and section 8 of
+`Task3_Performance_Evaluation.md`.
 
 ---
 
@@ -61,12 +65,12 @@ and the three diagrams are ours, added because they carry the Task 3 argument.
 
 ## Measurement instruments (Task 3)
 
-`serial_instr.c`, `task_1_instr.c` and `task_2_instr.c` are copies of the Week 4
+`serial_instr.c`, `task1_instr.c` and `task2_instr.c` are copies of the Week 4
 serial program and of Taabish's two Week 8 programs, with per-phase timers added
 and nothing else changed. Diff them against the originals to confirm.
 
 The instruments are deliberately separate files. The `MPI_Reduce` calls that
-collect phase times cost time themselves, so leaving them inside `task_1.c` would
+collect phase times cost time themselves, so leaving them inside `task1.c` would
 make the submitted Task 1 slower than the code we are actually claiming.
 
 ---
@@ -97,11 +101,11 @@ The full sweep takes roughly 45 minutes on an M3 Max.
 ## Building by hand
 
 ```bash
-mpicc -O2 task_1.c -o task_1 -lm
-mpicc -O2 task_2.c -o task_2 -lm -Xpreprocessor -fopenmp \
+mpicc -O2 task1.c -o task1 -lm
+mpicc -O2 task2.c -o task2 -lm -Xpreprocessor -fopenmp \
       -I$(brew --prefix libomp)/include -L$(brew --prefix libomp)/lib -lomp
-mpirun -np 8 ./task_1 30000000
-OMP_NUM_THREADS=4 mpirun -np 2 ./task_2 30000000
+mpirun -np 8 ./task1 30000000
+OMP_NUM_THREADS=4 mpirun -np 2 ./task2 30000000
 ```
 
 On Linux, `-fopenmp` alone replaces the three libomp flags.
@@ -112,11 +116,11 @@ factor d, one rank in d does no work.
 
 ---
 
-## Note on `task_2.c`
+## Note on `task2.c`
 
-As originally drafted, `task_2.c` called `memcpy` without including `<string.h>`,
+As originally drafted, `task2.c` called `memcpy` without including `<string.h>`,
 which is a hard error under Apple clang, so the file did not compile. A one line
-include was added. The original is preserved as `task_2.c.orig-backup`.
+include was added. The original is preserved as `task2.c.orig-backup`.
 
 ---
 

@@ -1,3 +1,23 @@
+////////////////////////////////////////////////////////////////////////////
+// task2.c
+// -------------------------------------------------------------------------
+// FIT3143 Lab #2 Task 2: prime search with Open MPI and OpenMP together.
+//
+// Same search as task1.c, but every MPI process now runs a team of threads.
+// The stride picks the process's share, OpenMP splits that share across the
+// threads. Writes to primes_task2.txt.
+//
+// Written by: Taabish Farooq Bhat (35473932)
+//
+// Team:
+//   Erwyna Soo Wen Xin  (36555789)  esoo0013@student.monash.edu
+//   Taabish Farooq Bhat (35473932)  ttaa0006@student.monash.edu
+//
+// Compile: mpicc -O2 task2.c -o task2 -lm -fopenmp
+//          on macOS: -Xpreprocessor -fopenmp -I$(brew --prefix libomp)/include
+//                    -L$(brew --prefix libomp)/lib -lomp
+// Run:     OMP_NUM_THREADS=<t> mpirun -np <procs> ./task2 <n>
+////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -5,6 +25,7 @@
 #include <mpi.h>
 #include <omp.h>
 #include <stdint.h>
+#include <string.h>   // Taabish: memcpy needs this, missed it the first time round
 
 static inline bool is_prime(uint64_t num) {
     if (num <= 1) return false;
@@ -28,9 +49,12 @@ int compare_uint64(const void *a, const void *b) {
 int main(int argc, char *argv[]) {
     int rank, size, provided;
     uint64_t n = 0;
+    // Same two pairs of timers as task1.c: whole run, and the search on its own.
     double start_time, comp_start, comp_end, end_time;
 
-    // Initialize MPI with thread support level
+    // Taabish: FUNNELED is enough here. Only the main thread ever calls MPI,
+    // the worker threads just search, so asking for a stronger level would be
+    // paying for locking we never use.
     MPI_Init_thread(&argc, &argv, MPI_THREAD_FUNNELED, &provided);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -50,9 +74,11 @@ int main(int argc, char *argv[]) {
     comp_start = MPI_Wtime();
 
     // Determine candidate counts per rank
+    // Rough count of candidates, only used to size the thread buffers.
     uint64_t total_odds = (n > 3) ? ((n - 1 - 3) / 2 + 1) : 0;
     
-    // Allocate thread-local storage to prevent race conditions
+    // One buffer per thread. Nothing shared on the hot path, so no lock and
+    // no false sharing.
     int max_threads = omp_get_max_threads();
     size_t *thread_counts = (size_t *)calloc(max_threads, sizeof(size_t));
     size_t thread_capacity = (total_odds / (size * max_threads)) + 1024;
@@ -62,9 +88,13 @@ int main(int argc, char *argv[]) {
         thread_buffers[t] = (uint64_t *)malloc(thread_capacity * sizeof(uint64_t));
     }
 
-    // Parallel search using OpenMP dynamic scheduling within each MPI Rank
+    // Taabish: dynamic scheduling matters here. A thread that draws a cheap
+    // chunk comes straight back for another one, so they even out on their own
+    // instead of being fixed up front like the MPI stride is.
     #pragma omp parallel
     {
+        // Each thread keeps its own count and pointer, so nothing in the loop
+        // below touches shared state.
         int tid = omp_get_thread_num();
         size_t local_cap = thread_capacity;
         size_t local_cnt = 0;
@@ -84,7 +114,9 @@ int main(int argc, char *argv[]) {
         thread_counts[tid] = local_cnt;
     }
 
-    // Merge OpenMP thread buffers into rank-level buffer
+    // Flatten the per thread buffers into one array for this rank before the
+    // gather.
+    // Total for this rank: every thread's haul, plus 2 if we are rank 0.
     size_t rank_total = 0;
     if (rank == 0 && n > 2) rank_total += 1; // Include prime 2
     for (int t = 0; t < max_threads; t++) {
@@ -111,6 +143,8 @@ int main(int argc, char *argv[]) {
     comp_end = MPI_Wtime();
 
     // Gather overall results to Root
+    // Counts go up first so the root can work out where each rank's block
+    // belongs, same two stage gather as task1.c.
     int *recv_counts = NULL;
     int *displacements = NULL;
     int rank_cnt_int = (int)rank_total;
@@ -141,7 +175,8 @@ int main(int argc, char *argv[]) {
                 all_primes, recv_counts, displacements, MPI_UNSIGNED_LONG_LONG,
                 0, MPI_COMM_WORLD);
 
-    // Root process sorts and writes output
+    // Root sorts and writes. Arrives interleaved because of the stride, so
+    // the qsort is not optional.
     if (rank == 0) {
         qsort(all_primes, total_primes, sizeof(uint64_t), compare_uint64);
 

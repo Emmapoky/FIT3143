@@ -20,7 +20,7 @@ and Taabish Farooq Bhat (35473932, ttaa0006@student.monash.edu)
 The partitioning scheme in Task 1 does not distribute the work evenly, and the
 amount by which it fails is predictable in closed form.
 
-`task_1.c` gives rank *r* the numbers `3 + 2r + 2pk`. For any odd prime *d*
+`task1.c` gives rank *r* the numbers `3 + 2r + 2pk`. For any odd prime *d*
 dividing *p*, the term `2pk` vanishes modulo *d*, so **every number rank *r* ever
 tests is congruent to `3 + 2r` modulo *d***. The rank whose class is 0 mod *d*
 therefore receives only multiples of *d*, and `is_prime` rejects those on its
@@ -125,13 +125,13 @@ built three instrumented programs to get them.
 | File | What it is |
 |---|---|
 | `serial_instr.c` | Week 4 Task 1, unchanged, plus a timer around the file write. Week 4 deliberately stopped its clock before writing; Lab 2 needs the write included. |
-| `task_1_instr.c` | Taabish's `task_1.c`, unchanged, with per-phase timers. |
-| `task_2_instr.c` | Taabish's `task_2.c`, unchanged, with the thread-merge phase timed on its own. |
+| `task1_instr.c` | Taabish's `task1.c`, unchanged, with per-phase timers. |
+| `task2_instr.c` | Taabish's `task2.c`, unchanged, with the thread-merge phase timed on its own. |
 
 Four design decisions we would defend in Q&A:
 
 **(a) The instrument is separate from the thing measured.** The `MPI_Reduce` calls
-that collect phase times cost time themselves. Leaving them in `task_1.c` would
+that collect phase times cost time themselves. Leaving them in `task1.c` would
 make our submitted Task 1 slower than the code we are claiming.
 
 **(b) Phase times are the MAX across ranks, not rank 0's own.** A collective
@@ -326,13 +326,79 @@ machine with homogeneous cores would push the plateau closer to 14x. The one thi
 that *would* transfer is the saw tooth, because it comes from arithmetic in the
 partitioning rather than from any hardware.
 
+
 ---
 
-## 8. Limitations we would raise ourselves
+## 8. CAAS: the same code across two compute nodes
 
-1. **Single node.** kappa here is a memory copy, not a network transfer, so it is
-   the most optimistic communication cost this code will ever see. A CAAS run
-   across two compute nodes is the missing measurement.
+Everything above was measured on one laptop. On 9 September we ran the same
+programs on Monash's CAAS cluster (`student-caas-headnode`), with 8 MPI ranks
+split deliberately across **two physical compute nodes**, `student-caas-n01` and
+`student-caas-n02`, so that `MPI_Gatherv` had to cross a network rather than copy
+within one machine. Job 39361, n = 130,000,000, output verified byte identical to
+the serial reference.
+
+| p | Total (s) | Speedup vs serial | Speedup vs p=1 | Amdahl | Gap | kappa(p) |
+|---|---|---|---|---|---|---|
+| 1 | 52.50 | 1.49x | 1.00x | 1.00 | 0.0% | 0.00015 |
+| 2 | 26.86 | 2.91x | 1.95x | 1.96 | 0.4% | 0.00072 |
+| 4 | 13.99 | 5.60x | 3.75x | 3.78 | 0.7% | 0.00116 |
+| 8 | 7.59 | **10.31x** | 6.91x | 7.05 | 1.9% | 0.00124 |
+
+Serial baseline on the cluster: 78.29 s. Measured fractions: r_p = 0.9819,
+r_s = 0.0179, giving a ceiling of 55.9x.
+
+### Three things this changes
+
+**1. The code scales near linearly on hardware that suits it.** 86.4% parallel
+efficiency at 8 processes, and the curve had not flattened when we stopped. On
+the laptop we plateaued near 7x. The difference is the machine, not the code: the
+M3 Max has 10 performance cores and 4 much slower efficiency cores, and past 14
+workers we were oversubscribing. Cluster cores are homogeneous and dedicated.
+
+**2. Amdahl's Law predicts our measurement to within 2%.** This is the result we
+would lead with. On the laptop, theory overshot measurement by roughly 23% at
+p = 8, and section 7 attributes that to core heterogeneity and oversubscription
+rather than to a flaw in the model. The cluster run tests that claim directly: on
+homogeneous dedicated cores with a balanced process count, the same model lands
+at 7.05 against a measured 6.91. The gap was the hardware, and we can now show it
+rather than argue it.
+
+**3. We predicted communication would dominate here. It does not.** The earlier
+version of this document, and our closing slide, both said a CAAS run across two
+nodes was the missing measurement and that kappa would finally become the
+dominant term. That prediction was wrong, and we would rather report it than
+quietly drop it.
+
+The gather did become genuinely more expensive: 0.0633 s at p = 8 across the
+network against 0.0138 s at the same width on one machine, 4.6x larger, which
+confirms it really is network traffic now and not a memory copy. But as a
+fraction of runtime kappa is still only 0.0012. The reason is a ratio we had not
+thought about carefully enough: the payload is about 59 MB of primes, moved once,
+against 52 seconds of arithmetic. At roughly 0.9 GB/s of effective throughput the
+transfer is over before it matters. Communication would only dominate this
+problem at a much smaller n, or with far more ranks, or on a slower interconnect.
+
+### What this run does not show
+
+We chose process counts of 1, 2, 4 and 8, all powers of two, so that the
+partition would be balanced and the scaling result would be clean. The
+consequence is that every measured imbalance ratio came back at 1.00, and the
+residue-class saw tooth from section 1 does not appear in this data at all. That
+finding still rests on the laptop sweep, which covered 18 widths including the
+ones with odd prime factors. Re-running on CAAS at p = 3, 6 or 12 would confirm
+it on the cluster, and we would expect it to, because it comes from arithmetic in
+the partitioning rather than from any property of the hardware.
+
+Raw output: `caas/results/caas_results.txt`.
+
+---
+
+## 9. Limitations we would raise ourselves
+
+1. **The cluster run covers only balanced process counts.** Section 8 used powers
+   of two, so it confirms the scaling result but not the residue-class finding.
+   That still rests on the laptop sweep.
 2. **The Week 4 baseline is a different primality test.** Handled by reporting both
    baselines, but it is the first thing we would flag rather than be caught on.
 3. **`int` in the gather path.** `MPI_Gatherv` takes `int` counts, so the code caps

@@ -1,30 +1,26 @@
 ////////////////////////////////////////////////////////////////////////////
-// task_2_instr.c
+// task2_instr.c
 // -------------------------------------------------------------------------
-// FIT3143 Lab #2 Task 3: instrumented copy of task_2.c (hybrid MPI + OpenMP).
+// FIT3143 Lab #2 Task 3: task2.c with phase timers bolted on.
 //
-// Same idea as task_1_instr.c. Taabish's hybrid search is untouched, I have
-// only wrapped the phases in timers so I can split the run time into the part
-// that scales and the part that does not.
+// Same idea as task1_instr.c. Taabish's hybrid search is untouched, I only
+// wrapped the phases in timers.
 //
 // Written by: Erwyna Soo Wen Xin (36555789)
-// Search / partitioning / collectives by: Taabish Farooq Bhat (35473932)
+// Search and collectives by: Taabish Farooq Bhat (35473932)
 //
 // Team:
 //   Erwyna Soo Wen Xin  (36555789)  esoo0013@student.monash.edu
 //   Taabish Farooq Bhat (35473932)  ttaa0006@student.monash.edu
 //
-// Erwyna: the hybrid has one phase task_1.c does not have, the merge of the
-// per thread buffers into one per rank buffer. I time it separately rather
-// than folding it into t_comp, because it is memcpy work that grows with the
-// thread count instead of shrinking with it. If I hid it inside the compute
-// phase it would make the parallel fraction look better than it is and the
-// Amdahl curve would be optimistic for exactly the configurations where the
-// thread count is high, which is where I care most about being honest.
+// Erwyna: the hybrid has one phase task1.c does not, the merge of the per
+// thread buffers into one per rank buffer. I time it on its own instead of
+// folding it into comp, because it is memcpy work that grows with the thread
+// count rather than shrinking with it. Hiding it inside comp would flatter
+// the parallel fraction exactly where the thread count is highest.
 //
-// Compile: mpicc -O2 -Xpreprocessor -fopenmp -I$(brew --prefix libomp)/include \
-//            -L$(brew --prefix libomp)/lib -lomp task_2_instr.c -o task_2_instr -lm
-// Run:     OMP_NUM_THREADS=<t> mpirun -np <procs> ./task_2_instr <n>
+// Compile: mpicc -O2 task2_instr.c -o task2_instr -lm -fopenmp
+// Run:     OMP_NUM_THREADS=<t> mpirun -np <procs> ./task2_instr <n>
 ////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
 #include <stdlib.h>
@@ -79,6 +75,7 @@ int main(int argc, char *argv[]) {
     MPI_Bcast(&n, 1, MPI_UNSIGNED_LONG_LONG, 0, MPI_COMM_WORLD);
     t_a = MPI_Wtime();
 
+    // Rough candidate count, only used to size the per thread buffers.
     uint64_t total_odds = (n > 3) ? ((n - 1 - 3) / 2 + 1) : 0;
 
     int max_threads = omp_get_max_threads();
@@ -90,6 +87,9 @@ int main(int argc, char *argv[]) {
         thread_buffers[t] = (uint64_t *)malloc(thread_capacity * sizeof(uint64_t));
     }
 
+    // Search phase. Timed as one block, then the merge after it is timed
+    // separately, because the merge grows with the thread count instead of
+    // shrinking with it.
     #pragma omp parallel
     {
         int tid = omp_get_thread_num();
@@ -112,6 +112,7 @@ int main(int argc, char *argv[]) {
     }
     t_b = MPI_Wtime();
 
+    // Flatten every thread's buffer into one array for this rank.
     size_t rank_total = 0;
     if (rank == 0 && n > 2) rank_total += 1;
     for (int t = 0; t < max_threads; t++) {
@@ -136,11 +137,12 @@ int main(int argc, char *argv[]) {
     free(thread_counts);
     t_m = MPI_Wtime();
 
-    // Same barrier, same reason as task_1_instr.c: separate waiting for
-    // the slowest rank from the real cost of the gather.
+    // Same barrier, same reason as task1_instr.c: keep waiting for the
+    // slowest rank separate from the real cost of the gather.
     MPI_Barrier(MPI_COMM_WORLD);
     t_mm = MPI_Wtime();
 
+    // Counts first so the root can build displacements, then Gatherv.
     int *recv_counts = NULL;
     int *displacements = NULL;
     int rank_cnt_int = (int)rank_total;
@@ -172,6 +174,8 @@ int main(int argc, char *argv[]) {
                 0, MPI_COMM_WORLD);
     t_c = MPI_Wtime();
 
+    // Sort and write are root only, so they are timed on rank 0 directly
+    // rather than reduced across ranks.
     if (rank == 0) {
         qsort(all_primes, total_primes, sizeof(uint64_t), compare_uint64);
         t_d = MPI_Wtime();
@@ -195,6 +199,7 @@ int main(int argc, char *argv[]) {
 
     free(rank_primes);
 
+    // Turn the timestamps into per phase durations before reducing them.
     t_end    = MPI_Wtime();
     d_bcast  = t_a  - t_start;
     d_comp   = t_b  - t_a;
