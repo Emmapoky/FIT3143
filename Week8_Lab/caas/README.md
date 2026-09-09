@@ -7,7 +7,24 @@ Task 1 and the Task 2 rubric rows ask for it by name in their D and HD bands:
 Everything in this folder is ready to submit. It has not been run, because it
 needs a Monash account on the cluster and the Australia VPN.
 
-## Steps
+## The short version
+
+Connect to the VPN, ssh in, copy the folder up, then from `Week8_Lab/caas`:
+
+```
+sbatch run_all.job
+squeue -u $USER          # R = running, PD = pending, gone = finished
+cat caas_results.txt
+```
+
+That one job builds all four programs, runs the serial baseline, runs Open MPI at
+1, 2, 4 and 8 processes **across two nodes**, runs the per-phase instrumented
+version, runs the hybrid, checks the output against the serial reference, and
+writes `caas_results.txt` plus `caas_results.csv`.
+
+Bring those two files back and drop them in `Week8_Lab/caas/results/`.
+
+## Steps, in full
 
 1. Connect to the Monash Australia VPN (`vpn.monash.edu` via GlobalProtect).
    Required from anywhere, including Malaysia.
@@ -17,12 +34,13 @@ needs a Monash account on the cluster and the Australia VPN.
 4. From inside `Week8_Lab/caas`:
 
 ```
-sbatch serial.job
-sbatch mpi.job
-sbatch hybrid.job
+sbatch run_all.job       # everything in one submission, recommended
 squeue -u $USER          # R means running, PD means pending
-cat mpi.<jobid>.out      # once it disappears from squeue
+cat caas_results.txt     # once it disappears from squeue
 ```
+
+The three separate job files (`serial.job`, `mpi.job`, `hybrid.job`) are still
+here if you want to run one piece at a time or the time limit is tight.
 
 ## What to look for, and why it matters to our argument
 

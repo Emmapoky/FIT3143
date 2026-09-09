@@ -1,0 +1,105 @@
+#!/bin/bash
+#SBATCH --job-name=fit3143_lab2
+#SBATCH --time=00:40:00
+#SBATCH --mem=16G
+#SBATCH --nodes=2
+#SBATCH --ntasks=8
+#SBATCH --ntasks-per-node=4
+#SBATCH --cpus-per-task=2
+#SBATCH --partition=defq
+#SBATCH --output=lab2_caas.%j.out
+####################################################################
+# run_all.job - the whole CAAS run in one submission.
+#
+# FIT3143 Lab #2, Week 8.
+# Erwyna Soo Wen Xin (36555789), Taabish Farooq Bhat (35473932)
+#
+# Submit this and nothing else:
+#
+#     sbatch run_all.job
+#
+# It builds all four programs, runs the serial baseline, the Open MPI
+# version at 1, 2, 4 and 8 processes ACROSS TWO NODES, and the hybrid,
+# then writes one readable summary to caas_results.txt and one machine
+# readable table to caas_results.csv.
+#
+# Why 2 nodes matters: on a single laptop, MPI_Gatherv is a shared
+# memory copy and kappa came out at 0.004 of runtime, which is
+# negligible. Splitting the ranks across two nodes makes the same
+# gather real network traffic. The gather phase time is the number
+# this whole job exists to produce.
+#
+# Erwyna: process counts are 1, 2, 4, 8 on purpose. They are powers of
+# two, so the stride partition is balanced. At any p with an odd prime
+# factor d, one rank in d receives only multiples of d and does no
+# work. See section 1 of Task3_Performance_Evaluation.md.
+####################################################################
+set -u
+N=${N:-130000000}
+OUT=caas_results.txt
+CSV=caas_results.csv
+
+module load openmpi 2>/dev/null || module load gcc/openmpi 2>/dev/null || true
+
+echo "Building..."
+gcc  -O2 ../../Lab1_W4/task1.c -o caas_serial      -lm          || { echo "serial build FAILED"; exit 1; }
+mpicc -O2 ../task_1.c           -o caas_mpi         -lm          || { echo "mpi build FAILED"; exit 1; }
+mpicc -O2 ../task_1_instr.c     -o caas_mpi_instr   -lm          || { echo "instr build FAILED"; exit 1; }
+mpicc -O2 -fopenmp ../task_2.c  -o caas_hybrid      -lm          || { echo "hybrid build FAILED"; exit 1; }
+echo "Build OK"
+echo
+
+{
+  echo "FIT3143 Lab 2, CAAS results"
+  echo "Erwyna Soo Wen Xin (36555789), Taabish Farooq Bhat (35473932)"
+  echo "Job $SLURM_JOB_ID, $(date)"
+  echo "n = $N"
+  echo "Nodes allocated: ${SLURM_JOB_NUM_NODES:-?}  (${SLURM_JOB_NODELIST:-unknown})"
+  echo "Tasks: ${SLURM_NTASKS:-?}, per node ${SLURM_NTASKS_PER_NODE:-?}, cpus per task ${SLURM_CPUS_PER_TASK:-?}"
+  echo "=================================================================="
+  echo
+  echo "--- 1. Serial baseline (Week 4 Task 1) ---"
+  ./caas_serial $N
+  echo
+  echo "--- 2. Open MPI (Task 1) across nodes ---"
+  for p in 1 2 4 8; do
+    echo "[ p = $p ]"
+    srun --ntasks=$p --cpus-per-task=1 ./caas_mpi $N
+    echo
+  done
+  echo "--- 3. Open MPI, per phase, to measure the gather across the network ---"
+  echo "PHASE line format: n,procs,threads,primes,bcast,comp,imbal,gather,sort,write,total,comp_min,comp_mean"
+  for p in 1 2 4 8; do
+    echo "[ p = $p ]"
+    srun --ntasks=$p --cpus-per-task=1 ./caas_mpi_instr $N
+    echo
+  done
+  echo "--- 4. Hybrid (Task 2), one process per node ---"
+  export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-2}
+  echo "OMP_NUM_THREADS = $OMP_NUM_THREADS"
+  srun --ntasks=2 --ntasks-per-node=1 ./caas_hybrid $N
+  echo
+  echo "=================================================================="
+  echo "Correctness check against the serial reference:"
+  tail -n +2 primes_serial.txt > ref.txt 2>/dev/null
+  if diff -q ref.txt primes_task1.txt >/dev/null 2>&1; then
+    echo "  Task 1 output MATCHES the serial reference"
+  else
+    echo "  Task 1 output DIFFERS, investigate before submitting"
+  fi
+} | tee "$OUT"
+
+# machine readable table, for folding back into the graphs
+{
+  echo "where,procs,threads,n,gather_s,comp_s,total_s"
+  grep '^PHASE,' "$OUT" | awk -F, '{print "caas," $2 "," $3 "," $1 "," $8 "," $6 "," $11}' \
+    | sed 's/^caas,\([0-9]*\),\([0-9]*\),PHASE/caas,\1,\2,/' 
+} > "$CSV" 2>/dev/null
+
+echo
+echo "Done."
+echo "  Readable summary : $OUT"
+echo "  Table            : $CSV"
+echo "  Slurm log        : lab2_caas.$SLURM_JOB_ID.out"
+echo
+echo "Bring $OUT and $CSV back and put them in Week8_Lab/caas/results/."
