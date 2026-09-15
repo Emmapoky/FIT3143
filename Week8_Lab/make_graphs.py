@@ -1,9 +1,9 @@
 ####################################################################
 # make_graphs.py
 # ------------------------------------------------------------------
-# FIT3143 Lab #2 Tasks 3 and 4: builds the seven required graphs from
-# the CSVs that run_benchmarks.sh produced, and derives the Amdahl
-# parameters that graphs 6 and 7 are drawn from.
+# FIT3143 Lab #2 Tasks 3 and 4: builds the seven required graphs and
+# three supporting ones from our measured CSVs, and works out the
+# Amdahl parameters that graphs 6, 7 and 10 are drawn from.
 #
 # Written by: Erwyna Soo Wen Xin (36555789)
 #
@@ -11,10 +11,9 @@
 #   Erwyna Soo Wen Xin  (36555789)  esoo0013@student.monash.edu
 #   Taabish Farooq Bhat (35473932)  ttaa0006@student.monash.edu
 #
-# Erwyna: same dark theme as our Week 4 deck so the two labs read as
-# one body of work. Every graph is written at 300 dpi with a
-# transparent-safe solid background, sized to drop straight into a
-# 1920 x 1080 slide without being rescaled and going soft.
+# Erwyna: same dark theme as our Week 4 graphs. Every graph is saved at
+# 300 dpi on a solid background, sized to fit a 16:9 slide without
+# being stretched.
 #
 # Run: python3 make_graphs.py
 ####################################################################
@@ -354,6 +353,80 @@ try:
     save(fig, 'graph9_rank_balance.png')
 except OSError:
     print("  (rank_balance.csv not found, skipping graph 9)")
+
+# =====================================================================
+# Supporting figure 10: theoretical against empirical speedup as n grows
+# ---------------------------------------------------------------------
+# Erwyna: graphs 6 and 7 hold n still and grow the process count. The
+# spec also asks for the theoretical speedup as n grows, so this graph
+# uses run_phases_by_n.py, which runs every n twice: on one worker to
+# get r_p and r_s at that n, and on 14 workers (14 processes, or 2 x 7
+# for the hybrid) to get kappa and the measured speedup. Same formula
+# as graphs 6 and 7, with the fractions measured again at every n.
+# =====================================================================
+def model_by_n(rows, width_of, comm_of, eff_width_of):
+    out = []
+    for nval in sorted({int(f(r, 'n')) for r in rows}):
+        at_n = [r for r in rows if int(f(r, 'n')) == nval]
+        one  = [r for r in at_n if width_of(r) == 1]
+        wide = [r for r in at_n if width_of(r) > 1]
+        if not one or not wide:
+            continue
+        b, w = one[0], wide[0]
+        T  = f(b, 'total_s')
+        rp = f(b, 'comp_s') / T
+        rs = (f(b, 'sort_s') + f(b, 'write_s')) / T
+        k  = comm_of(w) / T
+        p  = width_of(w)
+        pe = eff_width_of(w)
+        out.append((nval, rp, rs, k, p,
+                    1.0 / (rs + rp / p + k),
+                    1.0 / (rs + rp / pe + k),
+                    T / f(w, 'total_s')))
+    return out
+
+
+try:
+    bn1 = read("phases_by_n_task1.csv")
+    bn2 = read("phases_by_n_task2.csv")
+    m1 = model_by_n(bn1, lambda r: int(f(r, 'procs')),
+                    lambda r: f(r, 'bcast_s') + f(r, 'gather_s'),
+                    lambda r: p_effective(int(f(r, 'procs'))))
+    m2 = model_by_n(bn2, lambda r: int(f(r, 'procs')) * int(f(r, 'threads')),
+                    lambda r: f(r, 'bcast_s') + f(r, 'gather_s') + f(r, 'merge_s'),
+                    lambda r: p_effective(int(f(r, 'procs'))) * int(f(r, 'threads')))
+
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(13.0, 5.8), facecolor=BG)
+    x1 = [r[0] / 1e6 for r in m1]
+    a1.plot(x1, [r[5] for r in m1], color=C_THEORY, ls=':', marker='o', lw=2.2, ms=4,
+            label='Amdahl at p = 14')
+    a1.plot(x1, [r[6] for r in m1], color=C_HYB, marker='^', lw=2.4, ms=4,
+            label='Amdahl at p_eff = 12 (2 of the 14 ranks idle)')
+    a1.plot(x1, [r[7] for r in m1], color=C_MPI, marker='D', lw=2.6, ms=4,
+            label='Empirical (measured)')
+    style(a1, 'Task 1: 14 MPI processes', 'r_p, r_s and kappa measured again at every n',
+          'Problem size n (millions)', 'Speedup relative to one process')
+    legend(a1)
+    x2 = [r[0] / 1e6 for r in m2]
+    a2.plot(x2, [r[5] for r in m2], color=C_THEORY, ls=':', marker='o', lw=2.2, ms=4,
+            label='Amdahl at 2 x 7 = 14 workers')
+    a2.plot(x2, [r[7] for r in m2], color=C_HYB, marker='v', lw=2.6, ms=4,
+            label='Empirical (measured)')
+    style(a2, 'Task 2: 2 processes x 7 threads', 'Same method for the hybrid',
+          'Problem size n (millions)', 'Speedup relative to one worker')
+    legend(a2)
+    fig.suptitle('Graph 10  Theoretical against empirical speedup as n grows',
+                 fontsize=15, fontweight='bold', color=TEXT, x=0.02, ha='left', y=0.99)
+    save(fig, 'graph10_amdahl_vs_n.png')
+
+    with open("amdahl_by_n.csv", "w") as fh:
+        fh.write("model,n,r_p,r_s,kappa,workers,S_amdahl,S_amdahl_peff,S_empirical\n")
+        for tag, rows in [("task1_mpi", m1), ("task2_hybrid", m2)]:
+            for nval, rp, rs, k, p, sa, se, sm in rows:
+                fh.write(f"{tag},{nval},{rp:.6f},{rs:.6f},{k:.6f},{p},{sa:.4f},{se:.4f},{sm:.4f}\n")
+    print("  wrote amdahl_by_n.csv")
+except OSError:
+    print("  (phases_by_n_*.csv not found, run run_phases_by_n.py first, skipping graph 10)")
 
 # =====================================================================
 # Numbers for the slides

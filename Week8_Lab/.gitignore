@@ -2,3 +2,4 @@
 # Regenerate any of them by running the corresponding program.
 primes_*.txt
 build/
+__pycache__/

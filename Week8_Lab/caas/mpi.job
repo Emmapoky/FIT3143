@@ -18,10 +18,10 @@
 # memory copy and becomes real network traffic, so kappa becomes
 # measurable instead of negligible.
 #
-# Erwyna: pick a process count that is a power of two if you want the
-# partition to be balanced. See Task3_Performance_Evaluation.md
-# section 1 - at any p with an odd prime factor d, one rank in d sits
-# idle. 8 is clean, 6 and 12 are not.
+# Erwyna: pick a power of two for the process count if you want the
+# split to be even. At any p with an odd prime factor d, one rank in d
+# sits idle (our Task 3 document explains why). 8 is even, 6 and 12
+# are not.
 #
 # Submit: sbatch mpi.job
 ####################################################################

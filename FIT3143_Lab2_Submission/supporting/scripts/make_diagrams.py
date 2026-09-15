@@ -6,11 +6,10 @@
 #
 # Written by: Erwyna Soo Wen Xin (36555789)
 #
-# Erwyna: graphs 1 to 9 come out of measurements, so make_graphs.py
+# Erwyna: graphs 1 to 10 come out of measurements, so make_graphs.py
 # builds those. These three are drawings of how the code is put
-# together, so they live here. Same dark palette as the graphs, so a
-# marker flipping through the deck sees one visual language rather
-# than two.
+# together, so they live here. Same dark colours as the graphs so the
+# slides look like one set.
 #
 # Run: python3 make_diagrams.py
 ####################################################################
@@ -85,7 +84,7 @@ for i, n in enumerate(nums):
             fontsize=7.5, color=SUB, zorder=4)
 
 ax.text(0.1, 2.4,
-        'Rank 0 holds 3, 9, 15, 21 ...  every one divisible by 3, and is_prime rejects each on its first iteration.',
+        'Rank 0 holds 3, 9, 15, 21 ...  all multiples of 3, so apart from 3 itself is_prime rejects each one on its first check.',
         fontsize=10.5, color=DEAD, fontweight='bold')
 ax.text(0.1, 1.7,
         'Measured at n = 130,000,000:  rank 0 finished in 0.012 s having found 2 primes.',
@@ -197,7 +196,7 @@ ax.text(0.4, 1.95, 'so threads self balance at runtime in a way the fixed MPI st
         fontsize=10.5, color=TEXT)
 ax.text(0.4, 1.25, 'Each thread writes its own pre-allocated buffer, so there is no lock and no false sharing on the hot path.',
         fontsize=10, color=SUB)
-ax.text(0.4, 0.6, 'Only the process count is congruence bound. That is why 2 x 7 (2.29 s) beats 7 x 3 (2.50 s) at the same width.',
+ax.text(0.4, 0.6, 'Only the MPI stride can leave a process idle: with 6 workers, 2 x 3 took 3.39 s but 3 x 2 took 4.72 s.',
         fontsize=10, color='#00B894', fontweight='bold')
 save(fig, 'diagram3_hybrid_layout.png')
 

@@ -32,7 +32,7 @@
 # Erwyna: process counts are 1, 2, 4, 8 on purpose. They are powers of
 # two, so the stride partition is balanced. At any p with an odd prime
 # factor d, one rank in d receives only multiples of d and does no
-# work. See section 1 of Task3_Performance_Evaluation.md.
+# work. Our Task 3 document explains why.
 ####################################################################
 set -u
 N=${N:-130000000}

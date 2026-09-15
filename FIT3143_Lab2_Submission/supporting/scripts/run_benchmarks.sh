@@ -20,17 +20,15 @@
 #   phases_task1.csv         Task 3 + graph 6 MPI phase split
 #   phases_task2.csv         Task 3 + graph 7 hybrid phase split
 #
-# Erwyna: on how I time things, because this is the first question a
-# marker will ask. Every headline number in results_*.csv is the wall
-# clock of the WHOLE command as the shell sees it, mpirun included.
-# That is deliberate. The rubric says the overall speedup has to
-# include communication, computation, sorting and file writing, and
-# launching 14 processes is a real cost a user really waits for. Using
-# the program's own internal timer instead would quietly hand Open MPI
-# a free 0.2 to 0.3 seconds that the serial version never gets. The
-# internal timers still exist, in the phases_*.csv files, but they are
-# there to split the run into serial and parallel fractions for
-# Amdahl's Law, not to make our speedup look better.
+# Erwyna: how the timing works. Every headline number in results_*.csv
+# is the wall clock of the WHOLE command as the shell sees it, mpirun
+# included. That's on purpose. The overall speedup is meant to include
+# communication, computation, sorting and file writing, and starting 14
+# processes is time a user really waits for. Using the program's own
+# timer instead would give Open MPI a free 0.2 to 0.3 seconds that the
+# serial version never gets. The internal timers are still used, in the
+# phases_*.csv files, but only to split each run into its serial and
+# parallel parts for Amdahl's Law.
 #
 # Erwyna: fastest of REPS runs, not the mean. A slow run means
 # something else on the laptop stole a core; a fast run cannot be

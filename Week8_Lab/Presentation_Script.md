@@ -68,7 +68,7 @@ is byte identical to the Week 4 serial.
 ## Slide 5 - Graph 1, run time | Taabish | 1:26 to 1:49
 Run time against problem size. 31 values of n, 14 workers.
 
-Serial reaches 21.3 seconds. Open MPI, 3.2. OpenMP, 3.1. `[beat]`
+Serial reaches 21.2 seconds. Open MPI, 2.8. OpenMP, 2.6. `[beat]`
 
 Open MPI sits just above OpenMP at every n, and the gap is a constant, not a
 slope. It is 0.184 seconds of `mpirun` launch, paid once.
@@ -76,8 +76,8 @@ slope. It is 0.184 seconds of `mpirun` launch, paid once.
 ---
 
 ## Slide 6 - Graph 2, speedup vs n | Taabish | 1:49 to 2:14
-The same runs as speedup. 3x at 10 million, rising to 7.8x at 126 million, still
-climbing, because the launch cost is fixed while the work grows. `[beat]`
+The same runs as speedup. 2.5x at 10 million, rising to 7.8x at 126 million,
+because the launch cost is fixed while the work grows. `[beat]`
 
 One caveat we raise ourselves. Our Week 8 search uses a faster primality test
 than the Week 4 serial, worth about 1.4x before any parallelism.
@@ -160,7 +160,7 @@ So one rank gets nothing but multiples of d, thrown out on the first iteration.
 
 At p equals 3, rank 0 found two primes, in twelve milliseconds. Ranks 1 and 2
 found 3.7 million each, in 7.6 seconds. `[beat]` At p equals 4, all four ranks
-finished within 4 milliseconds.
+finished within 5 milliseconds.
 
 ---
 
@@ -175,8 +175,8 @@ match is the evidence imbalance is the dominant error term, not noise.
 The hybrid partly escapes it, because only the MPI stride is congruence bound.
 Inside a rank, dynamic scheduling hands out chunks on demand.
 
-So 2 by 7 has both processes working. 7 by 3 has one of seven idle. Same 14
-workers, different result.
+With the same 6 workers, 2 by 3 took 3.4 seconds and 3 by 2 took 4.7. With 3
+processes, one of them has nothing to search.
 
 ---
 
@@ -184,9 +184,9 @@ workers, different result.
 Open MPI matched OpenMP but never beat it, and paid launch cost to do it. On one
 shared memory node, threads are the right tool here.
 
-Communication was negligible, imbalance was everything. `[beat]` The fix is cheap:
-interleave chunks instead of single strided values. Our honest gap is single node
-only.
+On CAAS, across two nodes, Task 1 reached 10.31x at 8 processes and Amdahl was
+within 2%. Even there, communication was about 0.1% of the run. `[beat]` What we
+would change: hand out chunks instead of single strided values, so no rank sits idle.
 
 ---
 
@@ -221,8 +221,8 @@ That is our work. Happy to take questions.
 | Why `MPI_Gatherv` rather than `MPI_Gather`? | Taabish | Ranks find different counts, so the blocks are unequal. Gatherv takes a displacement per rank. |
 | Why `MPI_THREAD_FUNNELED`? | Taabish | Only the main thread calls MPI. A stronger level costs locking we do not need. |
 | Would you recommend MPI here over OpenMP? | Either | Not on one node. Same speed, extra launch cost, harder code. MPI earns its keep across machines. |
-| Why is empirical below theoretical? | Erwyna | Amdahl assumes an even split. Ours is not even, because of the residue class problem. p_eff closes most of the gap. |
+| Why is empirical below theoretical? | Erwyna | Three measured reasons: an idle rank when p has an odd factor (p_eff), qsort costs more once the lists arrive interleaved, and 4 slower efficiency cores. On CAAS, Amdahl was within 2%. |
 | Why baseline at p = 1 and not the Week 4 serial? | Erwyna | Different primality test, worth 1.4x. Using Week 4 would count an algorithmic win as a parallel win. |
-| What would change on CAAS? | Erwyna | Kappa stops being a memory copy and becomes network traffic. It would likely become the dominant term. |
+| What did CAAS show? | Erwyna | 10.31x at 8 processes across two nodes, 86% efficiency, Amdahl within 2%. The gather got 4.6x slower but was still about 0.1% of the run. |
 | Why does speedup stop at 7x? | Either | 10 performance plus 4 efficiency cores, then oversubscription past 14. |
 | How do you know the output is correct? | Taabish | Byte identical to the Week 4 serial reference under diff, at 30 million. |

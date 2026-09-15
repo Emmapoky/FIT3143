@@ -14,10 +14,11 @@
 //   Erwyna Soo Wen Xin  (36555789)  esoo0013@student.monash.edu
 //   Taabish Farooq Bhat (35473932)  ttaa0006@student.monash.edu
 //
-// Erwyna: this is the denominator for every speedup in the deck, so it has to
-// be the code Week 4 was actually marked on, not a tidied up rewrite. Diff it
-// against Lab1_W4/task1.c and the only differences are the clock_gettime calls
-// and the PHASE printf.
+// Erwyna: the serial baseline has to be the search Week 4 was marked on, not
+// a tidied up rewrite. IsPrime, the flag array and WriteToFile are the same as
+// in our Week 4 task1.c. What changed: the list always goes to the file (Week
+// 4 printed to the terminal when n was 100 or less), the progress messages are
+// gone, and a second timer around the write plus the PHASE line were added.
 //
 // Compile: gcc -O2 serial_instr.c -o serial_instr -lm
 // Run:     ./serial_instr <n>

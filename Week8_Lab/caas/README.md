@@ -1,81 +1,34 @@
-# Running this on CAAS
+# CAAS run
 
-**Owner: Taabish.** This is the one measurement we have not taken, and both the
-Task 1 and the Task 2 rubric rows ask for it by name in their D and HD bands:
-*"Performance analysis using CAAS or a locally set up cluster is included."*
+**Team:** Erwyna Soo Wen Xin (36555789, esoo0013@student.monash.edu) and Taabish Farooq Bhat (35473932, ttaa0006@student.monash.edu)
+**Written by:** Erwyna Soo Wen Xin
 
-Everything in this folder is ready to submit. It has not been run, because it
-needs a Monash account on the cluster and the Australia VPN.
+We ran Task 1 and Task 2 on Monash CAAS on 9 September 2026, as job 39361. The job used 8 MPI processes, 4 on each of two compute nodes, so the gather had to travel over the network instead of being a memory copy inside one machine.
 
-## The short version
+| File | What it is |
+|---|---|
+| `run_all.job` | The job we submitted. It builds the programs, runs the serial baseline, runs Task 1 at 1, 2, 4 and 8 processes across both nodes, runs the timed copy of Task 1 for the phase split, runs Task 2 with one process on each node, and checks the output against the serial reference. |
+| `serial.job`, `mpi.job`, `hybrid.job` | The same steps as separate jobs, for running one part at a time. |
+| `caas_results.txt` | The raw output of job 39361. |
+| `CAAS_Analysis.pdf` | What we worked out from that output. |
 
-Connect to the VPN, ssh in, copy the folder up, then from `Week8_Lab/caas`:
+## Running it
+
+1. Connect to the Monash VPN (GlobalProtect).
+2. Log in with `ssh <authcate>@student-caas-headnode.rep.monash.edu`.
+3. Copy our working folder up. The job files expect `task1.c`, `task2.c` and the timed copies of the programs in the folder above this one.
+4. From inside this folder, run:
 
 ```
 sbatch run_all.job
-squeue -u $USER          # R = running, PD = pending, gone = finished
+squeue -u $USER
 cat caas_results.txt
 ```
 
-That one job builds all four programs, runs the serial baseline, runs Open MPI at
-1, 2, 4 and 8 processes **across two nodes**, runs the per-phase instrumented
-version, runs the hybrid, checks the output against the serial reference, and
-writes `caas_results.txt` plus `caas_results.csv`.
+`squeue` shows R while the job is running and PD while it is waiting, and the job disappears from the list once it has finished. If the Open MPI module has a different name on the cluster, check `module avail` and change the `module load` line in the job file.
 
-Bring those two files back and drop them in `Week8_Lab/caas/results/`.
+## Results
 
-## Steps, in full
-
-1. Connect to the Monash Australia VPN (`vpn.monash.edu` via GlobalProtect).
-   Required from anywhere, including Malaysia.
-2. `ssh <your-monash-id>@<caas-host>` using the host name given in the unit's
-   Additional Information and Resources section on Moodle.
-3. Copy this whole `Week8_Lab` folder up, with FileZilla or `scp -r`.
-4. From inside `Week8_Lab/caas`:
-
-```
-sbatch run_all.job       # everything in one submission, recommended
-squeue -u $USER          # R means running, PD means pending
-cat caas_results.txt     # once it disappears from squeue
-```
-
-The three separate job files (`serial.job`, `mpi.job`, `hybrid.job`) are still
-here if you want to run one piece at a time or the time limit is tight.
-
-## What to look for, and why it matters to our argument
-
-On our laptop, communication was negligible: kappa reached only 0.004 of runtime
-at 28 processes, because every rank shared one node and `MPI_Gatherv` was a
-memory copy. `mpi.job` deliberately splits 8 ranks across 2 nodes, so the same
-gather becomes real network traffic.
-
-The number to bring back is the **gather phase time** from `task1_instr.c`. If
-it is orders of magnitude larger than the 0.036 s we measured locally, that
-confirms the limitation we state on the closing slide and in section 8 of
-`Task3_Performance_Evaluation.md`, and it turns an admitted gap into a measured
-result.
-
-To get the phase split rather than just the total, swap `task1.c` for
-`task1_instr.c` in `mpi.job` and read the `PHASE,` line out of the output.
-
-## If you want the whole sweep instead of one point
-
-`run_benchmarks.sh` takes environment overrides, so a reduced sweep fits inside a
-job's time limit without editing anything:
-
-```
-N_MAX=40000000 WIDTHS="1 2 4 8 16" REPS=1 ./run_benchmarks.sh
-```
-
-## Notes
-
-- The `module load openmpi` line may need a different module name. Run
-  `module avail` and use whatever the cluster actually calls it.
-- `--partition=defq` may need changing to the partition the unit tells you to
-  use. Do not change it to something you have not been told to use.
-- On Linux, plain `-fopenmp` is correct. The libomp flags in the root README are
-  a macOS quirk and are not needed here.
-- **Choose a power of two for the process count** if you want a balanced
-  partition. At any p with an odd prime factor d, one rank in d does no work.
-  That is our headline Task 3 finding and it will show up on the cluster too,
-  because it comes from arithmetic in the partitioning rather than from hardware.
+- 10.31x faster than the serial baseline at 8 processes, with 86.4% parallel efficiency.
+- Amdahl's Law predicted every measured point to within 2%.
+- The gather was about 4.6 times slower across the network, but still only about 0.12% of the run.

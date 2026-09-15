@@ -1,44 +1,40 @@
-# FIT3143 Lab #2 (Week 8) — Message Passing Interface
+# FIT3143 Lab 2 (Week 8): Message Passing Interface
 
-Erwyna Soo Wen Xin  (36555789)  esoo0013@student.monash.edu
-Taabish Farooq Bhat (35473932)  ttaa0006@student.monash.edu
+**Team:** Erwyna Soo Wen Xin (36555789, esoo0013@student.monash.edu) and Taabish Farooq Bhat (35473932, ttaa0006@student.monash.edu)
 
-| File | Task | Author |
+| File | Task | Written by |
 |---|---|---|
 | `task1.c` | Task 1, Open MPI | Taabish |
-| `task2.c` | Task 2, hybrid MPI + OpenMP | Taabish |
+| `task2.c` | Task 2, hybrid Open MPI + OpenMP | Taabish |
 | `Task3_Performance_Evaluation.pdf` | Task 3, performance evaluation | Erwyna |
+| `supporting/` | The measurements, scripts and CAAS run behind Task 3 | Erwyna |
 
-Slides and the AI declaration are uploaded separately.
+The slides, the AI declaration and the AI prompt records are uploaded as separate files.
 
-## Building
+## Building and running
 
 ```
-mpicc -O2 task1.c -o task1 -lm
-mpirun -np 8 ./task1 30000000
+mpicc -O2 task1.c -o task1
+mpirun -np 8 ./task1 130000000
 
-mpicc -O2 task2.c -o task2 -lm -fopenmp
-OMP_NUM_THREADS=4 mpirun -np 2 ./task2 30000000
+mpicc -O2 task2.c -o task2 -fopenmp
+OMP_NUM_THREADS=4 mpirun -np 2 ./task2 130000000
 ```
 
-On macOS the OpenMP flags are `-Xpreprocessor -fopenmp -I$(brew --prefix libomp)/include -L$(brew --prefix libomp)/lib -lomp`.
+On macOS with Homebrew's libomp, use `-Xpreprocessor -fopenmp -I$(brew --prefix libomp)/include -L$(brew --prefix libomp)/lib -lomp` in place of `-fopenmp`.
 
-Both write to `primes_task1.txt` / `primes_task2.txt`. Output is byte identical
-to our Week 4 serial program under `diff`.
+Each program writes the sorted primes to `primes_task1.txt` or `primes_task2.txt`, then prints the total run time and the search time of every rank (task1) or every thread (task2). Both prime lists match the list from our Week 4 serial program exactly.
 
-Pick a power of two for the process count if you want a balanced partition.
-Section 1 of the Task 3 document explains why.
+For an even split, use a power of two for the number of MPI processes. The Task 3 document explains why.
 
-## supporting/
+## What is in supporting/
 
-| Folder | What |
+| Folder | Contents |
 |---|---|
-| `instruments/` | the three timer-instrumented copies Task 3 measures with |
-| `scripts/` | benchmark and plotting scripts, everything regenerates from these |
-| `graphs/` | the 7 required figures, plus 2 extra and 3 diagrams |
-| `results/` | every measurement as CSV |
-| `caas/` | cluster job files and the output of job 39361 |
+| `instruments/` | Copies of our programs with phase timers added. Task 3 is measured with these. |
+| `scripts/` | The benchmark and plotting scripts. Every graph and table comes from these. |
+| `results/` | Every measurement, as CSV. |
+| `graphs/` | The 7 required graphs, 3 supporting graphs and 3 diagrams. |
+| `caas/` | The CAAS job files and the output of job 39361, 8 processes across two nodes. |
 
-Measured on an Apple M3 Max (14 cores) at n = 130,000,000, and on Monash CAAS
-across two compute nodes, where it reached 10.31x over the serial baseline at
-86.4% parallel efficiency.
+Measured on an Apple M3 Max (14 cores: 10 performance and 4 efficiency) and on Monash CAAS.

@@ -1,0 +1,40 @@
+queued Tue Sep 15 23:02:38 +08 2026
+ powermode            0
+Now drawing from 'Battery Power'
+ -InternalBattery-0 (id=36241507)	37%; discharging; 3:07 remaining present: true
+starting Tue Sep 15 23:02:38 +08 2026, loadavg { 3.33 13.76 17.92 }
+Now drawing from 'Battery Power'
+ -InternalBattery-0 (id=36241507)	37%; discharging; 3:07 remaining present: true
+  n = 10,000,000 done
+  n = 14,000,000 done
+  n = 18,000,000 done
+  n = 22,000,000 done
+  n = 26,000,000 done
+  n = 30,000,000 done
+  n = 34,000,000 done
+  n = 38,000,000 done
+  n = 42,000,000 done
+  n = 46,000,000 done
+  n = 50,000,000 done
+  n = 54,000,000 done
+  n = 58,000,000 done
+  n = 62,000,000 done
+  n = 66,000,000 done
+  n = 70,000,000 done
+  n = 74,000,000 done
+  n = 78,000,000 done
+  n = 82,000,000 done
+  n = 86,000,000 done
+  n = 90,000,000 done
+  n = 94,000,000 done
+  n = 98,000,000 done
+  n = 102,000,000 done
+  n = 106,000,000 done
+  n = 110,000,000 done
+  n = 114,000,000 done
+  n = 118,000,000 done
+  n = 122,000,000 done
+  n = 126,000,000 done
+  n = 130,000,000 done
+done
+finished Tue Sep 15 23:12:49 +08 2026
