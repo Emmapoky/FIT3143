@@ -30,9 +30,10 @@ from reportlab.platypus import (HRFlowable, Image, KeepTogether, PageBreak, Para
                                 SimpleDocTemplate, Spacer, Table, TableStyle)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+# AI_Declaration.pdf is not built here any more. It is one file with the
+# declaration and both prompt records, so make_ai_declaration.py builds it.
 DOCS = [
     ("Task3_Performance_Evaluation.md", "Task3_Performance_Evaluation.pdf"),
-    ("AI_Declaration.md", "AI_Declaration.pdf"),
     ("caas/results/caas_analysis.md", "caas/results/CAAS_Analysis.pdf"),
 ]
 FOOTER = "FIT3143 Lab 2   |   Erwyna Soo Wen Xin (36555789) and Taabish Farooq Bhat (35473932)"
@@ -253,13 +254,16 @@ def md_to_story(md, base_dir):
     return story
 
 
-def make_pdf(pdf_path, story, title):
+def make_pdf(pdf_path, story, title, label=None):
+    # label names the part of a combined file, e.g. "Part 1", so the page
+    # numbers still make sense once the parts are joined.
     def footer(canvas, doc):
         canvas.saveState()
         canvas.setFont(BODY, 7.4)
         canvas.setFillColor(colors.HexColor("#666666"))
         canvas.drawString(15 * mm, 9 * mm, FOOTER)
-        canvas.drawRightString(A4[0] - 15 * mm, 9 * mm, f"Page {doc.page}")
+        page = f"{label}, page {doc.page}" if label else f"Page {doc.page}"
+        canvas.drawRightString(A4[0] - 15 * mm, 9 * mm, page)
         canvas.restoreState()
 
     part = pdf_path + ".part"
@@ -271,12 +275,13 @@ def make_pdf(pdf_path, story, title):
     print("wrote", pdf_path)
 
 
-def build(md_path, pdf_path):
+def build(md_path, pdf_path, label=None):
     with open(md_path, encoding="utf-8") as fh:
         md = fh.read()
     m = re.search(r"^#\s+(.*)$", md, re.M)
     title = m.group(1).strip() if m else os.path.splitext(os.path.basename(pdf_path))[0]
-    make_pdf(os.path.abspath(pdf_path), md_to_story(md, os.path.dirname(os.path.abspath(md_path))), title)
+    make_pdf(os.path.abspath(pdf_path), md_to_story(md, os.path.dirname(os.path.abspath(md_path))),
+             title, label)
 
 
 if __name__ == "__main__":

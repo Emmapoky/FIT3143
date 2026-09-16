@@ -14,7 +14,7 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 OUT="$HERE/FIT3143_Lab2_Submission.zip"
 STAGE="$(mktemp -d)/FIT3143_Lab2_Submission"
 
-mkdir -p "$STAGE"/supporting/{caas,graphs,instruments,results,scripts}
+mkdir -p "$STAGE"/supporting/{caas,graphs,instruments,results,scripts,experiments}
 
 cp "$HERE/SUBMISSION_README.md"                "$STAGE/README.md"
 cp "$HERE/task1.c" "$HERE/task2.c"             "$STAGE/"
@@ -29,6 +29,9 @@ cp "$HERE"/graphs/*.png                        "$STAGE/supporting/graphs/"
 cp "$HERE"/serial_instr.c "$HERE"/task1_instr.c "$HERE"/task2_instr.c \
                                                "$STAGE/supporting/instruments/"
 cp "$HERE"/*.csv                               "$STAGE/supporting/results/"
+cp "$HERE"/experiments/partition_variants.c "$HERE"/experiments/run_partition_comparison.py \
+   "$HERE"/experiments/make_partition_graph.py "$HERE"/experiments/partition_comparison.csv \
+   "$HERE"/experiments/partition_comparison.png "$STAGE/supporting/experiments/"
 cp "$HERE"/make_diagrams.py "$HERE"/make_graphs.py "$HERE"/measure_launch.py \
    "$HERE"/run_benchmarks.sh "$HERE"/run_phases.py "$HERE"/run_phases_by_n.py \
                                                "$STAGE/supporting/scripts/"

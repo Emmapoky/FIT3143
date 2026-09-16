@@ -15,7 +15,7 @@ than a rush. `[beat]` means stop talking for one second. Do not fill them. The
 beats are what make this sound composed instead of recited, and they are already
 counted in the timings.
 
-**The deck is 22 pages, but you only present 17.** Pages 18 to 22 are the
+**The deck is 23 pages, but you only present 17.** Pages 18 to 23 are the
 appendix, and page 18 says so on its face. Do not click into them during the
 7 minutes. They exist so the marker reading the deck afterwards can check the
 phase breakdown, the full parameter table, how to reproduce the numbers, and the
@@ -27,13 +27,13 @@ duplicating yourself and burning time you do not have.
 
 ---
 
-## Slide 1 - Title | Erwyna | 0:00 to 0:14
+## Slide 1 - Title | Erwyna | 0:00 to 0:13
 Good afternoon. I'm Erwyna, this is Taabish. Our Lab 2 work on prime search with
 Open MPI, measured on a 14 core M3 Max up to 130 million. `[beat]`
 
 ---
 
-## Slide 2 - What we set out to answer | Erwyna | 0:14 to 0:30
+## Slide 2 - What we set out to answer | Erwyna | 0:13 to 0:29
 Three questions. Can Open MPI beat our Week 4 threaded versions. Does adding
 OpenMP threads inside each process help. And does Amdahl's Law predict what we
 measured. `[beat]` Taabish takes the first two.
@@ -42,9 +42,10 @@ measured. `[beat]` Taabish takes the first two.
 
 ---
 
-## Slide 3 - Partitioning scheme | Taabish | 0:30 to 1:01
-Our partitioning is cyclic. Rank r starts at 3 plus 2r and steps by 2p, walking
-the odd numbers in a stride.
+## Slide 3 - Partitioning scheme | Taabish | 0:29 to 1:06
+The root reads n from the command line and sends it to every rank with
+`MPI_Bcast`. Our partitioning is cyclic. Rank r starts at 3 plus 2r and steps by
+2p, walking the odd numbers in a stride.
 
 That was deliberate over a block split. Testing a candidate costs about its
 square root, so a block gives the last rank the expensive end and everyone waits.
@@ -55,7 +56,7 @@ communication, no scheduler.
 
 ---
 
-## Slide 4 - Collecting the results | Taabish | 1:01 to 1:26
+## Slide 4 - Collecting the results | Taabish | 1:06 to 1:31
 Results come back in two stages. `MPI_Gather` of one count per rank, so the root
 knows the sizes. Those become displacements, then `MPI_Gatherv` lands every block
 at its own offset in one call. `[beat]`
@@ -65,7 +66,7 @@ is byte identical to the Week 4 serial.
 
 ---
 
-## Slide 5 - Graph 1, run time | Taabish | 1:26 to 1:49
+## Slide 5 - Graph 1, run time | Taabish | 1:31 to 1:53
 Run time against problem size. 31 values of n, 14 workers.
 
 Serial reaches 21.2 seconds. Open MPI, 2.8. OpenMP, 2.6. `[beat]`
@@ -75,16 +76,17 @@ slope. It is 0.184 seconds of `mpirun` launch, paid once.
 
 ---
 
-## Slide 6 - Graph 2, speedup vs n | Taabish | 1:49 to 2:14
+## Slide 6 - Graph 2, speedup vs n | Taabish | 1:53 to 2:05
 The same runs as speedup. 2.5x at 10 million, rising to 7.8x at 126 million,
 because the launch cost is fixed while the work grows. `[beat]`
 
-One caveat we raise ourselves. Our Week 8 search uses a faster primality test
-than the Week 4 serial, worth about 1.4x before any parallelism.
+(Not spoken any more: the 1.4x primality test caveat. It stays in the slide text,
+and slide 12 and the Q&A table cover it. Cutting it pays for the two lines added
+to slides 3 and 16 on 16 September.)
 
 ---
 
-## Slide 7 - Graph 3, speedup vs width | Taabish | 2:14 to 2:41
+## Slide 7 - Graph 3, speedup vs width | Taabish | 2:05 to 2:31
 Now n is fixed and we sweep width to 28, twice our core count.
 
 All three plateau near 7x, not 14x. Ten performance cores plus four slower
@@ -95,7 +97,7 @@ But look at Open MPI. It has a saw tooth, and p equals 3 is slower than p equals
 
 ---
 
-## Slide 8 - Hybrid design | Taabish | 2:41 to 3:08
+## Slide 8 - Hybrid design | Taabish | 2:31 to 2:57
 Task 2 puts OpenMP inside each process. We initialise with
 `MPI_THREAD_FUNNELED`, because only the main thread calls MPI.
 
@@ -107,7 +109,7 @@ threads self balance in a way the fixed stride cannot.
 
 ---
 
-## Slide 9 - Graph 4, hybrid vs pure MPI | Taabish | 3:08 to 3:30
+## Slide 9 - Graph 4, hybrid vs pure MPI | Taabish | 2:57 to 3:19
 Process count held at 4 for both lines, adding threads.
 
 Pure Open MPI is flat at 4.8 seconds. Thread count means nothing to it. The
@@ -116,7 +118,7 @@ is already 16 workers on 14 cores.
 
 ---
 
-## Slide 10 - Graph 5, matched width | Taabish | 3:30 to 3:56
+## Slide 10 - Graph 5, matched width | Taabish | 3:19 to 3:44
 The comparison the spec asks for specifically. Matched total width, so 3
 processes of 2 threads is compared against 6 OpenMP threads, not 3.
 
@@ -128,7 +130,7 @@ explain why.
 
 ---
 
-## Slide 11 - How we measured | Erwyna | 3:56 to 4:31
+## Slide 11 - How we measured | Erwyna | 3:44 to 4:18
 For Task 3 I had to split the run into the part that scales and the part that
 doesn't. One stopwatch can't do that, so I instrumented three copies. Searches
 untouched, timers added.
@@ -141,7 +143,7 @@ absurd for a memory copy. That was idle ranks waiting, billed as communication.
 
 ---
 
-## Slide 12 - The model | Erwyna | 4:31 to 4:54
+## Slide 12 - The model | Erwyna | 4:18 to 4:40
 Separated properly, real communication is 5 milliseconds at one process, 36 at
 28. `[beat]` Kappa is four thousandths of runtime. On one node, communication is
 not what stops the speedup.
@@ -151,7 +153,7 @@ error has structure.
 
 ---
 
-## Slide 13 - One rank in d does no work | Erwyna | 4:54 to 5:35
+## Slide 13 - One rank in d does no work | Erwyna | 4:40 to 5:19
 Here is why. Rank r only ever tests 3 plus 2r plus 2pk. For any odd prime d
 dividing p, that term vanishes modulo d, so every number a rank touches sits in
 one residue class. `[beat]`
@@ -164,14 +166,14 @@ finished within 5 milliseconds.
 
 ---
 
-## Slide 14 - Graph 6 | Erwyna | 5:35 to 5:53
+## Slide 14 - Graph 6 | Erwyna | 5:19 to 5:37
 Which is what this shows. Amdahl at p is smooth and overshoots. Amdahl at the
 effective process count reproduces the saw tooth, dip for dip. `[beat]` That
 match is the evidence imbalance is the dominant error term, not noise.
 
 ---
 
-## Slide 15 - Graph 7 | Erwyna | 5:53 to 6:14
+## Slide 15 - Graph 7 | Erwyna | 5:37 to 6:00
 The hybrid partly escapes it, because only the MPI stride is congruence bound.
 Inside a rank, dynamic scheduling hands out chunks on demand.
 
@@ -180,25 +182,26 @@ processes, one of them has nothing to search.
 
 ---
 
-## Slide 16 - What we found and would change | Erwyna | 6:14 to 6:38
+## Slide 16 - What we found and would change | Erwyna | 6:00 to 6:37
 Open MPI matched OpenMP but never beat it, and paid launch cost to do it. On one
 shared memory node, threads are the right tool here.
 
 On CAAS, across two nodes, Task 1 reached 10.31x at 8 processes and Amdahl was
-within 2%. Even there, communication was about 0.1% of the run. `[beat]` What we
+within 2%. The hybrid at 2 by 2 matched Task 1 at 4 processes. Even there,
+communication was about 0.1% of the run. `[beat]` What we
 would change: hand out chunks instead of single strided values, so no rank sits idle.
 
 ---
 
-## Slide 17 - Questions | Erwyna | 6:38 to 6:41
+## Slide 17 - Questions | Erwyna | 6:37 to 6:41
 That is our work. Happy to take questions.
 
 ---
 
 # Rehearsal notes
 
-- **Time the two blocks separately.** Taabish runs 0:30 to 3:56, so 3 minutes 26.
-  Erwyna runs 3:56 to 6:41, so 2 minutes 46. If either drifts more than 15
+- **Time the two blocks separately.** Taabish runs 0:29 to 3:44, so 3 minutes 15.
+  Erwyna runs 3:44 to 6:41, so 2 minutes 57. If either drifts more than 15
   seconds, cut a sentence rather than speeding up. Rushing costs presentation
   marks. Finishing 20 seconds early does not.
 - **Practise the two handovers**, at slides 2 to 3 and 10 to 11. A fumbled
@@ -211,12 +214,12 @@ That is our work. Happy to take questions.
   speedup as n grows. Go there if anyone asks what happens to the speedup when the
   problem gets bigger. The line to say is that r_s falls from 0.096 at 10 million
   to 0.027 at 130 million, so the ceiling rises with n, and our measurement keeps
-  the same 60 to 67 percent of theory the whole way, which makes the gap a hardware
-  gap and not a size effect.
-- **If you are running long**, cut in this order. First the caveat paragraph on
-  slide 6, which is already covered on slide 12. Then the last sentence of slide
-  8. Then the second paragraph of slide 16. That is about 45 seconds and none of
-  it is load bearing.
+  a steady share of theory the whole way, 55 to 64 percent for Task 1 and 64 to 69
+  percent for Task 2, which makes the gap a hardware gap and not a size effect.
+- **If you are running long**, cut in this order. First the last sentence of
+  slide 8. Then "The hybrid at 2 by 2 matched Task 1 at 4 processes" on slide 16,
+  which stays on the slide for the marker. That is about 20 seconds and none of it
+  is load bearing. The slide 6 caveat is already cut.
 
 # Likely Q&A, and who takes it
 
@@ -231,3 +234,11 @@ That is our work. Happy to take questions.
 | What did CAAS show? | Erwyna | 10.31x at 8 processes across two nodes, 86% efficiency, Amdahl within 2%. The gather got 4.6x slower but was still about 0.1% of the run. |
 | Why does speedup stop at 7x? | Either | 10 performance plus 4 efficiency cores, then oversubscription past 14. |
 | How do you know the output is correct? | Taabish | Byte identical to the Week 4 serial reference under diff, at 30 million. |
+| Is your partitioning scheme optimal? | Taabish | We measured three schemes (A6). At 2, 4 and 8 processes the stride was within 5% of the best of them, and a block split was 10% to 22% slower. With an odd factor in p, chunks of 1000 were faster: 5.9 s against 8.5 s at 3 processes. We kept the stride in the submitted code because every graph and the CAAS run measure it, and chunks are the tested next step. |
+| Where do you time each thread? | Taabish | task2.c prints every thread's search time. At 3 x 2, rank 0's two threads took 0.006 s while the other four took 3.86 s. At 2 x 3, all six took 2.56 s. |
+| Why does Graph 5 dip at 4 x 4? | Either | A disturbed sample. Graph 7's separate phase sweep measured the same 4 x 4 at 2.23 s, which is 6.80x, in line with its neighbours. |
+| What is the purpose of Task 3? (Vishnu said in the 16 Sep consultation he will ask this) | Erwyna | To check whether the theoretical speedup correlates with the measured speedup, and explain it if not. Ours does: Amdahl at p_eff follows the saw tooth on the laptop, and on CAAS it was within 2%. |
+| Why Amdahl and not Gustafson? | Erwyna | Every experiment fixes n and adds processes, which is Amdahl's assumption. Gustafson grows the problem with the processes. A5 shows that side: as n grows, r_s falls and the theoretical speedup rises. |
+| How would you use Gustafson's Law? | Erwyna | Grow n with p so each process keeps the same amount of work, measure the serial fraction s of that p process run, then S = p - s (p - 1). |
+| Why did CAAS stop at 8 processes? | Erwyna | We split 8 ranks, 4 per node, so the gather had to cross the network. We did not go past one node's cores, so beyond 14 on Graph 3 is oversubscription on the laptop, not more nodes. |
+| Some runtimes in Graph 1 are under 1 second. Are they reliable? | Taabish | At 14 workers, n up to about 50 to 60 million runs under 1 s, so we kept the fastest of repeated runs. Those points show the fixed 0.184 s launch cost. The Amdahl fractions come from n = 130 million, where one process takes 14 s. |

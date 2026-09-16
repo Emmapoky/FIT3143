@@ -5,7 +5,15 @@
 **Team:** Erwyna Soo Wen Xin (36555789, esoo0013@student.monash.edu) and Taabish Farooq Bhat (35473932, ttaa0006@student.monash.edu)
 **Date:** 16 September 2026
 
-We used generative AI while preparing this lab, which item 9 of the assessment specification allows. We did not use any AI tool during the presentation or the Q&A, as item 10 requires. The full prompt records for both tools are uploaded as PDFs, listed at the end.
+We used generative AI while preparing this lab, which item 9 of the assessment specification allows. We did not use any AI tool during the presentation or the Q&A, as item 10 requires.
+
+This is our one AI declaration file. It has three parts:
+
+| Part | What it is |
+|---|---|
+| Part 1 | This declaration |
+| Part 2 | The full Gemini Pro prompt record, exported from Gemini |
+| Part 3 | The full Claude prompt record, exported from the Claude Code session logs |
 
 All measurements in this submission were taken on a MacBook Pro 14 inch (November 2023), Apple M3 Max, 14 cores: 10 performance and 4 efficiency, and on the Monash CAAS cluster.
 
@@ -13,12 +21,12 @@ All measurements in this submission were taken on a MacBook Pro 14 inch (Novembe
 
 | Tool | Used by | Prompt record |
 |---|---|---|
-| Gemini Pro (Google) | Taabish Farooq Bhat and Erwyna Soo Wen Xin | `AI_Prompt_Records_Gemini.pdf` |
-| Claude (Anthropic) | Erwyna Soo Wen Xin | `AI_Prompt_Records_Claude.pdf` |
+| Gemini Pro (Google) | Taabish Farooq Bhat and Erwyna Soo Wen Xin, together | Part 2 of this file |
+| Claude (Anthropic) | Erwyna Soo Wen Xin | Part 3 of this file |
 
 ## Gemini Pro
 
-One session, "Hybrid MPI and OpenMP Programming", transcript exported on 16 September 2026. Six prompts, in order:
+One session, "Hybrid MPI and OpenMP Programming", which Taabish and Erwyna worked through together. The transcript was exported on 16 September 2026. Six prompts, in order:
 
 1. Structuring the hybrid program: `MPI_Init_thread` with `MPI_THREAD_FUNNELED`, an MPI stride across processes, and `#pragma omp parallel for schedule(dynamic, 1000)` inside each process to avoid thread level load imbalance and false sharing.
 2. Reviewing our cyclic partitioning, where rank r takes 3 + 2r and strides by 2p, for residue class lock in and the load imbalance when an odd prime d divides p, with p_eff = p (1 - 1/d). Gemini recommended block cyclic chunking with a chunk size of 32,768 odd candidates.
@@ -38,6 +46,7 @@ Used by Erwyna on 8, 9, 15 and 16 September 2026.
 - Reviewing the programs. This found one real bug: `task2.c` called `memcpy` without including `<string.h>`, so it did not compile with Apple clang. The include was added.
 - Renaming the files to `task1.c` and `task2.c` to match the submission checklist, and rewriting some of the code comments to make them clearer.
 - Adding the per rank search times to `task1.c` and the per thread search times to `task2.c`, and adding checks on the value of n, on the MPI thread support level, and on every memory allocation. The search, the partitioning and the MPI and OpenMP calls that do the work were not changed.
+- On 16 September, writing a separate test program, `supporting/experiments/partition_variants.c`, that times the cyclic stride in `task1.c` against a block split and against chunks of 1000 odd numbers, with the script and graph behind appendix slide A6. The submitted `task1.c` was not changed.
 
 **Task 3 (performance evaluation, written by Erwyna)**
 
@@ -48,17 +57,13 @@ Used by Erwyna on 8, 9, 15 and 16 September 2026.
 **Task 4 (slides)**
 
 - Drafting slide text, drawing the three explanatory diagrams with `make_diagrams.py`, and checking the deck against the specification and the marking rubric.
+- On 16 September, a last check of the finished deck and the submission files against the specification, the rubric and our CSV data. This corrected one percentage on appendix slide A5 and in section 7 of the Task 3 document, and put this declaration and both prompt records into one file.
 
 **Q&A preparation**
 
 - Practice questions to rehearse with before the lab.
 
 Every number in our slides and documents comes from running our own code, on our own laptop and on CAAS, and the scripts in `supporting/scripts/` reproduce them.
-
-## Prompt records
-
-- `AI_Prompt_Records_Gemini.pdf`: the full Gemini Pro transcript, all six prompts and responses.
-- `AI_Prompt_Records_Claude.pdf`: every prompt typed into Claude for this lab.
 
 ## Signatures
 

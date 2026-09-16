@@ -9,7 +9,7 @@
 | `Task3_Performance_Evaluation.pdf` | Task 3, performance evaluation | Erwyna |
 | `supporting/` | The measurements, scripts and CAAS run behind Task 3 | Erwyna |
 
-The slides, the AI declaration and the AI prompt records are uploaded as separate files.
+The slides and `AI_Declaration.pdf` are uploaded as separate files. `AI_Declaration.pdf` is also in this zip. It is our one AI declaration file: the declaration, then the full Gemini Pro prompt record, then the full Claude prompt record.
 
 ## Building and running
 
@@ -36,5 +36,6 @@ For an even split, use a power of two for the number of MPI processes. The Task 
 | `results/` | Every measurement, as CSV. |
 | `graphs/` | The 7 required graphs, 3 supporting graphs and 3 diagrams. |
 | `caas/` | The CAAS job files and the output of job 39361, 8 processes across two nodes. |
+| `experiments/` | A side experiment for Task 1, not the submitted code: `partition_variants.c` builds the search three ways (our cyclic stride, a block split, and chunks of 1000 odd numbers dealt in turn), `run_partition_comparison.py` times all three at n = 130,000,000 on 2 to 14 processes, and `partition_comparison.csv` and `partition_comparison.png` hold the result shown on appendix slide A6. |
 
 Measured on a MacBook Pro 14 inch (November 2023) with an Apple M3 Max (14 cores: 10 performance and 4 efficiency), and on Monash CAAS.

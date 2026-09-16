@@ -5,7 +5,7 @@
 **Team:** Erwyna Soo Wen Xin (36555789, esoo0013@student.monash.edu) and Taabish Farooq Bhat (35473932, ttaa0006@student.monash.edu)
 **Task 3 written by:** Erwyna Soo Wen Xin
 
-These are our supporting notes for Task 3, submitted under the "Task 3 (Optional)" line of the submission checklist. They show how we measured the serial and parallel parts of Task 1 and Task 2, how we got the Amdahl's Law parameters from those measurements, and how the theoretical speedup compares with the speedup we measured. Every number comes from running our own code and can be reproduced with the scripts in `supporting/scripts/`. We used AI while writing parts of this document, as set out in our AI declaration.
+These are our supporting notes for Task 3, submitted under "Task 3 (Optional)" in the submission checklist. Below I show how we measured the serial and parallel parts of Task 1 and Task 2, how we got the Amdahl's Law parameters from those measurements, and how the theoretical speedup compares with the speedup we measured. Every number comes from running our own code and can be reproduced with the scripts in `supporting/scripts/`. 
 
 ## 1. Summary
 
@@ -217,7 +217,7 @@ All 31 values are in `supporting/results/amdahl_by_n.csv`. What this shows:
 
 - **Both speedups rise with n.** The search grows much faster than n, because each candidate k costs up to sqrt(k) divisions, while sorting and writing grow roughly with the number of primes. So the serial share r_s falls from 0.096 at 10 million to 0.027 at 130 million, and the theoretical speedup rises with it. This is the idea behind Gustafson's Law: as the problem grows, the parallel part grows faster than the serial part, so more speedup is possible.
 - **kappa matters more at small n.** At n = 10 million the whole run on one process takes only 0.43 s, so the fixed cost of the broadcast and the gather is 3.3% of it. By 130 million it is about 0.1%.
-- **The gap between theory and measurement stays a similar proportion as n grows.** Task 1 measured 56% to 63% of Amdahl at p_eff, and Task 2 measured about two thirds of Amdahl at every n. That points to the same hardware limit as sections 6 and 8, not to anything in the model that depends on n.
+- **The gap between theory and measurement stays a similar proportion as n grows.** Task 1 measured 55% to 64% of Amdahl at p_eff, and Task 2 measured 64% to 69% of Amdahl at every n apart from the noisy point below. That points to the same hardware limit as sections 6 and 8, not to anything in the model that depends on n.
 - **One noisy point.** For Task 2 at n = 26 million the single worker's file write happened to be slow, which pushed r_s up and made the theoretical curve dip. We left it in rather than re-running just that point.
 
 ## 8. Speedup against the Week 4 serial program
