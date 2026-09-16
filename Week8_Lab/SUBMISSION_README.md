@@ -37,4 +37,4 @@ For an even split, use a power of two for the number of MPI processes. The Task 
 | `graphs/` | The 7 required graphs, 3 supporting graphs and 3 diagrams. |
 | `caas/` | The CAAS job files and the output of job 39361, 8 processes across two nodes. |
 
-Measured on an Apple M3 Max (14 cores: 10 performance and 4 efficiency) and on Monash CAAS.
+Measured on a MacBook Pro 14 inch (November 2023) with an Apple M3 Max (14 cores: 10 performance and 4 efficiency), and on Monash CAAS.

@@ -19,7 +19,7 @@ These are our supporting notes for Task 3, submitted under the "Task 3 (Optional
 
 | Item | Setting |
 |---|---|
-| Laptop | Apple M3 Max, 14 cores: 10 performance cores and 4 efficiency cores |
+| Laptop | MacBook Pro 14 inch (November 2023), Apple M3 Max, 14 cores: 10 performance and 4 efficiency |
 | MPI | Open MPI from Homebrew, all processes on the one laptop |
 | Compiler | `-O2` for all five programs |
 | Problem size sweep | 31 values of n from 10 million to 130 million, at 14 workers |

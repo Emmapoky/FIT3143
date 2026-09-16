@@ -207,7 +207,12 @@ That is our work. Happy to take questions.
   to land clearly are "two primes" and "3.7 million".
 - **Know your appendix.** If a Q&A question goes to the parameter table or the
   phase split, jump to A1 or A2 rather than describing it from memory. That reads
-  as prepared, not as padding.
+  as prepared, not as padding. A5 is the new one: theoretical against measured
+  speedup as n grows. Go there if anyone asks what happens to the speedup when the
+  problem gets bigger. The line to say is that r_s falls from 0.096 at 10 million
+  to 0.027 at 130 million, so the ceiling rises with n, and our measurement keeps
+  the same 60 to 67 percent of theory the whole way, which makes the gap a hardware
+  gap and not a size effect.
 - **If you are running long**, cut in this order. First the caveat paragraph on
   slide 6, which is already covered on slide 12. Then the last sentence of slide
   8. Then the second paragraph of slide 16. That is about 45 seconds and none of
