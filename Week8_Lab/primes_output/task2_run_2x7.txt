@@ -1,0 +1,10 @@
+Task 2 (Hybrid Open MPI + OpenMP) Summary:
+  Input n: 130000000
+  MPI Processes: 2 | OMP Threads per Process: 7
+  Total Primes Found: 7378187
+  Computation Time: 1.6072 seconds (slowest process)
+  Total Wall Clock Time: 2.4056 seconds
+  Search time per thread, in seconds:
+    rank   0,   3689323 primes: 1.6009 1.6007 1.6007 1.6009 1.6009 1.6006 1.6006
+    rank   1,   3688864 primes: 1.5996 1.5993 1.5994 1.5997 1.5997 1.5993 1.5994
+  Slowest thread / average thread: 1.00

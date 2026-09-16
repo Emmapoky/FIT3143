@@ -1,0 +1,22 @@
+FIT3143 Lab 2, sorted prime output at n = 130,000,000
+Erwyna Soo Wen Xin (36555789) and Taabish Farooq Bhat (35473932)
+
+Produced on 16 September 2026 on the MacBook Pro (Apple M3 Max) by the
+submitted task1.c and task2.c:
+
+  mpirun -np 4 ./task1 130000000                     -> primes_task1.txt
+  OMP_NUM_THREADS=7 mpirun -np 2 ./task2 130000000   -> primes_task2.txt
+
+and by our Week 4 serial program (serial_instr.c) as the reference. The
+serial file starts with a count line, which is removed before comparing.
+
+7,378,187 primes, one per line, ascending. All three files are byte
+identical (cmp), so they have the same SHA-256:
+
+d25ba5bddd53c55309171e525b600c743c0aa62bf85f962afa1ab675dd372e1f  week4_serial_reference.txt
+d25ba5bddd53c55309171e525b600c743c0aa62bf85f962afa1ab675dd372e1f  primes_task1.txt
+d25ba5bddd53c55309171e525b600c743c0aa62bf85f962afa1ab675dd372e1f  primes_task2.txt
+
+The .xz files are compressed with xz -9 (open with 7-Zip, The Unarchiver or
+"xz -d"). The console output of both runs, including every rank's and every
+thread's search time, is in task1_run_p4.txt and task2_run_2x7.txt.

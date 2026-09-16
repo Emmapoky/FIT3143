@@ -47,6 +47,7 @@ Used by Erwyna on 8, 9, 15 and 16 September 2026.
 - Renaming the files to `task1.c` and `task2.c` to match the submission checklist, and rewriting some of the code comments to make them clearer.
 - Adding the per rank search times to `task1.c` and the per thread search times to `task2.c`, and adding checks on the value of n, on the MPI thread support level, and on every memory allocation. The search, the partitioning and the MPI and OpenMP calls that do the work were not changed.
 - On 16 September, writing a separate test program, `supporting/experiments/partition_variants.c`, that times the cyclic stride in `task1.c` against a block split and against chunks of 1000 odd numbers, with the script and graph behind appendix slide A6. The submitted `task1.c` was not changed.
+- On 16 September, after the teaching team asked for CAAS job files and the sorted prime output, recovering the exact job file and printed output of CAAS job 39361 from our git history and terminal records, and producing the compressed prime files and checksums in `supporting/primes_output/` by running the submitted programs.
 
 **Task 3 (performance evaluation, written by Erwyna)**
 

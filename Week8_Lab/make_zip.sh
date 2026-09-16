@@ -21,9 +21,12 @@ cp "$HERE/task1.c" "$HERE/task2.c"             "$STAGE/"
 cp "$HERE/Task3_Performance_Evaluation.pdf"    "$STAGE/"
 cp "$HERE/AI_Declaration.pdf"                  "$STAGE/"
 
-cp "$HERE"/caas/*.job "$HERE"/caas/README.md   "$STAGE/supporting/caas/"
-cp "$HERE"/caas/results/CAAS_Analysis.pdf \
-   "$HERE"/caas/results/caas_results.txt       "$STAGE/supporting/caas/"
+# Only the job file that actually ran on CAAS (job 39361), its exact output,
+# its README and our analysis. The other .job files in caas/ never ran.
+cp "$HERE"/caas/job39361/run_all.job "$HERE"/caas/job39361/caas_results.txt \
+   "$HERE"/caas/job39361/README.md "$HERE"/caas/results/CAAS_Analysis.pdf "$STAGE/supporting/caas/"
+mkdir -p "$STAGE/supporting/primes_output"
+cp "$HERE"/primes_output/*                     "$STAGE/supporting/primes_output/"
 
 cp "$HERE"/graphs/*.png                        "$STAGE/supporting/graphs/"
 cp "$HERE"/serial_instr.c "$HERE"/task1_instr.c "$HERE"/task2_instr.c \

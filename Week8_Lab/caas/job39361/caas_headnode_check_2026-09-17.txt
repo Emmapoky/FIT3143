@@ -1,0 +1,58 @@
+FIT3143 Lab 2, CAAS job 39361: check on the head node
+Erwyna Soo Wen Xin (36555789) and Taabish Farooq Bhat (35473932)
+
+Copied from the terminal on 17 September 2026, after logging in to
+student-caas-headnode.rep.monash.edu over the Monash VPN and running:
+
+  cd ~/Week8_Lab/caas && ls -l && sacct -j 39361 --format=JobID,JobName%15,NodeList%25,AllocCPUS,State,Start,Elapsed
+
+The listing shows the files job 39361 left behind on 9 September 2026, and
+sacct shows Slurm's own record of the job and of each step it ran.
+
+total 329956
+-rwxr-xr-x 1 esoo0013 student    27688 Sep  9 17:40 caas_hybrid
+-rwxr-xr-x 1 esoo0013 student    23048 Sep  9 17:40 caas_mpi
+-rwxr-xr-x 1 esoo0013 student    23392 Sep  9 17:40 caas_mpi_instr
+-rw-r--r-- 1 esoo0013 student      265 Sep  9 17:45 caas_results.csv
+-rw-r--r-- 1 esoo0013 student     2216 Sep  9 17:45 caas_results.txt
+-rwxr-xr-x 1 esoo0013 student    22512 Sep  9 17:40 caas_serial
+-rwxr-xr-x 1 esoo0013 student      927 Sep  9 17:01 hybrid.job
+-rw-r--r-- 1 esoo0013 student      123 Sep  9 16:55 lab2_caas.39353.out
+-rw-r--r-- 1 esoo0013 student      123 Sep  9 17:05 lab2_caas.39354.out
+-rw-r--r-- 1 esoo0013 student      123 Sep  9 17:15 lab2_caas.39355.out
+-rw-r--r-- 1 esoo0013 student      123 Sep  9 17:26 lab2_caas.39357.out
+-rw-r--r-- 1 esoo0013 student      123 Sep  9 17:28 lab2_caas.39360.out
+-rw-r--r-- 1 esoo0013 student     2591 Sep  9 17:45 lab2_caas.39361.out
+-rwxr-xr-x 1 esoo0013 student     1192 Sep  9 17:01 mpi.job
+-rw-r--r-- 1 esoo0013 student 67266328 Sep  9 17:41 primes_serial_instr.txt
+-rw-r--r-- 1 esoo0013 student 67266320 Sep  9 17:44 primes_task1_instr.txt
+-rw-r--r-- 1 esoo0013 student 67266320 Sep  9 17:43 primes_task1.txt
+-rw-r--r-- 1 esoo0013 student 67266320 Sep  9 17:45 primes_task2.txt
+-rw-r--r-- 1 esoo0013 student     3486 Sep  9 17:01 README.md
+-rw-r--r-- 1 esoo0013 student 67266320 Sep  9 17:45 ref.txt
+drwxr-xr-x 2 esoo0013 student     4096 Sep  9 02:30 results
+-rwxr-xr-x 1 esoo0013 student     4146 Sep  9 17:40 run_all.job
+-rwxr-xr-x 1 esoo0013 student      764 Sep  9 17:01 serial.job
+JobID                JobName                  NodeList  AllocCPUS      State               Start    Elapsed 
+------------ --------------- ------------------------- ---------- ---------- ------------------- ---------- 
+39361           fit3143_lab2     student-caas-n[01-02]         16  COMPLETED 2026-09-09T17:40:15   00:04:59 
+39361.batch            batch          student-caas-n01          8  COMPLETED 2026-09-09T17:40:15   00:04:59 
+39361.0             caas_mpi          student-caas-n01          8  COMPLETED 2026-09-09T17:41:34   00:00:53 
+39361.1             caas_mpi     student-caas-n[01-02]         16  COMPLETED 2026-09-09T17:42:27   00:00:27 
+39361.2             caas_mpi     student-caas-n[01-02]         16  COMPLETED 2026-09-09T17:42:54   00:00:14 
+39361.3             caas_mpi     student-caas-n[01-02]         16  COMPLETED 2026-09-09T17:43:08   00:00:09 
+39361.4       caas_mpi_instr          student-caas-n01          8  COMPLETED 2026-09-09T17:43:17   00:00:52 
+39361.5       caas_mpi_instr     student-caas-n[01-02]         16  COMPLETED 2026-09-09T17:44:09   00:00:27 
+39361.6       caas_mpi_instr     student-caas-n[01-02]         16  COMPLETED 2026-09-09T17:44:36   00:00:15 
+39361.7       caas_mpi_instr     student-caas-n[01-02]         16  COMPLETED 2026-09-09T17:44:51   00:00:08 
+39361.8          caas_hybrid     student-caas-n[01-02]         16  COMPLETED 2026-09-09T17:44:59   00:00:14 
+
+How this matches the submitted files:
+- run_all.job on the head node is 4146 bytes, the same size as the run_all.job
+  in this folder, and caas_results.txt is 2216 bytes, the same size as ours.
+- Steps 39361.0 to .3 are Task 1 at 1, 2, 4 and 8 processes (53 s, 27 s, 14 s
+  and 9 s, against 52.47 s, 26.84 s, 13.99 s and 7.59 s in caas_results.txt).
+  Steps .4 to .7 are the timed copy, and .8 is the hybrid (14 s, against
+  13.96 s). Steps 1 to 3 and 5 to 8 ran across both nodes.
+- serial.job, mpi.job and hybrid.job were copied up on 9 September but never
+  submitted, so they are not part of our submission.
