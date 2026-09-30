@@ -1,0 +1,38 @@
+GPU: Tesla T4, compute 7.5, 40 SMs, 14.6 GB, warp 32
+     max 1024 threads/block, 1024 threads/SM, 256-bit bus, peak DRAM ~320 GB/s
+     copy engines: 3, concurrent kernels: yes
+
+== Main pipelines: 7680x4320, 30.0 deg, block 16x16, 99.5 MB ==
+CPU v0 nearest 509.31 ms, bilinear 1302.77 ms (one core)
+variant                       H2D(ms) kernel(ms)  D2H(ms)  total(ms)  kern-SU    e2e-SU  mismatch  max
+v1_nn_1d_pinned                 8.060     2.957    7.587    18.604     172.2x     27.4x          0    0
+v2_nn_2d_pinned                 8.059     1.551    7.582    17.191     328.4x     29.6x          0    0
+v3_bilinear_2d_pinned           8.060     2.690    7.588    18.338     484.4x     71.0x          0    0
+v4_nn_2d_pageable              21.674     1.397   21.715    44.786     364.5x     11.4x          0    0
+v4_bilinear_2d_pageable        21.225     2.685   20.892    44.802     485.2x     29.1x          0    0
+v6_texture_bilinear_pinned      8.055     2.459    7.580    18.093     529.9x     72.0x     257964    1
+kern-SU = CPU time / kernel time, e2e-SU = CPU time / (H2D + kernel + D2H)
+v6 is checked against v3's CPU bilinear; small max diff is expected (8-bit weights)
+
+== Block size sweep (kernel only, input already on GPU) ==
+block    threads  occupancy  nearest(ms)  bilinear(ms)  checks
+32x1          32        50%        1.517         3.383  ok
+64x1          64       100%        1.446         3.368  ok
+128x1        128       100%        1.444         3.379  ok
+256x1        256       100%        1.445         3.370  ok
+8x4           32        50%        1.729         2.954  ok
+8x8           64       100%        1.589         2.935  ok
+16x8         128       100%        1.520         2.829  ok
+32x4         128       100%        1.462         3.854  ok
+16x16        256       100%        1.453         3.337  ok
+32x8         256       100%        1.565         3.875  ok
+64x4         256       100%        1.510         4.004  ok
+32x16        512       100%        1.631         4.321  ok
+32x32       1024       100%        1.880         4.360  ok
+
+== Streams: 4 streams, 8 chunks, bilinear, 30.0 deg ==
+v5a one image serial      18.736 ms
+v5a one image streams     13.777 ms  (1.36x vs serial)  mismatch 0
+v5b batch of 8 serial    147.131 ms  (18.391 ms/image)
+v5b batch of 8 streams    81.107 ms  (10.138 ms/image, 1.81x)  mismatch 0
+

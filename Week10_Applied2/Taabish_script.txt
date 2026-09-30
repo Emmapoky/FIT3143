@@ -1,0 +1,23 @@
+TAABISH SCRIPT (Task 1, about 3:00). Deck slide numbers as in Canva.
+[a] [K] [E] [C] [P] [X] [S] = fill from the Colab CSV, say what the CSV says.
+
+SLIDE 2 (0:20)
+An 8K frame has 33 million pixels, and each output pixel depends only on the input, so the task is data parallel. We use inverse mapping: each thread owns one output pixel and applies R transpose to find its source, so no holes and no write races.
+
+SLIDE 3 (0:35)
+cudaMalloc reserves both buffers in GDDR6. For host to device, the GPU's DMA copy engine pulls the bytes over PCIe. From pageable memory, the driver first copies into a pinned staging buffer. cudaMallocHost gives page-locked memory, so the DMA reads it directly and async copies can overlap. The kernel works only in GDDR6, then device to host brings the result back. PCIe is the narrow pipe: we measured [a] gigabytes per second, against 320 inside the T4.
+
+SLIDE 4 (0:25)
+The host allocates, copies, picks the launch configuration, launches the kernel asynchronously, then synchronises and checks errors. The device runs thousands of threads in SIMT style. Our block is 16 by 16, so 256 threads, or 8 warps of 32. For 8K the grid is 480 by 270 blocks.
+
+SLIDE 5, code proof (0:20)
+Here is the kernel from our submission. Each thread finds its pixel from blockIdx times blockDim plus threadIdx, and a guard drops threads past the edge. It applies R transpose to find the source pixel, so every output pixel has exactly one writer. The launch rounds the grid up, and we check the error straight after because launches are asynchronous.
+
+SLIDE 6 (0:40)
+We built one variant per CUDA feature. 2D blocks beat the 1D grid because a square tile reads a compact patch of the source, which suits the cache. Against one CPU core, the kernel alone is [K] times faster, but end to end only [E] times, because copies take [C] percent of GPU time. That is Amdahl's law: more cores cannot shrink the PCIe transfer. The kernel hits [P] percent of peak bandwidth, so it is memory bound. Pinned memory made copies [X] times faster, and streams gave [S] times on a batch.
+(Check first: if v2 is not faster than v1 in the CSV, change sentence 2.)
+
+SLIDE 7 (0:30)
+GPUDirect Storage lets NVMe DMA straight into GPU memory. The CPU keeps only the control path through cuFile, so the bounce buffer in host RAM goes away. Our verdict: it helps the company's bulk pipeline, which is I/O bound, if frames are raw or decoded on the GPU with nvJPEG. It does not help one photo, JPEGs decoded on the CPU, or images already in RAM.
+
+APPENDIX A1 to A7 are yours for Q&A only. Drill task1/Task1_QA_Drill.md.
