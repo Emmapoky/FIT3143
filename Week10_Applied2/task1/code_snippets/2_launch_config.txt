@@ -1,0 +1,9 @@
+// Execution configuration for an 8K frame (7680 x 4320)
+dim3 block(16, 16);                         // 256 threads = 8 warps
+dim3 grid((w + block.x - 1) / block.x,      // ceil(7680/16) = 480
+          (h + block.y - 1) / block.y);     // ceil(4320/16) = 270
+// 129,600 blocks x 256 threads = 33,177,600 threads, one per pixel
+rotate_nn_2d<<<grid, block>>>(d_src, d_dst, w, h, r);
+CUDA_CHECK(cudaGetLastError());   // launch is async: check it here
+// v1 for comparison: flat 1D grid, needs / and % to recover (x, y)
+rotate_nn_1d<<<(w * h + 255) / 256, 256>>>(d_src, d_dst, w, h, r);

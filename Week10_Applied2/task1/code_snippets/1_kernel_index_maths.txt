@@ -1,0 +1,11 @@
+// Simplified from rotate_nn_2d + pixel_nearest in rotate_cuda.cu
+__global__ void rotate_nn_2d(const u8 *src, u8 *dst, int w, int h, Rot r)
+{
+    int x = blockIdx.x * blockDim.x + threadIdx.x;  // global column
+    int y = blockIdx.y * blockDim.y + threadIdx.y;  // global row
+    if (x >= w || y >= h) return;          // grid is rounded up
+    float dx = x - r.cx, dy = y - r.cy;    // R^-1 = R^T, y flipped
+    int ix = floorf(r.cx + r.c * dx - r.s * dy + 0.5f);
+    int iy = floorf(r.cy + r.s * dx + r.c * dy + 0.5f);
+    copy_or_black(src, dst, w, h, ix, iy, x, y);   // outside -> black
+}

@@ -1,0 +1,11 @@
+[1] NVIDIA, "CUDA Programming Guide," v13.4, 2026. [Online]. Available: https://docs.nvidia.com/cuda/cuda-programming-guide/
+[2] NVIDIA, "CUDA C++ Best Practices Guide," v13.4, 2026. [Online]. Available: https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/
+[8] NVIDIA, "NVIDIA Turing GPU Architecture," whitepaper, 2018. [Online]. Available: https://images.nvidia.com/aem-dam/en-zz/Solutions/design-visualization/technologies/turing-architecture/NVIDIA-Turing-Architecture-Whitepaper.pdf
+[9] NVIDIA, "NVIDIA T4 Tensor Core GPU." [Online]. Available: https://www.nvidia.com/en-us/data-center/tesla-t4/
+[11] NVIDIA, "NVIDIA GPUDirect Storage Overview Guide." [Online]. Available: https://docs.nvidia.com/gpudirect-storage/overview-guide/index.html
+[13] NVIDIA, "cuFile API Reference Guide." [Online]. Available: https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html
+[14] NVIDIA, "NVIDIA GPUDirect Storage Release Notes." [Online]. Available: https://docs.nvidia.com/gpudirect-storage/release-notes/index.html
+[15] A. Thompson and C. J. Newburn, "GPUDirect Storage: A Direct Path Between Storage and GPU Memory," NVIDIA Technical Blog, Aug. 6, 2019. [Online]. Available: https://developer.nvidia.com/blog/gpudirect-storage/
+[16] J. Ravi, S. Byna, and Q. Koziol, "GPU Direct I/O with HDF5," in Proc. IEEE/ACM 5th Int. Parallel Data Systems Workshop (PDSW), 2020, pp. 28-33, doi: 10.1109/PDSW51947.2020.00010.
+[20] E. Lindholm, J. Nickolls, S. Oberman, and J. Montrym, "NVIDIA Tesla: A unified graphics and computing architecture," IEEE Micro, vol. 28, no. 2, pp. 39-55, 2008, doi: 10.1109/MM.2008.31.
+[21] N. P. Jouppi et al., "In-datacenter performance analysis of a tensor processing unit," in Proc. 44th Annu. Int. Symp. Computer Architecture (ISCA), 2017, pp. 1-12, doi: 10.1145/3079856.3080246.

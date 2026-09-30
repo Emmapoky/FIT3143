@@ -1,0 +1,261 @@
+<!doctype html><html><head><meta charset='utf-8'><title>FIT3143 Applied 2 Task 1</title><style>
+body { font-family: -apple-system, Helvetica, Arial, sans-serif;
+       font-size: 10.5pt; line-height: 1.45; color: #1F2933;
+       max-width: 180mm; margin: 0 auto; }
+h1 { font-size: 18pt; margin-bottom: 4pt; }
+h2 { font-size: 14pt; color: #2F6DB5; border-bottom: 1px solid #ccd;
+     padding-bottom: 2pt; margin-top: 18pt; }
+img { width: 100%; border: 1px solid #e3e6ea; margin: 6pt 0; }
+table { border-collapse: collapse; width: 100%; font-size: 9pt;
+        margin: 6pt 0; }
+th, td { border: 1px solid #c9ced6; padding: 3pt 5pt; vertical-align: top;
+         text-align: left; }
+th { background: #EEF3FA; }
+code { font-size: 9pt; background: #F3F4F6; padding: 0 2pt; }
+hr { border: none; border-top: 1px solid #e3e6ea; margin: 14pt 0; }
+p { margin: 5pt 0; }
+@page { size: A4; margin: 15mm 14mm; }
+</style></head><body><h1>FIT3143 Applied #2, Task 1: Image Rotation with GPU</h1>
+<p><strong>Team:</strong> Erwyna Soo Wen Xin (36555789, esoo0013@student.monash.edu) and Taabish Farooq Bhat (35473932, ttaa0006@student.monash.edu)</p>
+<p><strong>Artefacts:</strong> <code>rotate_cuda.cu</code> (CUDA prototype, variants v0 to v6), <code>Applied2_Task1_Colab.ipynb</code> (build, run, sweeps, graphs), <code>rotate_cpu.c</code> (CPU check of the maths), <code>diagrams/</code> (D1 to D5), <code>code_snippets/</code>.</p>
+<p><strong>The problem.</strong> Rotate a W x H RGB image counterclockwise by θ about its centre with R = [[cos θ, -sin θ], [sin θ, cos θ]]. Each output pixel depends only on the input image, so the task is <strong>data-parallel</strong> with no dependencies between pixels. An 8K frame (7680 x 4320 x 3 bytes) is 99.5 MB and has 33.2 million independent work items.</p>
+<p><strong>Design choice: inverse mapping (D4).</strong> One thread owns one <em>destination</em> pixel and applies R^-1 = R^T to find its source point. Forward mapping (push each source pixel through R) leaves holes and lets two source pixels write the same output, which is a write race. Inverse mapping gives exactly one writer per output pixel, so we need no atomics and no synchronisation. Image rows grow downwards, so y is flipped before and after applying R^T. That keeps the turn counterclockwise on screen. Source points outside the image become black.</p>
+<p><img src="diagrams/D4_inverse_mapping.png" alt="D4" /></p>
+<hr />
+<h2>1a. Moving image data between host memory (DDR5) and GPU memory (GDDR)</h2>
+<p><img src="diagrams/D1_data_path.png" alt="D1" /></p>
+<ol>
+<li><strong>Load and decode (CPU).</strong> The file is read from NVMe into host DDR5 and decoded (for example, JPEG to raw RGB).</li>
+<li><strong>Allocate on the device.</strong> <code>cudaMalloc</code> reserves <code>d_src</code> and <code>d_dst</code> in GPU global memory. That is GDDR5/GDDR6 on cards like the T4 (16 GB GDDR6, 320 GB/s [8]) or HBM on data-centre parts (H100 SXM: HBM3, 3.35 TB/s [10]). The host cannot dereference these pointers; they belong to a separate address space.</li>
+<li><strong>Host to device (H2D) over PCIe.</strong> <code>cudaMemcpy(d_src, h_src, n, cudaMemcpyHostToDevice)</code> hands the copy to the GPU's <strong>DMA copy engine</strong>. The engine reads host RAM through the PCIe root complex and writes GDDR. The CPU does not move the bytes itself.</li>
+<li><strong>Pageable vs pinned host memory.</strong> DMA needs physical pages that cannot be swapped out. A normal <code>malloc</code> buffer is <em>pageable</em>, so the driver first copies it into its own pinned staging buffer and then runs the DMA from there. That is an extra CPU copy and a second pass over DDR5 [4]. <code>cudaMallocHost</code> returns a <code>cudaError_t</code> and writes the address of a <em>page-locked</em> (pinned) buffer into its pointer argument. The engine can DMA straight from that buffer, and it is also required for copies to overlap with kernels [5]. The Best Practices Guide says pinned transfers &quot;attain the highest bandwidth between the host and the device&quot; [2]. Our v4 measures pageable against pinned (graph g3).</li>
+<li><strong>Compute stays on the GPU.</strong> The kernel reads <code>d_src</code> and writes <code>d_dst</code> in GDDR through the L2 cache. Nothing crosses PCIe while it runs.</li>
+<li><strong>Device to host (D2H).</strong> <code>cudaMemcpy(..., cudaMemcpyDeviceToHost)</code> copies the result back. It &quot;returns only once the copy has completed&quot; [3]. It is issued on the same stream as the kernel, so it also waits for the kernel to finish.</li>
+</ol>
+<p><strong>Synchronisation semantics [3].</strong> <code>cudaMemcpy</code> from pinned memory is synchronous with respect to the host. For pageable H2D, &quot;a stream sync is performed before the copy is initiated&quot;. <code>cudaMemcpyAsync</code> only returns early, and only overlaps with other work, when the host buffer is pinned.</p>
+<p><strong>Bandwidth ladder (why PCIe is the narrow pipe):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Link</th>
+<th>Bandwidth</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DDR5-4800, one 64-bit DIMM / dual channel</td>
+<td>38.4 / 76.8 GB/s</td>
+<td>4800 MT/s x 8 B [7]</td>
+</tr>
+<tr>
+<td>PCIe 3.0 x16 (Colab T4)</td>
+<td>about 15.75 GB/s per direction</td>
+<td>8 GT/s per lane, 128b/130b [6]; about 12 GB/s achievable with pinned memory [2]</td>
+</tr>
+<tr>
+<td>PCIe 4.0 / 5.0 x16</td>
+<td>about 31.5 / 63 GB/s per direction</td>
+<td>16 / 32 GT/s per lane [6]; &quot;128 GB/s&quot; figures are both directions added together [10]</td>
+</tr>
+<tr>
+<td>T4 GDDR6</td>
+<td>320 GB/s</td>
+<td>256-bit bus [8]</td>
+</tr>
+<tr>
+<td>H100 SXM HBM3</td>
+<td>3.35 TB/s</td>
+<td>[10]</td>
+</tr>
+</tbody>
+</table>
+<p>At about 12 GB/s, one 8K frame takes roughly 8 ms each way. The kernel only has to stream 199 MB through a 320 GB/s memory system, which is under 1 ms. The copy, not the arithmetic, sets the end-to-end time.</p>
+<p><strong>Other paths, briefly.</strong> <em>Unified Memory</em> (<code>cudaMallocManaged</code>) migrates pages on demand, so the programming is simpler but it still moves the data over PCIe. <em>Zero-copy</em> mapped pinned memory lets kernels read host RAM directly over PCIe on every access, which is too slow for a gather-heavy kernel. <em>NVLink</em> replaces PCIe on some data-centre systems. <em>GPUDirect Storage</em> skips host RAM altogether (1c).</p>
+<hr />
+<h2>1b. The CUDA programming model, and the expected speed-up</h2>
+<p><img src="diagrams/D2_cuda_hierarchy.png" alt="D2" /></p>
+<p><strong>Host (CPU) responsibilities.</strong> The host allocates host and device memory, copies inputs H2D, and chooses the execution configuration. It then launches the kernel, which is asynchronous: the call returns at once. After that it synchronises, copies the result D2H, checks every API call and launch (<code>CUDA_CHECK</code>, <code>cudaGetLastError</code>), and frees memory. The host is the controller in a master/worker model.</p>
+<p><strong>Device (GPU) responsibilities.</strong> The device runs the kernel as a very large number of lightweight threads in <strong>SIMT</strong> style (single instruction, multiple threads) [20]. The hardware groups them into <strong>warps of 32</strong> that issue together [1]. Warp schedulers switch between resident warps every cycle to <strong>hide memory latency</strong>.</p>
+<p><strong><code>&lt;&lt;&lt;grid, block&gt;&gt;&gt;</code> and the hierarchy.</strong> <code>kernel&lt;&lt;&lt;grid, block, shmem, stream&gt;&gt;&gt;(args)</code>:</p>
+<ul>
+<li><strong>Thread:</strong> one output pixel. It has private registers and its own <code>threadIdx</code>.</li>
+<li><strong>Block:</strong> up to 1024 threads [1]. Ours is 16 x 16 = 256 threads, which is 8 warps. A block runs on a single <strong>SM</strong> and can share shared memory and <code>__syncthreads()</code>.</li>
+<li><strong>Grid:</strong> every block of the launch. For 8K it is ceil(7680/16) x ceil(4320/16) = 480 x 270 = <strong>129,600 blocks, 33,177,600 threads</strong>. Blocks are independent, so they can be scheduled on any of the T4's 40 SMs in any order [8].</li>
+<li><strong>Index maths:</strong> <code>x = blockIdx.x * blockDim.x + threadIdx.x</code> (same for y). A guard <code>if (x &gt;= W || y &gt;= H) return;</code> handles the grid rounded up past the image edge. Only warps on the image border diverge.</li>
+</ul>
+<p><strong>Sample codes: one CUDA feature per variant, and how each changes speed-up</strong> (full code in <code>rotate_cuda.cu</code>, slide versions in <code>code_snippets/</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Variant</th>
+<th>Feature</th>
+<th>Expected effect on speed-up (mechanism)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v0</td>
+<td>CPU serial loop, one core</td>
+<td>Baseline T_serial. It is also the reference answer: every GPU output is compared byte by byte (built with <code>--fmad=false</code> so rounding matches).</td>
+</tr>
+<tr>
+<td>v1</td>
+<td>1D grid, 256-thread blocks</td>
+<td>Large speed-up from data parallelism. Each thread pays for <code>/</code> and <code>%</code>, and a block covers one long thin output strip, whose source footprint is a slanted line over many rows. That means poorer cache locality for the gathered reads.</td>
+</tr>
+<tr>
+<td>v2</td>
+<td>2D grid of 16 x 16 blocks</td>
+<td>A square tile maps back to a compact square patch of the source. Its gathered reads hit L1/L2 better and writes stay <strong>coalesced</strong> along rows. The block sweep (g4) varies the shape; <strong>occupancy</strong> is limited by registers, the 1024 threads/SM cap and the max blocks per SM. Tiny blocks (8 x 4) leave SMs under-filled.</td>
+</tr>
+<tr>
+<td>v3</td>
+<td>Bilinear interpolation</td>
+<td>4 gathered reads and about 30 more flops per pixel. It is still <strong>memory-bound</strong>, so it costs much less than 4x on the GPU. The CPU pays for every operation serially, so the GPU speed-up for bilinear is usually <em>larger</em> than for nearest.</td>
+</tr>
+<tr>
+<td>v4</td>
+<td>Pageable vs pinned host memory</td>
+<td>Pageable adds the staging copy, so there is lower PCIe bandwidth and a lower end-to-end speed-up. The kernel is unchanged.</td>
+</tr>
+<tr>
+<td>v5a</td>
+<td>Streams, one image in 8 row chunks</td>
+<td>A destination band can need source rows from anywhere, so each band's kernel waits (<code>cudaStreamWaitEvent</code>) only for the H2D chunks that cover its source rows. D2H of band i overlaps the kernel of band i+1. Overlap is better at small angles (5°) than large (30°).</td>
+</tr>
+<tr>
+<td>v5b</td>
+<td>Streams, batch of 8 images on 4 streams</td>
+<td>H2D of one image, kernel of another and D2H of a third run together (separate copy engines, full-duplex PCIe). The per-image time approaches max(H2D, D2H) instead of the sum, which is at most about 2x for a copy-dominated job (D5).</td>
+</tr>
+<tr>
+<td>v6</td>
+<td>Texture object, hardware bilinear</td>
+<td>The texture unit does the 4-tap filter and border handling in hardware, through the texture cache. Its weights have only 8 fractional bits, so output may differ by 1 or 2 intensity levels. That is a quality versus speed trade-off.</td>
+</tr>
+</tbody>
+</table>
+<p><img src="diagrams/D5_streams_timeline.png" alt="D5" /></p>
+<p><strong>Expected speed-up on modern GPUs.</strong> There are two numbers, and they should not be mixed up:</p>
+<ol>
+<li><strong>Kernel-only speed-up.</strong> Rotation does roughly 2 flops per byte (nearest) to 7 flops per byte (bilinear). That is far below the T4's balance point of 8.1 TFLOPS / 320 GB/s ≈ 25 flops/byte [9], [8]. So the kernel is <strong>memory-bound</strong> and the roofline caps it by bandwidth, not FLOPS [19]. Against a CPU that already saturates dual-channel DDR5 (76.8 GB/s), the ceiling is roughly the bandwidth ratio: about 4x for a T4 (320 GB/s) and about 44x for an H100 (3.35 TB/s). Against our <em>single-core</em> baseline the gap is far larger, because one core can neither saturate DRAM nor issue millions of independent gathers at once. The GPU has tens of thousands of threads in flight to hide latency.</li>
+<li><strong>End-to-end speed-up</strong> (H2D + kernel + D2H). By Amdahl's law [18], the copies are a part that more GPU cores cannot shrink. Even with an infinitely fast kernel, S_max = T_cpu / (T_H2D + T_D2H).</li>
+</ol>
+<p><strong>Prediction for 8K, checked against the Colab run.</strong> Our local check (<code>rotate_cpu.c</code>, <code>-O2</code>, one core of an Apple M3 Max) took <strong>113 ms (nearest)</strong> and <strong>290 ms (bilinear)</strong>. On a T4, copies take about 99.5 MB / 12 GB/s ≈ 8.3 ms each way, and the kernel is at least 199 MB / 320 GB/s ≈ 0.62 ms. That gives a kernel-only ceiling of about 180x but an end-to-end ceiling of only about 113 / 17.2 ≈ <strong>6.6x</strong>, with copies above 90% of GPU time. The Colab CPU is a different core, so the measured values from notebook section 10 (graphs g1 to g6) replace this estimate on the slides:</p>
+<table>
+<thead>
+<tr>
+<th>8K, 30°</th>
+<th>CPU (ms)</th>
+<th>H2D (ms)</th>
+<th>Kernel (ms)</th>
+<th>D2H (ms)</th>
+<th>Kernel SU</th>
+<th>E2E SU</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v2 nearest, pinned</td>
+<td><em>fill from Colab</em></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>v3 bilinear, pinned</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>v4 nearest, pageable</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>What moves the speed-up up:</strong> larger images (the fixed launch and transfer latency is amortised, so the scaled speed-up grows in the Gustafson sense), batching with streams, pinned memory, keeping images resident on the GPU across several operations, and faster links (PCIe 5.0, NVLink) or GPU-side decode and I/O (nvJPEG, GDS).</p>
+<p><strong>State-of-the-art libraries.</strong> NVIDIA NPP provides <code>nppiRotate_*</code> (angle, shift, interpolation mode) [22]. OpenCV's CUDA module provides <code>cv::cuda::rotate</code> and <code>cv::cuda::warpAffine</code> [24]. nvJPEG decodes JPEG on the GPU [23], so the CPU decode step leaves the pipeline.</p>
+<p><strong>Vector (SIMD) vs GPU (SIMT) vs NPU.</strong> CPU SIMD (AVX, NEON) applies one instruction to a short fixed-width vector. Rotation's scattered gathers fit it poorly. A GPU runs thousands of scalar threads in warps, with hardware gather, a texture unit and high-bandwidth memory. That suits pixel-parallel warps like this one. An NPU (for example, the TPU's systolic matrix unit [21]) is built for dense low-precision matrix multiply. A rotation is a gather, not a matmul, so it maps poorly unless it is expressed as a grid-sample layer inside a neural network.</p>
+<hr />
+<h2>1c. GPUDirect Storage (GDS) and image rotation</h2>
+<p><img src="diagrams/D3_gpudirect_storage.png" alt="D3" /></p>
+<p><strong>What it is.</strong> GDS is part of NVIDIA's Magnum IO GPUDirect family. It opens a <strong>direct DMA path between storage and GPU memory</strong>: local NVMe, NVMe-oF, or distributed file systems such as Lustre and VAST NFS [11]. Normally a read goes storage → CPU <strong>bounce buffer</strong> in system memory → <code>cudaMemcpy</code> over PCIe → GPU. With GDS, the storage device's DMA engine writes straight into GPU memory [11], [12]. The CPU keeps only the control path.</p>
+<p><strong>How it is used.</strong> The cuFile API [13]: <code>cuFileDriverOpen</code>, <code>cuFileHandleRegister</code> on a file opened with <code>O_DIRECT</code>, optionally <code>cuFileBufRegister</code> on the device buffer, then <code>cuFileRead(fh, d_src, bytes, file_off, buf_off)</code> fills <code>d_src</code> directly. <code>cuFileWrite</code> does the reverse for the rotated output. The kernel launch is unchanged.</p>
+<p><strong>Requirements and fallback.</strong> GDS needs the <code>nvidia-fs</code> kernel driver and runs on Linux x86-64 only. It needs a supported file system (for example, ext4/XFS on NVMe, Lustre, GPFS, WekaFS, BeeGFS, NFS). Tmpfs, OverlayFS, ZFS and Btrfs run only in compatibility mode. Data Center and Quadro cards with compute capability above 6 are supported; other cards run only in compatibility mode [14]. In compatibility mode, cuFile &quot;stages through CPU system memory&quot;, so it becomes the traditional path again [11].</p>
+<p><strong>Evidence.</strong></p>
+<ul>
+<li>NVIDIA reports &quot;2x-8x higher bandwidth&quot;, &quot;3.8x lower end-to-end latency&quot;, and CPU utilisation &quot;near zero during large transfers&quot; on a DGX-2 [15].</li>
+<li>An independent HDF5 study measured about 2x read and write rates against POSIX I/O on local storage [16].</li>
+<li>The overview guide notes the latency gain is most visible for small transfers, and that removing the bounce buffer reduces load on the CPU [11].</li>
+<li>Research is moving further, towards GPU-initiated storage access (BaM) [17].</li>
+</ul>
+<p><strong>Verdict: beneficial for the company's bulk pipeline, not for a single photo.</strong></p>
+<ul>
+<li><strong>Where it helps.</strong> The team lead's scenario is massive numbers of high-resolution images per day. Our 1b estimate puts the rotation kernel under 10% of the per-image GPU time (graph g2 confirms or corrects this on the T4), so an end-to-end pipeline is <strong>I/O-bound</strong> (Amdahl again). If frames are stored raw (or decoded on the GPU with nvJPEG) and streamed from NVMe or network storage, GDS attacks exactly that bottleneck. It removes the second trip through DDR5, removes the bounce copy, and frees CPU cores that would otherwise sit in <code>read()</code> and <code>memcpy</code>. That matters most when several GPUs share one host memory system [15]. It combines well with streams (v5b) and <code>cuFileWrite</code> for the output.</li>
+<li><strong>Where it does not help.</strong>
+<ul>
+<li>The image is <em>already</em> in host RAM, which is our benchmark's case. GDS only changes the storage → GPU leg.</li>
+<li>A single image or small files, where setup and registration dominate.</li>
+<li>JPEG/PNG decoded on the CPU. The CPU is back in the data path, so the bounce buffer returns in another form.</li>
+<li>The bottleneck is the PCIe link itself. GDS saves a hop through host memory, but the data still crosses PCIe once.</li>
+<li>Unsupported file systems, OS or GPU, which silently fall back to compatibility mode.</li>
+<li>On a shared Colab VM we cannot assume <code>nvidia-fs</code> or a supported file system, so we did not run GDS there. Our code sample covers the host path only.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2>Limitations and future work</h2>
+<ul>
+<li><strong>Canvas and format.</strong> The output keeps the input size, so rotated corners are cropped (no &quot;expand to fit&quot; option). Only 8-bit RGB and binary PPM are supported; there is no JPEG decode.</li>
+<li><strong>Baseline fairness.</strong> The CPU baseline is single-threaded. An OpenMP or SIMD CPU version would give a fairer &quot;best CPU&quot; comparison.</li>
+<li><strong>Timing noise.</strong> Colab is a shared VM. We report the mean of 10 runs after a warm-up; adding standard deviation would show the spread.</li>
+<li><strong>v5a overlap depends on θ.</strong> Large angles need most of the source before any band can start. Streams across images (v5b) is the better design for throughput.</li>
+<li><strong>v6 texture precision.</strong> The 8-bit filter weights mean v6 is close to, but not bit-identical with, the CPU bilinear result.</li>
+<li><strong>Future work.</strong>
+<ul>
+<li>Compare against NPP <code>nppiRotate</code> and OpenCV CUDA.</li>
+<li>Add an nvJPEG + GDS + streams pipeline on a GDS-capable server.</li>
+<li>Try shared-memory staging of each block's source patch.</li>
+<li>Measure on a PCIe 4.0/5.0 GPU to see how the end-to-end ceiling moves.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2>References</h2>
+<p>[1] NVIDIA, &quot;CUDA Programming Guide,&quot; v13.4, 2026. [Online]. Available: https://docs.nvidia.com/cuda/cuda-programming-guide/</p>
+<p>[2] NVIDIA, &quot;CUDA C++ Best Practices Guide,&quot; v13.4, 2026. [Online]. Available: https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/</p>
+<p>[3] NVIDIA, &quot;CUDA Runtime API: API synchronization behavior.&quot; [Online]. Available: https://docs.nvidia.com/cuda/cuda-runtime-api/api-sync-behavior.html</p>
+<p>[4] M. Harris, &quot;How to Optimize Data Transfers in CUDA C/C++,&quot; NVIDIA Technical Blog, Dec. 4, 2012. [Online]. Available: https://developer.nvidia.com/blog/how-optimize-data-transfers-cuda-cc/</p>
+<p>[5] M. Harris, &quot;How to Overlap Data Transfers in CUDA C/C++,&quot; NVIDIA Technical Blog, Dec. 13, 2012. [Online]. Available: https://developer.nvidia.com/blog/how-overlap-data-transfers-cuda-cc/</p>
+<p>[6] PCI-SIG, &quot;PCI Express Base Specification, Revision 5.0,&quot; 2019. [Online]. Available: https://pcisig.com/specifications</p>
+<p>[7] JEDEC Solid State Technology Association, &quot;DDR5 SDRAM,&quot; JESD79-5, Jul. 2020. [Online]. Available: https://www.jedec.org/standards-documents/docs/jesd79-5d</p>
+<p>[8] NVIDIA, &quot;NVIDIA Turing GPU Architecture,&quot; whitepaper, 2018. [Online]. Available: https://images.nvidia.com/aem-dam/en-zz/Solutions/design-visualization/technologies/turing-architecture/NVIDIA-Turing-Architecture-Whitepaper.pdf</p>
+<p>[9] NVIDIA, &quot;NVIDIA T4 Tensor Core GPU.&quot; [Online]. Available: https://www.nvidia.com/en-us/data-center/tesla-t4/</p>
+<p>[10] NVIDIA, &quot;NVIDIA H100 Tensor Core GPU.&quot; [Online]. Available: https://www.nvidia.com/en-us/data-center/h100/</p>
+<p>[11] NVIDIA, &quot;NVIDIA GPUDirect Storage Overview Guide.&quot; [Online]. Available: https://docs.nvidia.com/gpudirect-storage/overview-guide/index.html</p>
+<p>[12] NVIDIA, &quot;NVIDIA GPUDirect Storage Design Guide.&quot; [Online]. Available: https://docs.nvidia.com/gpudirect-storage/design-guide/index.html</p>
+<p>[13] NVIDIA, &quot;cuFile API Reference Guide.&quot; [Online]. Available: https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html</p>
+<p>[14] NVIDIA, &quot;NVIDIA GPUDirect Storage Release Notes.&quot; [Online]. Available: https://docs.nvidia.com/gpudirect-storage/release-notes/index.html</p>
+<p>[15] A. Thompson and C. J. Newburn, &quot;GPUDirect Storage: A Direct Path Between Storage and GPU Memory,&quot; NVIDIA Technical Blog, Aug. 6, 2019. [Online]. Available: https://developer.nvidia.com/blog/gpudirect-storage/</p>
+<p>[16] J. Ravi, S. Byna, and Q. Koziol, &quot;GPU Direct I/O with HDF5,&quot; in Proc. IEEE/ACM 5th Int. Parallel Data Systems Workshop (PDSW), 2020, pp. 28-33, doi: 10.1109/PDSW51947.2020.00010.</p>
+<p>[17] Z. Qureshi et al., &quot;GPU-initiated on-demand high-throughput storage access in the BaM system architecture,&quot; in Proc. 28th ACM Int. Conf. Architectural Support for Programming Languages and Operating Systems (ASPLOS), vol. 2, 2023, pp. 325-339, doi: 10.1145/3575693.3575748.</p>
+<p>[18] G. M. Amdahl, &quot;Validity of the single processor approach to achieving large scale computing capabilities,&quot; in Proc. AFIPS Spring Joint Computer Conf., 1967, pp. 483-485, doi: 10.1145/1465482.1465560.</p>
+<p>[19] S. Williams, A. Waterman, and D. Patterson, &quot;Roofline: An insightful visual performance model for multicore architectures,&quot; Commun. ACM, vol. 52, no. 4, pp. 65-76, 2009, doi: 10.1145/1498765.1498785.</p>
+<p>[20] E. Lindholm, J. Nickolls, S. Oberman, and J. Montrym, &quot;NVIDIA Tesla: A unified graphics and computing architecture,&quot; IEEE Micro, vol. 28, no. 2, pp. 39-55, 2008, doi: 10.1109/MM.2008.31.</p>
+<p>[21] N. P. Jouppi et al., &quot;In-datacenter performance analysis of a tensor processing unit,&quot; in Proc. 44th Annu. Int. Symp. Computer Architecture (ISCA), 2017, pp. 1-12, doi: 10.1145/3079856.3080246.</p>
+<p>[22] NVIDIA, &quot;NPP: Image Geometry Transforms Functions.&quot; [Online]. Available: https://docs.nvidia.com/cuda/npp/image_geometry_transforms.html</p>
+<p>[23] NVIDIA, &quot;nvJPEG Documentation.&quot; [Online]. Available: https://docs.nvidia.com/cuda/nvjpeg/index.html</p>
+<p>[24] OpenCV, &quot;Image Warping (cudawarping module),&quot; OpenCV 4.x documentation. [Online]. Available: https://docs.opencv.org/4.x/db/d29/group__cudawarping.html</p>
+</body></html>

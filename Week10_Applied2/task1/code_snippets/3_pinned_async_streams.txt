@@ -1,0 +1,11 @@
+// v5b: batch of images over 4 streams (async copies need pinned RAM)
+CUDA_CHECK(cudaMallocHost(&h_in, n * batch));   // page-locked host
+for (int i = 0; i < batch; i++) {
+    int k = i % 4;                              // round-robin stream
+    cudaMemcpyAsync(d_in[k], h_in + i * n, n, cudaMemcpyHostToDevice,
+                    st[k]);
+    rotate_bl_2d<<<grid, block, 0, st[k]>>>(d_in[k], d_out[k], ...);
+    cudaMemcpyAsync(h_out + i * n, d_out[k], n, cudaMemcpyDeviceToHost,
+                    st[k]);    // same stream = in order, so buffers
+}                              // can be reused; streams overlap
+cudaDeviceSynchronize();       // wait for all 4 streams

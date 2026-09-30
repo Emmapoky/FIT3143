@@ -1,0 +1,42 @@
+FIT3143 Applied #2 speaker notes (target 6:30 to 6:50 at about 130 wpm)
+[x] = fill from the Colab CSV before rehearsing. Say what the CSV says.
+
+SLIDE 1 (Erwyna, 0:15)
+Hi, I'm Erwyna and this is Taabish. Taabish shows how we rotate large images on a GPU with CUDA. Then I look at the ethical cost of scaling HPC for AI, and we finish with our limitations.
+
+SLIDE 2 (Taabish, 0:20)
+An 8K frame has 33 million pixels, and each output pixel depends only on the input, so the task is data parallel. We use inverse mapping: each thread owns one output pixel and applies R transpose to find its source, so no holes and no write races.
+
+SLIDE 3 (Taabish, 0:35)
+cudaMalloc reserves both buffers in GDDR6. For host to device, the GPU's DMA copy engine pulls the bytes over PCIe. From pageable memory, the driver first copies into a pinned staging buffer. cudaMallocHost gives page-locked memory, so the DMA reads it directly and async copies can overlap. The kernel works only in GDDR6, then device to host brings the result back. PCIe is the narrow pipe: we measured [a] gigabytes per second, against 320 inside the T4.
+
+SLIDE 4 (Taabish, 0:32)
+The host allocates, copies, picks the launch configuration, launches the kernel asynchronously, then synchronises and checks errors. The device runs thousands of threads in SIMT style. Our block is 16 by 16, so 256 threads, or 8 warps of 32. For 8K the grid is 480 by 270 blocks. Each thread finds its pixel from blockIdx times blockDim plus threadIdx, and a guard drops threads past the edge.
+
+SLIDE 5 (Taabish, 0:45)
+We built one variant per CUDA feature. 2D blocks beat the 1D grid because a square tile reads a compact patch of the source, which suits the cache. Against one CPU core, the kernel alone is [K] times faster, but end to end only [E] times, because copies take [C] percent of GPU time. That is Amdahl's law: more cores cannot shrink the PCIe transfer. The kernel hits [P] percent of peak bandwidth, so it is memory bound. Pinned memory made copies [X] times faster, and streams gave [S] times on a batch.
+(Check first: if v2 is not faster than v1 in the CSV, change sentence 2.)
+
+SLIDE 6 (Taabish, 0:30)
+GPUDirect Storage lets NVMe DMA straight into GPU memory. The CPU keeps only the control path through cuFile, so the bounce buffer in host RAM goes away. Our verdict: it helps the company's bulk pipeline, which is I/O bound, if frames are raw or decoded on the GPU with nvJPEG. It does not help one photo, JPEGs decoded on the CPU, or images already in RAM.
+
+SLIDE 7 (Erwyna, 0:35)
+The IEA puts data centres at 415 terawatt hours in 2024, and about 1,200 by 2035, with GPU servers driving the growth. Frontier and LUMI use the same MI250X nodes, and their GFLOPS per watt are almost equal. But LUMI runs on hydropower and heats part of a Finnish town. So the carbon cost of a FLOP depends on the grid and heat reuse, not only the chip.
+
+SLIDE 8 (Erwyna, 0:25)
+This matters here. Johor went from 10 megawatts to over a gigawatt in about three years, and data centres could use almost a third of Peninsular electricity by 2035, on a grid that is 79 percent fossil. One myth check: AI does not emit more CO2 than aviation today. That is a 2030 projection.
+
+SLIDE 9 (Erwyna, 0:38)
+Where the compute sits decides whose law governs the data. In data-parallel training, nodes swap gradients every iteration, and gradients can leak training samples, so data residency becomes a scheduler placement rule. Security is the dual-use problem: the same accelerators train a hospital model or a military one, so the US limits their export, and since July 2025 Malaysia needs a permit for US AI chips. Fairness has a compute cost too: Malay is under 0.1 percent of web text.
+
+SLIDE 10 (Erwyna, 0:32)
+Frontier training compute grows about five times a year, and the best academic model sits about three thousand times lower. Most academics have one to eight GPUs. That is strong scaling in reverse: fewer processors, much longer wall time. NCI Gadi has 776 GPUs and demand near three times its allocation. And if only companies can train frontier models, only companies can audit them.
+
+SLIDE 11 (Erwyna, 0:38)
+UNESCO, the OECD and Malaysia's AIGE agree on values, but none gives an operator a number to report. The EU is closer: the AI Act flags models above ten to the twenty-five FLOP, and sites over 500 kilowatts must report PUE. So we propose SCALE, where each step is a Slurm setting and a reported number. Size right: stop adding GPUs when parallel efficiency drops. Carbon-aware: shifting flexible jobs cut emissions by up to 19 percent. Account every joule. Keep data lawful and local. Give equitable, fair-share access.
+
+SLIDE 12 (Erwyna, 0:32)
+Our limits. The CPU baseline is one core and Colab is a shared VM, so our speed-ups belong to that setup, and we could not run GDS. Most model energy figures are estimates, and carbon-aware gains fall to 1 to 2 percent fleet-wide. Next, we would run the rotation on a GDS server and measure its energy with Slurm. So: rotation is memory bound and PCIe sets the ceiling, and the cost of a FLOP depends on where and for whom it runs.
+
+SLIDE 13 (Erwyna, 0:05)
+Thank you. We are happy to take your questions.

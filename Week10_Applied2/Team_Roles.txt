@@ -1,0 +1,51 @@
+FIT3143 Applied #2: GPU/NPU and Exponential Growth
+Team roles: Erwyna Soo Wen Xin (36555789) and Taabish Farooq Bhat (35473932)
+
+Class: Week 10, most likely Thu 8 Oct 2026 (check Moodle). Submit BEFORE class starts.
+Worth 10 marks. 7 min talk, then about 2 min Q&A. Either of us can be asked about ANY part.
+Rubric: content 40% (Task 1 20%, Task 2 20%), presentation 20%, Q&A 40%.
+
+----------------------------------------------------------------
+TAABISH: Task 1, Image Rotation with GPU (presents about 3 min)
+----------------------------------------------------------------
+1. Own 1a, 1b and 1c. Draft answers and diagrams are in task1/.
+2. Run Applied2_Task1_Colab.ipynb on Colab (Runtime > T4 GPU), top to bottom.
+   Save the CSVs and graphs into task1/results/. Screenshot the timing table.
+   These are our real numbers, so the slides must quote them exactly.
+3. Read rotate_cuda.cu until you can explain every kernel without notes:
+   why inverse mapping, what blockIdx/threadIdx/blockDim give you, why
+   pinned memory is faster, what the streams overlap, how we timed each stage.
+4. Put the Colab graphs and the 3 code snippets onto the Task 1 slides.
+5. Drill task1/Task1_QA_Drill.md, then read Erwyna's Task 2 drill once.
+6. Send Erwyna your AI prompt records (PDF) for the declaration.
+
+Slides you present: Task 1 title, data path (1a), CUDA model (1b),
+results + speed-up (1b), GPUDirect Storage (1c).
+
+----------------------------------------------------------------
+ERWYNA: Task 2, Ethics of Scaling HPC for AI (presents about 4 min)
+----------------------------------------------------------------
+1. Own 2a to 2d. Draft report, charts and speaker notes are in task2/.
+2. Check every number on the slides against task2/references.
+3. Own the Canva deck: title, agenda, Task 2 slides, Q&A slide, appendix.
+4. Own the AI declaration (both of us, all tools, all prompt records as PDF)
+   and the final Moodle upload (slides PDF, task1 zip, task2 report PDF,
+   AI declaration PDF).
+5. Drill task2/Task2_QA_Drill.md, then read Taabish's Task 1 drill once.
+6. Book two full run throughs together. Target 6:30 to 6:50, never over 7.
+
+Slides you present: title + agenda (15 s), Task 2 slides, summary and
+limitations, Q&A.
+
+----------------------------------------------------------------
+BOTH
+----------------------------------------------------------------
+- Names, IDs and Monash emails on the title slide and every submitted file.
+- Q&A answers: verdict, then the mechanism, then our evidence. Use parallel
+  terms (SIMT, warp, occupancy, memory bound, PCIe DMA, PUE, utilisation),
+  not everyday analogies. Name the problem before giving the fix.
+- Know our own limitations and future work slide. We lost marks in Lab 2 by
+  forgetting it.
+- Only quote numbers we measured or cited. If the deck and the CSV disagree,
+  the deck is wrong.
+- No AI tools during the talk or Q&A.

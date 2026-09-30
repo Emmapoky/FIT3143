@@ -1,0 +1,11 @@
+// Each stage timed on the GPU's own clock with a pair of events
+cudaEventRecord(ev[0]);
+cudaMemcpy(d_src, h_src, bytes, cudaMemcpyHostToDevice);   // H2D
+cudaEventRecord(ev[1]);
+rotate_bl_2d<<<grid, block>>>(d_src, d_dst, w, h, r, 0, h); // kernel
+cudaEventRecord(ev[2]);
+cudaMemcpy(h_dst, d_dst, bytes, cudaMemcpyDeviceToHost);   // D2H
+cudaEventRecord(ev[3]);
+cudaEventSynchronize(ev[3]);            // host waits for the last one
+cudaEventElapsedTime(&h2d, ev[0], ev[1]);   // ms, repeat for ker, d2h
+// warm-up run discarded, then mean of 10 runs; CPU uses clock_gettime
