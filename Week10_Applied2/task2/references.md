@@ -36,11 +36,11 @@ Numbering matches Task2_Report.md, the charts and the slide content. All online 
 
 [17] S. Loo, "Data centres, energy demand and sustainability: Can Malaysia strike the right balance?" ISEAS Perspective, no. 2025/43, ISEAS Yusof Ishak Institute, Singapore, Jun. 12, 2025. [Online]. Available: https://www.iseas.edu.sg/articles-commentaries/iseas-perspective/2025-43-data-centres-energy-demand-and-sustainability-can-malaysia-strike-the-right-balance-by-sara-loo. Accessed: Sep. 30, 2026.
 
-[18] The Sun, "TNB powers 36 data centres, plans for 33.5GW peak demand by 2035," thesun.my, Jul. 2026. [Online]. Available: https://thesun.my/news/malaysia-news/tnb-powers-36-data-centres-plans-for-33-5-gw-peak-demand-by-2035/. Accessed: Sep. 30, 2026.
+[18] Bernama, "Electricity consumption of data centres expected to surge to 31 pct by 2035," BernamaBiz, Jul. 1, 2026 (reporting the Ministry of Energy Transition and Water Transformation reply to Parliament, Jun. 30, 2026). [Online]. Available: https://www.bernamabiz.com/news.php?id=2575423. Accessed: Oct. 1, 2026.
 
 [19] TNGlobal, "MBSB sees data center demand to drive Malaysia's power capacity upcycle," technode.global, Sep. 14, 2026. [Online]. Available: https://technode.global/2026/09/14/mbsb-sees-data-center-demand-to-drive-malaysias-power-capacity-upcycle/. Accessed: Sep. 30, 2026.
 
-[20] Lowyat.NET, "Johor to stop approving Tier 1 and Tier 2 data centres," lowyat.net, Nov. 2025. [Online]. Available: https://www.lowyat.net/2025/374704/johor-data-centre-approvals/. Accessed: Sep. 30, 2026.
+[20] J. Shadiqe, "Johor shuts door on water-guzzling data centres, tightens approval rules," New Straits Times, Nov. 27, 2025 (statement in the Johor State Assembly). [Online]. Available: https://www.nst.com.my/news/nation/2025/11/1324188/johor-shuts-door-water-guzzling-data-centres-tightens-approval-rules. Accessed: Oct. 1, 2026.
 
 [21] Ember, "Malaysia: Electricity data," ember-energy.org, Apr. 22, 2026. [Online]. Available: https://ember-energy.org/countries-and-regions/malaysia/. Accessed: Sep. 30, 2026.
 
@@ -145,3 +145,5 @@ Numbering matches Task2_Report.md, the charts and the slide content. All online 
 [71] SchedMD, "Fair Tree fairshare algorithm," Slurm Workload Manager documentation. [Online]. Available: https://slurm.schedmd.com/fair_tree.html. Accessed: Sep. 30, 2026.
 
 [72] D. Zhao et al., "Sustainable supercomputing for AI: GPU power capping at HPC scale," in Proc. ACM Symp. Cloud Comput. (SoCC), 2023, pp. 588-596, doi: 10.1145/3620678.3624793.
+
+[73] S. Jamison, S. Podder, A. Burden, B. Ghosh, S. Ramani, S. K. Singh, and M. Robinson, "Powering sustainable AI: Balancing growth with environmental responsibility," Accenture, 2025. [Online]. Available: https://www.accenture.com/content/dam/accenture/final/corporate/corporate-initiatives/sustainability/document/Powering-Sustainable-AI.pdf. Accessed: Oct. 1, 2026.

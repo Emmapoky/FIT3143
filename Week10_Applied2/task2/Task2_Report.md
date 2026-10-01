@@ -31,9 +31,9 @@ Method: every figure below was checked against its primary source on 30 Septembe
 
 ![Chart C1: TOP500 and Green500 June 2026](charts/C1_top500_green500_efficiency.png)
 
-**Compare and contrast: the aviation claim.** The supplementary lecture quotes a chart saying AI data centres emit more CO2 than aviation. We checked the source. The chart is an Accenture *projection for 2030*: AI data centres could reach 3.4% of global CO2, against about 2.5% for aviation today [15]. The IEA's current estimate is about 180 Mt CO2 for *all* data centres in 2024, around 0.5% of combustion emissions, rising to 300 Mt (Base) or 500 Mt (Lift-Off) by 2035 [16], [1]. So the accurate claim is: "data centres are one of the few sectors, with road transport and aviation, whose emissions are still rising" [16], not "they already exceed aviation". *Limitation:* both numbers are modelled estimates. Operators rarely publish per-site energy, which is exactly the gap Finding D2 addresses.
+**Compare and contrast: the aviation claim.** The supplementary lecture quotes a chart saying AI data centres emit more CO2 than aviation. We checked the source. The chart is built on an Accenture *projection for 2030*: AI could reach 3.4% of global CO2 emissions [73]. Accenture never mentions aviation; the comparison with aviation's roughly 2.5% today was added by media coverage [15]. The IEA's current estimate is about 180 Mt CO2 for *all* data centres in 2024, around 0.5% of combustion emissions, rising to 300 Mt (Base) or 500 Mt (Lift-Off) by 2035 [16], [1]. So the accurate claim is: "data centres are one of the few sectors, with road transport and aviation, whose emissions are still rising" [16], not "they already exceed aviation". *Limitation:* both numbers are modelled estimates. Operators rarely publish per-site energy, which is exactly the gap Finding D2 addresses.
 
-**Local lens: Malaysia.** Johor went from about 10 MW of data-centre capacity in early 2021 to about 1.3 GW by November 2024 [17]. The energy transition ministry told Parliament in July 2026 that data centres could reach up to 31% of Peninsular electricity demand by 2035, up from about 7% now [18]. By June 2026, 42 connected projects held 5.65 GW of contracted maximum demand but drew only 1.26 GW of actual load [19]. Johor stopped approving new Tier 1 and Tier 2 (high water use) data centres in November 2025 [20]. *So what:* unlike Kajaani, Johor has no cold climate for free cooling and no heating demand to absorb waste heat, and 79% of Malaysia's electricity still came from fossil fuels in 2025 [21]. The Frontier vs LUMI lesson therefore applies directly: the same GPUs in Johor carry a larger carbon and water cost per FLOP than in the Nordics.
+**Local lens: Malaysia.** Johor went from about 10 MW of data-centre capacity in early 2021 to about 1.3 GW by November 2024 [17]. The energy transition ministry told Parliament in July 2026 that data centres could use up to 31% of Peninsular electricity by 2035 (73,274 GWh), up from about 7% now [18]. By June 2026, 42 connected projects held 5.65 GW of contracted maximum demand but drew only 1.26 GW of actual load [19]. Johor stopped approving new Tier 1 and Tier 2 (high water use) data centres in November 2025 [20]. *So what:* unlike Kajaani, Johor has no cold climate for free cooling and no heating demand to absorb waste heat, and 79% of Malaysia's electricity still came from fossil fuels in 2025 [21]. The Frontier vs LUMI lesson therefore applies directly: the same GPUs in Johor carry a larger carbon and water cost per FLOP than in the Nordics.
 
 **Link to parallel computing.** Energy = power x time. Power scales with the number of GPUs switched on; time scales with how well the job is parallelised. A job that scales poorly still keeps every GPU powered while it waits on communication (all-reduce over the interconnect) or the serial fraction. Meta's Llama 3 405B run on up to 16K H100 GPUs reached a Model FLOPs Utilisation of only 38 to 43%, and had 466 job interruptions in 54 days [22]. So more than half of the peak GPU throughput, and much of the energy behind it, did no useful model work. Industry now sizes these clusters in gigawatts, not FLOPs. An H100 is rated up to 700 W [23], and with host CPUs, NICs and power supplies each GPU draws about 1.3 kW; a 100,000 GPU cluster needs over 150 MW [24]. So 1 GW feeds roughly 650,000 H100-class GPUs, not a few thousand. At that scale the interconnect and failure rate, not the chip, set the limit.
 
@@ -111,9 +111,6 @@ We combine the evidence above into a five-step checklist (Chart C4). Each step m
 
 
 
-## Generative AI declaration
-
-We used Claude (Anthropic), Gemini (Google) and ChatGPT (OpenAI) while preparing this work, as the spec allows. FIT3143_A2_AI_Declaration.pdf lists every tool, what it was used for and the full prompt records. We checked every figure against its source and edited all outputs ourselves.
 
 ## References
 
@@ -153,11 +150,11 @@ IEEE style. All online sources accessed 30 September 2026.
 
 [17] S. Loo, "Data centres, energy demand and sustainability: Can Malaysia strike the right balance?" ISEAS Perspective, no. 2025/43, ISEAS Yusof Ishak Institute, Singapore, Jun. 12, 2025. [Online]. Available: https://www.iseas.edu.sg/articles-commentaries/iseas-perspective/2025-43-data-centres-energy-demand-and-sustainability-can-malaysia-strike-the-right-balance-by-sara-loo. Accessed: Sep. 30, 2026.
 
-[18] The Sun, "TNB powers 36 data centres, plans for 33.5GW peak demand by 2035," thesun.my, Jul. 2026. [Online]. Available: https://thesun.my/news/malaysia-news/tnb-powers-36-data-centres-plans-for-33-5-gw-peak-demand-by-2035/. Accessed: Sep. 30, 2026.
+[18] Bernama, "Electricity consumption of data centres expected to surge to 31 pct by 2035," BernamaBiz, Jul. 1, 2026 (reporting the Ministry of Energy Transition and Water Transformation reply to Parliament, Jun. 30, 2026). [Online]. Available: https://www.bernamabiz.com/news.php?id=2575423. Accessed: Oct. 1, 2026.
 
 [19] TNGlobal, "MBSB sees data center demand to drive Malaysia's power capacity upcycle," technode.global, Sep. 14, 2026. [Online]. Available: https://technode.global/2026/09/14/mbsb-sees-data-center-demand-to-drive-malaysias-power-capacity-upcycle/. Accessed: Sep. 30, 2026.
 
-[20] Lowyat.NET, "Johor to stop approving Tier 1 and Tier 2 data centres," lowyat.net, Nov. 2025. [Online]. Available: https://www.lowyat.net/2025/374704/johor-data-centre-approvals/. Accessed: Sep. 30, 2026.
+[20] J. Shadiqe, "Johor shuts door on water-guzzling data centres, tightens approval rules," New Straits Times, Nov. 27, 2025 (statement in the Johor State Assembly). [Online]. Available: https://www.nst.com.my/news/nation/2025/11/1324188/johor-shuts-door-water-guzzling-data-centres-tightens-approval-rules. Accessed: Oct. 1, 2026.
 
 [21] Ember, "Malaysia: Electricity data," ember-energy.org, Apr. 22, 2026. [Online]. Available: https://ember-energy.org/countries-and-regions/malaysia/. Accessed: Sep. 30, 2026.
 
@@ -262,3 +259,5 @@ IEEE style. All online sources accessed 30 September 2026.
 [71] SchedMD, "Fair Tree fairshare algorithm," Slurm Workload Manager documentation. [Online]. Available: https://slurm.schedmd.com/fair_tree.html. Accessed: Sep. 30, 2026.
 
 [72] D. Zhao et al., "Sustainable supercomputing for AI: GPU power capping at HPC scale," in Proc. ACM Symp. Cloud Comput. (SoCC), 2023, pp. 588-596, doi: 10.1145/3620678.3624793.
+
+[73] S. Jamison, S. Podder, A. Burden, B. Ghosh, S. Ramani, S. K. Singh, and M. Robinson, "Powering sustainable AI: Balancing growth with environmental responsibility," Accenture, 2025. [Online]. Available: https://www.accenture.com/content/dam/accenture/final/corporate/corporate-initiatives/sustainability/document/Powering-Sustainable-AI.pdf. Accessed: Oct. 1, 2026.

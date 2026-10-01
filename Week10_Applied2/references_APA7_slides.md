@@ -31,6 +31,8 @@ Thompson, A., & Newburn, C. J. (2019, August 6). *GPUDirect Storage: A direct pa
 
 Ahuja, K., Diddee, H., Hada, R., Ochieng, M., Ramesh, K., Jain, P., Nambi, A., Ganu, T., Segal, S., Ahmed, M., Bali, K., & Sitaram, S. (2023). MEGA: Multilingual evaluation of generative AI. In *Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing* (pp. 4232-4267). Association for Computational Linguistics. https://doi.org/10.18653/v1/2023.emnlp-main.258
 
+Bernama. (2026, July 1). *Electricity consumption of data centres expected to surge to 31 pct by 2035*. BernamaBiz. https://www.bernamabiz.com/news.php?id=2575423
+
 Bureau of Industry and Security. (2022, October 13). Implementation of additional export controls: Certain advanced computing and semiconductor manufacturing items; supercomputer and semiconductor end use; entity list modification. *Federal Register, 87*, 62186. https://www.federalregister.gov/d/2022-21658
 
 Common Crawl. (2026). *Distribution of languages (CC-MAIN-2026-39)* [Data set]. https://commoncrawl.github.io/cc-crawl-statistics/plots/languages
@@ -47,11 +49,11 @@ Giles, M. (2025, June 27). *By 2030, AI data centers could take a bigger share o
 
 International Energy Agency. (2025). *Energy and AI*. https://www.iea.org/reports/energy-and-ai
 
+Jamison, S., Podder, S., Burden, A., Ghosh, B., Ramani, S., Singh, S. K., & Robinson, M. (2025). *Powering sustainable AI: Balancing growth with environmental responsibility*. Accenture. https://www.accenture.com/content/dam/accenture/final/corporate/corporate-initiatives/sustainability/document/Powering-Sustainable-AI.pdf
+
 Khandelwal, A., Yun, T., Nayak, N. V., Merullo, J., Bach, S. H., Sun, C., & Pavlick, E. (2025). $100K or 100 days: Trade-offs when pre-training with academic resources. In *Conference on Language Modeling*. https://arxiv.org/abs/2410.23261
 
 Loo, S. (2025, June 12). *Data centres, energy demand and sustainability: Can Malaysia strike the right balance?* (ISEAS Perspective No. 2025/43). ISEAS-Yusof Ishak Institute. https://www.iseas.edu.sg/articles-commentaries/iseas-perspective/2025-43-data-centres-energy-demand-and-sustainability-can-malaysia-strike-the-right-balance-by-sara-loo
-
-Lowyat.NET. (2025, November). *Johor to stop approving Tier 1 and Tier 2 data centres*. https://www.lowyat.net/2025/374704/johor-data-centre-approvals/
 
 LUMI consortium. (2023, March 9). *LUMI data center receives the Green Data Centre of the Year award*. https://lumi-supercomputer.eu/lumi-data-center-receives-the-green-data-centre-of-the-year-award/
 
@@ -69,9 +71,9 @@ Pilz, K. F., Sanders, J., Rahman, R., & Heim, L. (2025). *Trends in AI supercomp
 
 Radovanovic, A., Koningstein, R., Schneider, I., Chen, B., Duarte, A., Roy, B., Xiao, D., Haridasan, M., Hung, P., Care, N., Talukdar, S., Mullen, E., Smith, K., Cottman, M., & Cirne, W. (2023). Carbon-aware computing for datacenters. *IEEE Transactions on Power Systems, 38*(2), 1270-1280. https://doi.org/10.1109/TPWRS.2022.3173250
 
-Stanford Institute for Human-Centered AI. (2026). *The AI index 2026 annual report*. https://hai.stanford.edu/ai-index/2026-ai-index-report
+Shadiqe, J. (2025, November 27). *Johor shuts door on water-guzzling data centres, tightens approval rules*. New Straits Times. https://www.nst.com.my/news/nation/2025/11/1324188/johor-shuts-door-water-guzzling-data-centres-tightens-approval-rules
 
-The Sun. (2026, July). *TNB powers 36 data centres, plans for 33.5GW peak demand by 2035*. https://thesun.my/news/malaysia-news/tnb-powers-36-data-centres-plans-for-33-5-gw-peak-demand-by-2035/
+Stanford Institute for Human-Centered AI. (2026). *The AI index 2026 annual report*. https://hai.stanford.edu/ai-index/2026-ai-index-report
 
 TOP500. (2026). *Green500 list, June 2026*. https://www.top500.org/lists/green500/list/2026/06/
 

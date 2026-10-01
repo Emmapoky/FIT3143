@@ -65,3 +65,6 @@ Pageable memory forces a staging copy into a driver pinned buffer before DMA. Pi
 
 **18. (Cross, asked of Erwyna) Would GDS speed up one photo?**
 No. GDS only removes the host bounce buffer on the storage to GPU path. One photo is decoded on the CPU and is already in RAM. It helps bulk raw or nvJPEG pipelines where I/O dominates; we could not test it on Colab (no nvidia-fs, no O_DIRECT).
+
+**19. Isn't one CPU core an unfair baseline?**
+Yes, and we measured the fairer one. `rotate_cpu_omp.c` splits the row loop across all cores with OpenMP (0 mismatches against one thread). On a 14-thread laptop (M3 Max) it does 8K nearest in 14.5 ms (8.9x over one thread, 63% parallel efficiency), which actually beats the T4's 17.2 ms end to end, because the GPU pays 15.6 ms of PCIe copies. So the GPU wins only when data stays on the GPU or images are batched. Colab's own all-core number is in `results/run_cpu_omp.txt` (Colab VMs usually have only 2 vCPUs).

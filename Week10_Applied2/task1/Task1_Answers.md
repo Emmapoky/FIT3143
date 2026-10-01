@@ -188,9 +188,3 @@ Measured on a Tesla T4 (Colab), one CPU core, mean of 10 runs after warm-up, 0 m
 [23] NVIDIA, "nvJPEG Documentation." [Online]. Available: https://docs.nvidia.com/cuda/nvjpeg/index.html
 
 [24] OpenCV, "Image Warping (cudawarping module)," OpenCV 4.x documentation. [Online]. Available: https://docs.opencv.org/4.x/db/d29/group__cudawarping.html
-
----
-
-## Generative AI declaration
-
-We used Claude (Anthropic), Gemini (Google) and ChatGPT (OpenAI) while preparing this work, as the spec allows. FIT3143_A2_AI_Declaration.pdf lists every tool, what it was used for and the full prompt records. We ran, checked and edited all outputs ourselves, and every measured number comes from our own Colab T4 run.
