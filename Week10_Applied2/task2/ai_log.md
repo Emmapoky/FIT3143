@@ -22,7 +22,7 @@ For the team's Generative AI declaration, as the Applied #2 specification requir
 
 ## Corrections made to the unit's supplementary lecture after checking
 
-- GPUs per gigawatt: the lecture's estimate (about 1,000 GPUs per GW) is wrong by orders of magnitude. The correct figure is roughly 650,000 H100-class GPUs per GW [23], [24].
+- GPUs per gigawatt: the lecture's estimate (about 1,000 GPUs per GW) is wrong by orders of magnitude. The correct figure is roughly 670,000 H100-class GPUs per GW (about 1.5 kW per GPU all-in) [23], [24].
 - "AI data centres emit more CO2 than aviation": this is an Accenture 2030 projection, not a current fact [15], [16].
 - Frontier's rank and power are updated to the June 2026 TOP500 (3rd, 1.353 EFLOP/s, 24.6 MW) [5].
 

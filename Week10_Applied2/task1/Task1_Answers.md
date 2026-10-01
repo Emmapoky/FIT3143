@@ -61,13 +61,13 @@ At about 12 GB/s, one 8K frame takes roughly 8 ms each way. The kernel only has 
 | Variant | Feature | Expected effect on speed-up (mechanism) |
 |---|---|---|
 | v0 | CPU serial loop, one core | Baseline T_serial. It is also the reference answer: every GPU output is compared byte by byte (built with `--fmad=false` so rounding matches). |
-| v1 | 1D grid, 256-thread blocks | Large speed-up from data parallelism. Each thread pays for `/` and `%`, and a block covers one long thin output strip, whose source footprint is a slanted line over many rows. That means poorer cache locality for the gathered reads. |
-| v2 | 2D grid of 16 x 16 blocks | A square tile maps back to a compact square patch of the source. Its gathered reads hit L1/L2 better and writes stay **coalesced** along rows. The block sweep (g4) varies the shape; **occupancy** is limited by registers, the 1024 threads/SM cap and the max blocks per SM. Tiny blocks (8 x 4) leave SMs under-filled. |
+| v1 | 1D grid, 256-thread blocks | Large speed-up from data parallelism. Each thread pays for an integer `/` and `%` to turn its 1D id into (x, y). That is what makes v1 slower: 2.96 ms against 1.55 ms for v2. |
+| v2 | 2D grid of 16 x 16 blocks | The 2D index comes straight from `blockIdx` and `threadIdx`, with no divide or modulo, and writes stay **coalesced** along rows. Block shape barely matters for nearest: 128 x 1 takes 1.44 ms and 16 x 16 takes 1.45 ms, so the gain over v1 is the index maths, not the cache. Shape does matter for bilinear, which reads 4 neighbours (16 x 8: 2.83 ms, 64 x 4: 4.00 ms). The block sweep (g4) varies the shape; **occupancy** is limited by registers, the 1024 threads/SM cap and the max blocks per SM. Tiny blocks (8 x 4) leave SMs under-filled. |
 | v3 | Bilinear interpolation | 4 gathered reads and about 30 more flops per pixel. It is still **memory-bound**, so it costs much less than 4x on the GPU. The CPU pays for every operation serially, so the GPU speed-up for bilinear is usually *larger* than for nearest. |
 | v4 | Pageable vs pinned host memory | Pageable adds the staging copy, so there is lower PCIe bandwidth and a lower end-to-end speed-up. The kernel is unchanged. |
 | v5a | Streams, one image in 8 row chunks | A destination band can need source rows from anywhere, so each band's kernel waits (`cudaStreamWaitEvent`) only for the H2D chunks that cover its source rows. D2H of band i overlaps the kernel of band i+1. Overlap is better at small angles (5°) than large (30°). |
 | v5b | Streams, batch of 8 images on 4 streams | H2D of one image, kernel of another and D2H of a third run together (separate copy engines, full-duplex PCIe). The per-image time approaches max(H2D, D2H) instead of the sum, which is at most about 2x for a copy-dominated job (D5). |
-| v6 | Texture object, hardware bilinear | The texture unit does the 4-tap filter and border handling in hardware, through the texture cache. Its weights have only 8 fractional bits, so output may differ by 1 or 2 intensity levels. That is a quality versus speed trade-off. |
+| v6 | Texture object, hardware bilinear | The texture unit does the 4-tap filter and border handling in hardware, through the texture cache. Its weights have only 8 fractional bits, so output differs by at most 1 intensity level (measured: 257,964 bytes, 0.26% of the output). That is a quality versus speed trade-off. |
 
 ![D5](diagrams/D5_streams_timeline.png)
 
@@ -76,13 +76,15 @@ At about 12 GB/s, one 8K frame takes roughly 8 ms each way. The kernel only has 
 1. **Kernel-only speed-up.** Rotation does roughly 2 flops per byte (nearest) to 7 flops per byte (bilinear). That is far below the T4's balance point of 8.1 TFLOPS / 320 GB/s ≈ 25 flops/byte [9], [8]. So the kernel is **memory-bound** and the roofline caps it by bandwidth, not FLOPS [19]. Against a CPU that already saturates dual-channel DDR5 (76.8 GB/s), the ceiling is roughly the bandwidth ratio: about 4x for a T4 (320 GB/s) and about 44x for an H100 (3.35 TB/s). Against our *single-core* baseline the gap is far larger, because one core can neither saturate DRAM nor issue millions of independent gathers at once. The GPU has tens of thousands of threads in flight to hide latency.
 2. **End-to-end speed-up** (H2D + kernel + D2H). By Amdahl's law [18], the copies are a part that more GPU cores cannot shrink. Even with an infinitely fast kernel, S_max = T_cpu / (T_H2D + T_D2H).
 
-**Prediction for 8K, checked against the Colab run.** Our local check (`rotate_cpu.c`, `-O2`, one core of an Apple M3 Max) took **113 ms (nearest)** and **290 ms (bilinear)**. On a T4, copies take about 99.5 MB / 12 GB/s ≈ 8.3 ms each way, and the kernel is at least 199 MB / 320 GB/s ≈ 0.62 ms. That gives a kernel-only ceiling of about 180x but an end-to-end ceiling of only about 113 / 17.2 ≈ **6.6x**, with copies above 90% of GPU time. The Colab CPU is a different core, so the measured values from notebook section 10 (graphs g1 to g6) replace this estimate on the slides:
+**Prediction for 8K, checked against the Colab run.** Our local check (`rotate_cpu.c`, `-O2`, one core of an Apple M3 Max) took **113 ms (nearest)** and **290 ms (bilinear)**. On a T4, copies take about 99.5 MB / 12 GB/s ≈ 8.3 ms each way, and the kernel is at least 199 MB / 320 GB/s ≈ 0.62 ms. That gives a kernel-only ceiling of about 180x but an end-to-end ceiling of only about 113 / 17.2 ≈ **6.6x**, with copies above 90% of GPU time. The Colab CPU is a slower core than the M3 Max (509 ms vs 113 ms for nearest), which is why the measured end-to-end speed-up is larger than this estimate. The measured values from the Colab run (graphs g1 to g6) are the ones on the slides:
 
 | 8K, 30° | CPU (ms) | H2D (ms) | Kernel (ms) | D2H (ms) | Kernel SU | E2E SU |
 |---|---|---|---|---|---|---|
-| v2 nearest, pinned | *fill from Colab* | | | | | |
-| v3 bilinear, pinned | | | | | | |
-| v4 nearest, pageable | | | | | | |
+| v2 nearest, pinned | 509.3 | 8.06 | 1.55 | 7.58 | 328x | 29.6x |
+| v3 bilinear, pinned | 1302.8 | 8.06 | 2.69 | 7.59 | 484x | 71.0x |
+| v4 nearest, pageable | 509.3 | 21.67 | 1.40 | 21.71 | 364x | 11.4x |
+
+Measured on a Tesla T4 (Colab), one CPU core, mean of 10 runs after warm-up, 0 mismatched pixels for v1 to v4. Copies are 91% of the v2 time. The kernel reaches 128 GB/s, 40% of the 320 GB/s peak, so it is memory bound. Pinned memory is 2.7x faster than pageable for H2D. Streams give 1.81x on a batch of 8 images and 1.36x on one image. With a zero-time kernel, Amdahl caps the end-to-end speed-up at 509.3 / (8.06 + 7.58) = 32.6x, so 29.6x is 91% of the bound. Run to run, the v2 kernel varied from 1.45 to 2.11 ms (shared Colab GPU) while the copies stayed at 8.06 ms, so treat kernel-only speed-ups as roughly plus or minus 30%. v1 to v5 match the CPU byte for byte; v6 differs in 0.26% of bytes, by at most 1.
 
 **What moves the speed-up up:** larger images (the fixed launch and transfer latency is amortised, so the scaled speed-up grows in the Gustafson sense), batching with streams, pinned memory, keeping images resident on the GPU across several operations, and faster links (PCIe 5.0, NVLink) or GPU-side decode and I/O (nvJPEG, GDS).
 
@@ -111,7 +113,7 @@ At about 12 GB/s, one 8K frame takes roughly 8 ms each way. The kernel only has 
 
 **Verdict: beneficial for the company's bulk pipeline, not for a single photo.**
 
-- **Where it helps.** The team lead's scenario is massive numbers of high-resolution images per day. Our 1b estimate puts the rotation kernel under 10% of the per-image GPU time (graph g2 confirms or corrects this on the T4), so an end-to-end pipeline is **I/O-bound** (Amdahl again). If frames are stored raw (or decoded on the GPU with nvJPEG) and streamed from NVMe or network storage, GDS attacks exactly that bottleneck. It removes the second trip through DDR5, removes the bounce copy, and frees CPU cores that would otherwise sit in `read()` and `memcpy`. That matters most when several GPUs share one host memory system [15]. It combines well with streams (v5b) and `cuFileWrite` for the output.
+- **Where it helps.** The team lead wants to rotate lots of high-resolution images every day. On the T4 the kernel took only 1.55 of 17.19 ms (9%) of the per-image GPU time, so an end-to-end pipeline is **I/O-bound** (Amdahl again). If frames are stored raw (or decoded on the GPU with nvJPEG) and streamed from NVMe or network storage, GDS attacks exactly that bottleneck. It removes the second trip through DDR5, removes the bounce copy, and frees CPU cores that would otherwise sit in `read()` and `memcpy`. That matters most when several GPUs share one host memory system [15]. It combines well with streams (v5b) and `cuFileWrite` for the output.
 - **Where it does not help.**
   - The image is *already* in host RAM, which is our benchmark's case. GDS only changes the storage → GPU leg.
   - A single image or small files, where setup and registration dominate.
@@ -186,3 +188,9 @@ At about 12 GB/s, one 8K frame takes roughly 8 ms each way. The kernel only has 
 [23] NVIDIA, "nvJPEG Documentation." [Online]. Available: https://docs.nvidia.com/cuda/nvjpeg/index.html
 
 [24] OpenCV, "Image Warping (cudawarping module)," OpenCV 4.x documentation. [Online]. Available: https://docs.opencv.org/4.x/db/d29/group__cudawarping.html
+
+---
+
+## Generative AI declaration
+
+We used Claude (Anthropic), Gemini (Google) and ChatGPT (OpenAI) while preparing this work, as the spec allows. FIT3143_A2_AI_Declaration.pdf lists every tool, what it was used for and the full prompt records. We ran, checked and edited all outputs ourselves, and every measured number comes from our own Colab T4 run.

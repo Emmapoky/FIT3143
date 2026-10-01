@@ -1,5 +1,7 @@
 # Task 2 Q&A Drill
 
+**Team:** Erwyna Soo Wen Xin (36555789, esoo0013@student.monash.edu) and Taabish Farooq Bhat (35473932, ttaa0006@student.monash.edu)
+
 Format for every answer: **verdict**, then **mechanism** in parallel computing terms, then **evidence** with a number. Name the challenge before giving the fix. Reference numbers match `references.md`.
 
 ---
@@ -17,7 +19,7 @@ The challenge is that grid carbon intensity changes by hour, but the scheduler n
 Amdahl's law says the serial fraction caps speedup, so past some processor count each extra GPU adds little speed [68]. But every GPU still draws power while it waits on the serial part or on all-reduce communication. Energy is power times time, so poor parallel efficiency burns energy for no work; Llama 3 405B ran at only 38 to 43% MFU on up to 16K H100s [22].
 
 **5. What is data sovereignty, and how does it affect distributed training?**
-Data sovereignty means data is governed by the laws of the place where it is stored or processed. In data-parallel training every node exchanges gradients through all-reduce each iteration, and gradients can leak training samples [27], so a cluster spanning countries moves data-derived information across borders. The fix is to make residency a placement constraint for the scheduler, or use federated learning, which keeps raw data on site at the cost of more communication rounds [28].
+Data sovereignty means data is governed by the laws of the place where it is stored or processed. In data-parallel training every node exchanges gradients through all-reduce each iteration, and gradients can leak training samples [27], so a cluster spanning countries moves data-derived information across borders. The fix is to make residency a placement constraint for the scheduler, or use federated learning, which keeps raw data on site at the cost of more communication rounds [28]. Careful: FedAvg still shares updates, and [27] shows updates can leak samples, so it needs secure aggregation or differential privacy on top, at some cost to accuracy.
 
 **6. Why is Malaysia's data centre boom an ethical issue?**
 It concentrates large power and water loads on a mostly fossil grid. Johor grew from about 10 MW in 2021 to about 1.3 GW in 2024 [17], data centres could reach 31% of Peninsular demand by 2035 [18], and 79% of Malaysian electricity was fossil in 2025 [21]. Johor has stopped approving water-heavy Tier 1 and 2 designs [20], and unlike Kajaani it has no heating demand to reuse waste heat.
@@ -26,10 +28,10 @@ It concentrates large power and water loads on a mostly fossil grid. Johor grew 
 No, not today. That claim comes from an Accenture projection for 2030 reported by Sherwood News [15]. The IEA estimates all data centres emitted about 180 Mt CO2 in 2024, around 0.5% of combustion emissions, rising to 300 to 500 Mt by 2035 [16], [1]; the accurate statement is that data centre emissions are among the few still growing.
 
 **8. How many GPUs does a 1 GW AI data centre hold?**
-Roughly 650,000 H100-class GPUs, not a few thousand. An H100 is rated up to 700 W [23], and with host CPUs, NICs and power supplies each GPU needs about 1.3 kW; SemiAnalysis sizes a 100,000 GPU cluster at over 150 MW [24]. At that scale the interconnect and failure rate limit scaling: Llama 3 had 466 job interruptions in 54 days [22].
+Roughly 670,000 H100-class GPUs, not a few thousand. An H100 is rated up to 700 W [23], but with host CPUs, NICs, networking and cooling each GPU needs about 1.5 kW all-in; SemiAnalysis sizes a 100,000 GPU cluster at over 150 MW [24], and 1 GW / 1.5 kW is about 670,000. At that scale the interconnect and failure rate limit scaling: Llama 3 had 466 job interruptions in 54 days [22].
 
 **9. Why is the EU AI Act threshold written in FLOP?**
-Training compute is the one input that is measurable and scales with capability, so the Act presumes systemic risk above 10^25 FLOP [53]. That is about the same as running Frontier at its full HPL speed of 1.353 EFLOP/s for 100 days [5]. The limitation is that efficiency gains let capable models be trained below the threshold.
+Training compute is the one input that is measurable and scales with capability, so the Act presumes systemic risk above 10^25 FLOP [53]. That is about the same as running Frontier at its full HPL speed of 1.353 EFLOP/s for about 86 days (10^25 / 1.353 x 10^18 FLOP/s) [5]. The limitation is that efficiency gains let capable models be trained below the threshold.
 
 **10. How does unequal access to HPC create unfairness, in parallel computing terms?**
 Frontier-scale training needs strong scaling across tens of thousands of GPUs, which only industry can afford. Over 90% of notable 2025 models came from industry [3], the best academic model is about 3,000 times below the frontier [38], and 85% of surveyed academics had no cloud budget [40]. With 1 to 8 GPUs, wall time grows so much that frontier work and independent audits become impossible.
@@ -47,3 +49,22 @@ The AcctGatherEnergyType plugin reads RAPL, IPMI or GPU sensors, and `sacct` rep
 - **Why not just buy carbon offsets?** Offsets do not cut grid load at peak hours; scheduling and power caps reduce actual kWh at almost no cost [64], [66].
 - **Does power capping hurt performance?** Slightly. BERT capped at 150 W used 87.7% of the energy for 108.5% of the time [66]; watch for users submitting extra jobs to compensate [72].
 - **Why does tokenisation matter for fairness?** A Tamil prompt needs about 10 tokens per word [33], so it costs more inference FLOPs for the same meaning.
+
+---
+
+## More likely questions (panel, 1 Oct)
+
+**A. Why does the grid matter more than the chip?**
+Frontier and LUMI are within 3% on GFLOPS per watt (55.0 vs 53.4). Carbon per FLOP is energy times grid carbon intensity, and LUMI runs on hydropower while Malaysia's grid is 79% fossil. So the same job has a very different footprint depending on where it is scheduled.
+
+**B. 19% or 1 to 2%, which is right?**
+Both, under different conditions. Wiesner et al. got up to 19% for jobs that can wait days and be paused. Google's fleet-wide system cut 1 to 2% of power at peak-carbon hours. Plan on the lower figure for normal deadlines.
+
+**C. How is SCALE more than principles?**
+Each step maps to a scheduler setting and a reported number: Slurm ConsumedEnergy for Account, Fair Tree fairshare for Equitable, power caps and begin times for Carbon-aware. For Size right we stop adding GPUs when parallel efficiency falls below about 70%, measured from the job's speed-up. UNESCO, OECD and AIGE give values but no metric; the EU gives 10^25 FLOP and 500 kW.
+
+**D. Link the compute divide to parallel computing.**
+Same problem size, far fewer processors: with 1 to 8 GPUs instead of thousands, wall time grows roughly in proportion, so frontier-scale training is out of reach (about 3,000x less compute than the frontier). Gadi's demand at about 3x its allocation means queueing decides who can train, and so who can audit.
+
+**E. (Cross, asked of Taabish) How would you measure your kernel's energy?**
+Sample GPU power (nvidia-smi or DCGM) during the run and multiply by time. At about 70 W for 17 ms, that is roughly 1.2 J per 8K image, against about 509 ms of a CPU core. That is SCALE step A applied to our own Task 1 code.

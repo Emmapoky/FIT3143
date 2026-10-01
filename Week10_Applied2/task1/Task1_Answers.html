@@ -102,12 +102,12 @@ p { margin: 5pt 0; }
 <tr>
 <td>v1</td>
 <td>1D grid, 256-thread blocks</td>
-<td>Large speed-up from data parallelism. Each thread pays for <code>/</code> and <code>%</code>, and a block covers one long thin output strip, whose source footprint is a slanted line over many rows. That means poorer cache locality for the gathered reads.</td>
+<td>Large speed-up from data parallelism. Each thread pays for an integer <code>/</code> and <code>%</code> to turn its 1D id into (x, y). That is what makes v1 slower: 2.96 ms against 1.55 ms for v2.</td>
 </tr>
 <tr>
 <td>v2</td>
 <td>2D grid of 16 x 16 blocks</td>
-<td>A square tile maps back to a compact square patch of the source. Its gathered reads hit L1/L2 better and writes stay <strong>coalesced</strong> along rows. The block sweep (g4) varies the shape; <strong>occupancy</strong> is limited by registers, the 1024 threads/SM cap and the max blocks per SM. Tiny blocks (8 x 4) leave SMs under-filled.</td>
+<td>The 2D index comes straight from <code>blockIdx</code> and <code>threadIdx</code>, with no divide or modulo, and writes stay <strong>coalesced</strong> along rows. Block shape barely matters for nearest: 128 x 1 takes 1.44 ms and 16 x 16 takes 1.45 ms, so the gain over v1 is the index maths, not the cache. Shape does matter for bilinear, which reads 4 neighbours (16 x 8: 2.83 ms, 64 x 4: 4.00 ms). The block sweep (g4) varies the shape; <strong>occupancy</strong> is limited by registers, the 1024 threads/SM cap and the max blocks per SM. Tiny blocks (8 x 4) leave SMs under-filled.</td>
 </tr>
 <tr>
 <td>v3</td>
@@ -132,7 +132,7 @@ p { margin: 5pt 0; }
 <tr>
 <td>v6</td>
 <td>Texture object, hardware bilinear</td>
-<td>The texture unit does the 4-tap filter and border handling in hardware, through the texture cache. Its weights have only 8 fractional bits, so output may differ by 1 or 2 intensity levels. That is a quality versus speed trade-off.</td>
+<td>The texture unit does the 4-tap filter and border handling in hardware, through the texture cache. Its weights have only 8 fractional bits, so output differs by at most 1 intensity level (measured: 257,964 bytes, 0.26% of the output). That is a quality versus speed trade-off.</td>
 </tr>
 </tbody>
 </table>
@@ -142,7 +142,7 @@ p { margin: 5pt 0; }
 <li><strong>Kernel-only speed-up.</strong> Rotation does roughly 2 flops per byte (nearest) to 7 flops per byte (bilinear). That is far below the T4's balance point of 8.1 TFLOPS / 320 GB/s ≈ 25 flops/byte [9], [8]. So the kernel is <strong>memory-bound</strong> and the roofline caps it by bandwidth, not FLOPS [19]. Against a CPU that already saturates dual-channel DDR5 (76.8 GB/s), the ceiling is roughly the bandwidth ratio: about 4x for a T4 (320 GB/s) and about 44x for an H100 (3.35 TB/s). Against our <em>single-core</em> baseline the gap is far larger, because one core can neither saturate DRAM nor issue millions of independent gathers at once. The GPU has tens of thousands of threads in flight to hide latency.</li>
 <li><strong>End-to-end speed-up</strong> (H2D + kernel + D2H). By Amdahl's law [18], the copies are a part that more GPU cores cannot shrink. Even with an infinitely fast kernel, S_max = T_cpu / (T_H2D + T_D2H).</li>
 </ol>
-<p><strong>Prediction for 8K, checked against the Colab run.</strong> Our local check (<code>rotate_cpu.c</code>, <code>-O2</code>, one core of an Apple M3 Max) took <strong>113 ms (nearest)</strong> and <strong>290 ms (bilinear)</strong>. On a T4, copies take about 99.5 MB / 12 GB/s ≈ 8.3 ms each way, and the kernel is at least 199 MB / 320 GB/s ≈ 0.62 ms. That gives a kernel-only ceiling of about 180x but an end-to-end ceiling of only about 113 / 17.2 ≈ <strong>6.6x</strong>, with copies above 90% of GPU time. The Colab CPU is a different core, so the measured values from notebook section 10 (graphs g1 to g6) replace this estimate on the slides:</p>
+<p><strong>Prediction for 8K, checked against the Colab run.</strong> Our local check (<code>rotate_cpu.c</code>, <code>-O2</code>, one core of an Apple M3 Max) took <strong>113 ms (nearest)</strong> and <strong>290 ms (bilinear)</strong>. On a T4, copies take about 99.5 MB / 12 GB/s ≈ 8.3 ms each way, and the kernel is at least 199 MB / 320 GB/s ≈ 0.62 ms. That gives a kernel-only ceiling of about 180x but an end-to-end ceiling of only about 113 / 17.2 ≈ <strong>6.6x</strong>, with copies above 90% of GPU time. The Colab CPU is a slower core than the M3 Max (509 ms vs 113 ms for nearest), which is why the measured end-to-end speed-up is larger than this estimate. The measured values from the Colab run (graphs g1 to g6) are the ones on the slides:</p>
 <table>
 <thead>
 <tr>
@@ -158,33 +158,34 @@ p { margin: 5pt 0; }
 <tbody>
 <tr>
 <td>v2 nearest, pinned</td>
-<td><em>fill from Colab</em></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>509.3</td>
+<td>8.06</td>
+<td>1.55</td>
+<td>7.58</td>
+<td>328x</td>
+<td>29.6x</td>
 </tr>
 <tr>
 <td>v3 bilinear, pinned</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>1302.8</td>
+<td>8.06</td>
+<td>2.69</td>
+<td>7.59</td>
+<td>484x</td>
+<td>71.0x</td>
 </tr>
 <tr>
 <td>v4 nearest, pageable</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>509.3</td>
+<td>21.67</td>
+<td>1.40</td>
+<td>21.71</td>
+<td>364x</td>
+<td>11.4x</td>
 </tr>
 </tbody>
 </table>
+<p>Measured on a Tesla T4 (Colab), one CPU core, mean of 10 runs after warm-up, 0 mismatched pixels for v1 to v4. Copies are 91% of the v2 time. The kernel reaches 128 GB/s, 40% of the 320 GB/s peak, so it is memory bound. Pinned memory is 2.7x faster than pageable for H2D. Streams give 1.81x on a batch of 8 images and 1.36x on one image. With a zero-time kernel, Amdahl caps the end-to-end speed-up at 509.3 / (8.06 + 7.58) = 32.6x, so 29.6x is 91% of the bound. Run to run, the v2 kernel varied from 1.45 to 2.11 ms (shared Colab GPU) while the copies stayed at 8.06 ms, so treat kernel-only speed-ups as roughly plus or minus 30%. v1 to v5 match the CPU byte for byte; v6 differs in 0.26% of bytes, by at most 1.</p>
 <p><strong>What moves the speed-up up:</strong> larger images (the fixed launch and transfer latency is amortised, so the scaled speed-up grows in the Gustafson sense), batching with streams, pinned memory, keeping images resident on the GPU across several operations, and faster links (PCIe 5.0, NVLink) or GPU-side decode and I/O (nvJPEG, GDS).</p>
 <p><strong>State-of-the-art libraries.</strong> NVIDIA NPP provides <code>nppiRotate_*</code> (angle, shift, interpolation mode) [22]. OpenCV's CUDA module provides <code>cv::cuda::rotate</code> and <code>cv::cuda::warpAffine</code> [24]. nvJPEG decodes JPEG on the GPU [23], so the CPU decode step leaves the pipeline.</p>
 <p><strong>Vector (SIMD) vs GPU (SIMT) vs NPU.</strong> CPU SIMD (AVX, NEON) applies one instruction to a short fixed-width vector. Rotation's scattered gathers fit it poorly. A GPU runs thousands of scalar threads in warps, with hardware gather, a texture unit and high-bandwidth memory. That suits pixel-parallel warps like this one. An NPU (for example, the TPU's systolic matrix unit [21]) is built for dense low-precision matrix multiply. A rotation is a gather, not a matmul, so it maps poorly unless it is expressed as a grid-sample layer inside a neural network.</p>
@@ -203,7 +204,7 @@ p { margin: 5pt 0; }
 </ul>
 <p><strong>Verdict: beneficial for the company's bulk pipeline, not for a single photo.</strong></p>
 <ul>
-<li><strong>Where it helps.</strong> The team lead's scenario is massive numbers of high-resolution images per day. Our 1b estimate puts the rotation kernel under 10% of the per-image GPU time (graph g2 confirms or corrects this on the T4), so an end-to-end pipeline is <strong>I/O-bound</strong> (Amdahl again). If frames are stored raw (or decoded on the GPU with nvJPEG) and streamed from NVMe or network storage, GDS attacks exactly that bottleneck. It removes the second trip through DDR5, removes the bounce copy, and frees CPU cores that would otherwise sit in <code>read()</code> and <code>memcpy</code>. That matters most when several GPUs share one host memory system [15]. It combines well with streams (v5b) and <code>cuFileWrite</code> for the output.</li>
+<li><strong>Where it helps.</strong> The team lead wants to rotate lots of high-resolution images every day. On the T4 the kernel took only 1.55 of 17.19 ms (9%) of the per-image GPU time, so an end-to-end pipeline is <strong>I/O-bound</strong> (Amdahl again). If frames are stored raw (or decoded on the GPU with nvJPEG) and streamed from NVMe or network storage, GDS attacks exactly that bottleneck. It removes the second trip through DDR5, removes the bounce copy, and frees CPU cores that would otherwise sit in <code>read()</code> and <code>memcpy</code>. That matters most when several GPUs share one host memory system [15]. It combines well with streams (v5b) and <code>cuFileWrite</code> for the output.</li>
 <li><strong>Where it does not help.</strong>
 <ul>
 <li>The image is <em>already</em> in host RAM, which is our benchmark's case. GDS only changes the storage → GPU leg.</li>
@@ -258,4 +259,7 @@ p { margin: 5pt 0; }
 <p>[22] NVIDIA, &quot;NPP: Image Geometry Transforms Functions.&quot; [Online]. Available: https://docs.nvidia.com/cuda/npp/image_geometry_transforms.html</p>
 <p>[23] NVIDIA, &quot;nvJPEG Documentation.&quot; [Online]. Available: https://docs.nvidia.com/cuda/nvjpeg/index.html</p>
 <p>[24] OpenCV, &quot;Image Warping (cudawarping module),&quot; OpenCV 4.x documentation. [Online]. Available: https://docs.opencv.org/4.x/db/d29/group__cudawarping.html</p>
+<hr />
+<h2>Generative AI declaration</h2>
+<p>We used Claude (Anthropic), Gemini (Google) and ChatGPT (OpenAI) while preparing this work, as the spec allows. FIT3143_A2_AI_Declaration.pdf lists every tool, what it was used for and the full prompt records. We ran, checked and edited all outputs ourselves, and every measured number comes from our own Colab T4 run.</p>
 </body></html>

@@ -1,7 +1,7 @@
 # Task 2: Ethical Implications of Scaling HPC for AI
 
 **FIT3143 Parallel Computing, Applied #2** | Monash University Malaysia | 30 September 2026<br>
-Erwyna Soo Wen Xin (36555789) and Taabish Farooq Bhat (35473932)
+Erwyna Soo Wen Xin (36555789, esoo0013@student.monash.edu) and Taabish Farooq Bhat (35473932, ttaa0006@student.monash.edu)
 
 ## Summary
 
@@ -21,7 +21,7 @@ Method: every figure below was checked against its primary source on 30 Septembe
 
 ![Chart C2: IEA data-centre electricity projection](charts/C2_iea_datacentre_electricity.png)
 
-**Finding A1. Demand is rising fast, and GPU servers drive it.** Data centres used about 415 TWh in 2024, around 1.5% of world electricity, and the IEA Base Case more than doubles this to about 945 TWh by 2030 [1]. The 2026 update already estimates 485 TWh for 2025, a 17% jump in one year [4]. *Why:* the growth is driven by accelerated servers. GPU server electricity grows about 30% a year in the Base Case against 9% for conventional servers [1]. *So what:* by 2035 the cases range from about 700 TWh (Headwinds) to above 1,700 TWh (Lift-Off), with High Efficiency at about 970 TWh (Chart C2). The spread between cases is bigger than today's total, so efficiency choices made by cluster designers and users matter at planetary scale.
+**Finding A1. Demand is rising fast, and GPU servers drive it.** Data centres used about 415 TWh in 2024, around 1.5% of world electricity, and the IEA Base Case more than doubles this to about 945 TWh by 2030 [1]. The 2026 update already estimates 485 TWh for 2025, a 17% jump in one year [4]. *Why:* the growth is driven by accelerated servers. GPU server electricity grows about 30% a year in the Base Case against 9% for conventional servers [1]. *So what:* by 2035 the cases range from about 700 TWh (Headwinds) to above 1,700 TWh (Lift-Off), with High Efficiency at about 970 TWh (Chart C2). The spread between cases is bigger than today's total, so the choices cluster designers and users make now change the global total.
 
 **Finding A2. The footprint of a FLOP depends on the grid more than the chip.** Frontier (USA) and LUMI (Finland) are almost the same machine: both are HPE Cray EX235a nodes with AMD MI250X GPUs on a Slingshot-11 interconnect. On the June 2026 lists Frontier is ranked 3rd (1.353 EFLOP/s at 24.6 MW) and LUMI 11th (379.7 PFLOP/s at 7.1 MW) [5], and on the Green500 they reach 54.98 and 53.43 GFLOPS/W respectively (Chart C1) [6]. Frontier also runs at a PUE of about 1.03 at peak with warm-water cooling [7]. So both are efficient in the narrow sense. The difference is outside the rack. LUMI runs on 100% hydropower and its waste heat covers up to 20% of Kajaani's district heating, with a potential saving of 12,400 t CO2 a year [8]. *So what:* GFLOPS/W and PUE describe how well a site turns electricity into computation. They say nothing about carbon intensity (gCO2e/kWh) or heat reuse. A responsible site must report both. *Alternative that loses:* ranking sites only by Green500 score would put Frontier ahead of LUMI, which hides the real carbon gap.
 
@@ -77,9 +77,9 @@ Method: every figure below was checked against its primary source on 30 Septembe
 
 **Finding D2. Regulation is starting to require numbers.** The EU AI Act presumes a general-purpose model has systemic risk once training compute exceeds 10^25 FLOP [53], and its documentation duties include the computational resources and known or estimated energy use of training [53]. Separately, the EU Energy Efficiency Directive makes data centres of 500 kW or more report energy performance, including PUE, water use, renewable share and waste-heat reuse, to a European database [54], [55]. *Compare:* the AI Act regulates a *model* by its FLOP count; the Directive regulates a *site* by its kW. Together they cover both ends of the parallel stack. Malaysia has neither yet. Its National AI Action Plan 2026 to 2030 was released in July 2026, and an AI Governance Bill is still in public consultation [56]. *Limitation:* a FLOP threshold is a proxy. Efficiency gains mean a capable model can be trained under 10^25 FLOP.
 
-**Finding D3. Green AI turns efficiency into a research metric.** Schwartz et al. argued that efficiency should be an evaluation criterion alongside accuracy, and that papers should report the floating point operations (FPO) needed for a result [57]. Varoquaux, Luccioni and Whittaker (FAccT 2025) go further: compute demand grows faster than model performance, and the bigger-is-better paradigm concentrates power; they ask every study to report compute cost, energy and memory for training and inference [58]. *Why it works:* what gets reported gets optimised. The Software Carbon Intensity specification, now ISO/IEC 21031:2024, gives a formula for this: SCI = ((E x I) + M) per R, that is, energy times grid intensity plus embodied carbon, per functional unit [59].
+**Finding D3. Green AI turns efficiency into a research metric.** Schwartz et al. argued that efficiency should be an evaluation criterion alongside accuracy, and that papers should report the floating point operations (FPO) needed for a result [57]. Varoquaux, Luccioni and Whittaker (FAccT 2025) go further: compute demand grows faster than model performance, and the bigger-is-better paradigm concentrates power; they ask every study to report compute cost, energy and memory for training and inference [58]. *Why it works:* once people have to report a number, they try to lower it. The Software Carbon Intensity specification, now ISO/IEC 21031:2024, gives a formula for this: SCI = ((E x I) + M) per R, that is, energy times grid intensity plus embodied carbon, per functional unit [59].
 
-**Finding D4. The scheduler is where ethics becomes a mechanism.** Three tools already exist in production HPC.
+**Finding D4. The scheduler is where we can actually enforce this.** Three tools already exist in production HPC.
 1. *Energy accounting.* Slurm's AcctGatherEnergyType plugins (RAPL, IPMI, GPU) record joules per job, and `sacct` reports them as ConsumedEnergy [60], [61]. NVIDIA DCGM gives per-job GPU energy through prologue and epilogue scripts [62]. *Limitation:* Slurm warns the figure is only exact for exclusive node allocations [61]. This matters because fewer than 30% of surveyed HPC users know their own energy use; Kamatar et al. propose charging allocations in energy or carbon instead of core-hours [63].
 2. *Carbon-aware scheduling.* Google's carbon-intelligent system shifts flexible work using day-ahead carbon forecasts and "virtual capacity curves"; its fleet trial cut power by 1 to 2% in the highest-carbon hours [64]. Wiesner et al. showed that ML jobs which can wait until later in the week can cut emissions by up to about 19% when jobs can be paused and resumed [65]. *Why:* grid carbon intensity varies by hour and day, and many batch jobs have slack in their deadline.
 3. *Power capping and idle power-down.* Capping GPUs from 250 W to 150 W for BERT training used 87.7% of the energy for 108.5% of the time [66]. Slurm's power-saving mode suspends idle nodes after SuspendTime [67]. *Alternative that loses:* buying offsets does not reduce grid load at peak hours, and the scheduler options above cost almost nothing.
@@ -109,6 +109,11 @@ We combine the evidence above into a five-step checklist (Chart C4). Each step m
 4. **Malaysian data is thin.** Malaysia has no public equivalent of the EU data-centre energy database, so our Johor figures rely on parliamentary answers, analyst reports and news. That gap is itself one of our recommendations.
 5. **Future work.** (i) Measure it ourselves: enable Slurm energy accounting on a small cluster and compare the energy of a strong-scaling sweep (1 to 16 GPUs) for our Task 1 CUDA kernel. (ii) Test a simple carbon-aware delay policy using hourly grid-intensity data for Peninsular Malaysia. (iii) Track the EU data-centre rating scheme proposed in September 2026 [54] and Malaysia's planned AI Governance Bill.
 
+
+
+## Generative AI declaration
+
+We used Claude (Anthropic), Gemini (Google) and ChatGPT (OpenAI) while preparing this work, as the spec allows. FIT3143_A2_AI_Declaration.pdf lists every tool, what it was used for and the full prompt records. We checked every figure against its source and edited all outputs ourselves.
 
 ## References
 

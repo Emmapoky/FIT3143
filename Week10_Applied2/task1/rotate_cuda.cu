@@ -140,8 +140,8 @@ __global__ void rotate_nn_1d(const u8 *__restrict__ src,
 }
 
 // v2: 2D grid of 2D blocks. blockIdx picks the output tile, threadIdx the
-// pixel inside it. A square tile maps back to a square patch of the
-// source, so its gathered reads stay close together in the cache.
+// pixel inside it. No divide or modulo like v1, which is why it is
+// faster. Our sweep shows shape barely matters for nearest (128x1 ~ 16x16).
 // y0..y1 lets the streams version run one band of rows at a time.
 __global__ void rotate_nn_2d(const u8 *__restrict__ src,
                              u8 *__restrict__ dst, int w, int h, Rot r,
