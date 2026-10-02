@@ -5,6 +5,7 @@
  * Team:
  *   Erwyna Soo Wen Xin  36555789  esoo0013@student.monash.edu
  *   Taabish Farooq Bhat 35473932  ttaa0006@student.monash.edu
+ * Task 1 (this file): Taabish Farooq Bhat
  *
  * Rotates an RGB image counterclockwise by theta about its centre using
  * R = [[cos t, -sin t], [sin t, cos t]]. Every variant below shows one
@@ -72,6 +73,7 @@ __host__ __device__ inline void src_coord(const Rot r, int x, int y,
     *sy = r.cy + r.s * dx + r.c * dy;
 }
 
+// Nearest neighbour for one output pixel: round the source point and copy.
 __host__ __device__ inline void pixel_nearest(const u8 *src, u8 *dst,
                                               int w, int h, const Rot r,
                                               int x, int y)
@@ -102,6 +104,7 @@ __host__ __device__ inline float fetch(const u8 *src, int w, int h,
     return (float)src[((size_t)y * w + x) * 3 + ch];
 }
 
+// Bilinear for one output pixel: blend the 4 nearest source pixels.
 __host__ __device__ inline void pixel_bilinear(const u8 *src, u8 *dst,
                                                int w, int h, const Rot r,
                                                int x, int y)
@@ -208,6 +211,7 @@ static double now_ms(void)
     return t.tv_sec * 1e3 + t.tv_nsec / 1e6;
 }
 
+// Milliseconds between two recorded CUDA events (GPU clock).
 static float event_ms(cudaEvent_t a, cudaEvent_t b)
 {
     float ms;
@@ -238,6 +242,7 @@ static void make_test_image(u8 *img, int w, int h)
         }
 }
 
+// Skips whitespace and # comments in a PPM header.
 static int skip_ws_comments(FILE *f)
 {
     int c = fgetc(f);
@@ -288,6 +293,7 @@ static u8 *read_ppm(const char *path, int *w, int *h)
     return img;
 }
 
+// Saves an RGB image as a binary P6 PPM file.
 static void write_ppm(const char *path, const u8 *img, int w, int h)
 {
     FILE *f = fopen(path, "wb");
@@ -300,6 +306,7 @@ static void write_ppm(const char *path, const u8 *img, int w, int h)
     fclose(f);
 }
 
+// v0: serial CPU rotation, also the reference answer for every check.
 static void rotate_cpu(const u8 *src, u8 *dst, int w, int h, Rot r,
                        int bilinear)
 {
@@ -317,6 +324,7 @@ struct Check {
     int max_diff;    // largest absolute difference in intensity levels
 };
 
+// Counts bytes that differ between two images and the largest difference.
 static Check compare(const u8 *a, const u8 *b, size_t n)
 {
     Check c = {0, 0};
@@ -348,12 +356,14 @@ struct Gpu {
     cudaEvent_t ev[4];
 };
 
+// Rounds the grid up so every pixel gets a thread.
 static dim3 grid_for(dim3 block, int w, int rows)
 {
     // Round up so the ragged right and bottom edges still get threads.
     return dim3((w + block.x - 1) / block.x, (rows + block.y - 1) / block.y);
 }
 
+// Launches the kernel for variant k on a band of rows in stream st.
 static void launch(const Gpu &g, Kind k, dim3 block, cudaStream_t st,
                    int y0, int y1)
 {
@@ -385,6 +395,7 @@ static void launch(const Gpu &g, Kind k, dim3 block, cudaStream_t st,
     CUDA_CHECK_LAUNCH();
 }
 
+// v6: wraps the source in a texture object with hardware bilinear.
 static void setup_texture(Gpu &g)
 {
     cudaDeviceProp p;
@@ -468,6 +479,7 @@ static double time_kernel(Gpu &g, Kind k, dim3 block, int reps)
 static FILE *g_csv = NULL;
 static double g_angle = 30.0;
 
+// Writes one result row to the CSV file used for the graphs.
 static void csv_row(const char *section, const char *variant, int w, int h,
                     const char *block, Stage s, double cpu, double bytes,
                     Check c, double occ)
@@ -487,6 +499,7 @@ static void csv_row(const char *section, const char *variant, int w, int h,
     fflush(g_csv);
 }
 
+// Prints one row of the results table to the terminal.
 static void print_row(const char *name, Stage s, double cpu, Check c)
 {
     printf("%-28s %8.3f %9.3f %8.3f %9.3f %9.1fx %8.1fx %10zu %4d\n", name,
@@ -494,6 +507,7 @@ static void print_row(const char *name, Stage s, double cpu, Check c)
            c.max_diff);
 }
 
+// Prints the GPU name, SM count and memory so runs can be compared.
 static void print_device(void)
 {
     cudaDeviceProp p;

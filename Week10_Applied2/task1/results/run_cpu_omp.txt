@@ -1,0 +1,4 @@
+nproc: 2
+8K 7680x4320, 30.0 deg, up to 2 threads (OpenMP)
+  nearest   1 thread    503.6 ms | 2 threads    470.0 ms | 1.07x, efficiency 54% | mismatch 0
+  bilinear  1 thread   1246.9 ms | 2 threads   1108.3 ms | 1.13x, efficiency 56% | mismatch 0

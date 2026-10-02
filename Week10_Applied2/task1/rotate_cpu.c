@@ -5,6 +5,7 @@
  * Team:
  *   Erwyna Soo Wen Xin  36555789  esoo0013@student.monash.edu
  *   Taabish Farooq Bhat 35473932  ttaa0006@student.monash.edu
+ * Task 1 (this file): Taabish Farooq Bhat
  *
  * Plain C copy of the v0 baseline in rotate_cuda.cu (same maths, same
  * rounding). It runs anywhere, so we used it to test the rotation maths
@@ -29,6 +30,7 @@ typedef struct {
     float cx, cy; /* centre of rotation */
 } Rot;
 
+/* Builds cos, sin and the image centre for a rotation in degrees. */
 static Rot make_rot(double deg, int w, int h)
 {
     Rot r;
@@ -53,6 +55,7 @@ static void src_coord(Rot r, int x, int y, float *sx, float *sy)
     *sy = r.cy + r.s * dx + r.c * dy;
 }
 
+/* Serial nearest neighbour rotation, one pixel at a time. */
 static void rotate_nearest(const u8 *src, u8 *dst, int w, int h, Rot r)
 {
     for (int y = 0; y < h; y++)
@@ -70,6 +73,7 @@ static void rotate_nearest(const u8 *src, u8 *dst, int w, int h, Rot r)
         }
 }
 
+/* Reads one channel of a source pixel, or 0 if it is off the image. */
 static float fetch(const u8 *src, int w, int h, int x, int y, int ch)
 {
     if (x < 0 || x >= w || y < 0 || y >= h)
@@ -77,6 +81,7 @@ static float fetch(const u8 *src, int w, int h, int x, int y, int ch)
     return (float)src[((size_t)y * w + x) * 3 + ch];
 }
 
+/* Serial bilinear rotation: blends the 4 nearest source pixels. */
 static void rotate_bilinear(const u8 *src, u8 *dst, int w, int h, Rot r)
 {
     for (int y = 0; y < h; y++)
@@ -98,6 +103,7 @@ static void rotate_bilinear(const u8 *src, u8 *dst, int w, int h, Rot r)
         }
 }
 
+/* Wall-clock time in milliseconds for timing the CPU. */
 static double now_ms(void)
 {
     struct timespec t;
@@ -105,6 +111,7 @@ static double now_ms(void)
     return t.tv_sec * 1e3 + t.tv_nsec / 1e6;
 }
 
+/* Makes a random RGB test image. */
 static u8 *random_image(int w, int h)
 {
     size_t n = (size_t)w * h * 3;
@@ -116,6 +123,7 @@ static u8 *random_image(int w, int h)
 
 static int g_fail = 0;
 
+/* Prints PASS or FAIL for one self-test and counts failures. */
 static void report(const char *name, int ok)
 {
     printf("  %-52s %s\n", name, ok ? "PASS" : "FAIL");
@@ -140,6 +148,7 @@ static int matches_perm(const u8 *src, const u8 *dst, int n, int kind)
     return 1;
 }
 
+/* Checks the maths: identity, exact 90/180/270 turns, direction. */
 static void self_tests(void)
 {
     printf("Self-tests\n");
@@ -214,6 +223,7 @@ static void self_tests(void)
     free(dst);
 }
 
+/* Runs the self-tests, then times an 8K rotation on one core. */
 int main(int argc, char **argv)
 {
     double angle = argc > 1 ? atof(argv[1]) : 30.0;

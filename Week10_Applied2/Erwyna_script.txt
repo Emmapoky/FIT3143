@@ -22,7 +22,7 @@ SLIDE 13, SCALE (0:35)
 UNESCO, the OECD and Malaysia's AIGE agree on values, but give operators no number to report. The EU is closer: the AI Act flags models above ten to the twenty-five FLOP, and sites over 500 kilowatts must report PUE. So we propose SCALE, where each step is a Slurm setting and a reported number. Size right: stop adding GPUs when parallel efficiency drops. Carbon-aware: jobs that can wait days and be paused cut CO2 by up to 19 percent. Account every joule. Keep data lawful and local. Give fair-share access.
 
 SLIDE 14, limitations (0:28)
-Our limits: a one-core CPU baseline on a shared Colab VM, so our speed-ups belong to that setup, and no GDS test. Most model energy figures are estimates, and Google's fleet only saved 1 to 2 percent at peak-carbon hours. Next, we would run it on a GDS server and measure energy with Slurm. So: rotation is memory bound and PCIe sets the ceiling, and the cost of a FLOP depends on where and for whom it runs.
+Our limits: a one-core CPU baseline on a shared Colab VM, so our speed-ups belong to that setup, and no GDS test. Most model energy figures are estimates, so we measured ours: about 0.7 joules per 8K image on the T4. Google's fleet only saved 1 to 2 percent at peak-carbon hours. Next, a GDS server and Slurm energy accounting. So: rotation is memory bound and PCIe sets the ceiling, and the cost of a FLOP depends on where and for whom it runs.
 
 SLIDE 15, Q&A (0:03)
 Thank you. Any questions?

@@ -14,7 +14,7 @@ SLIDE 5, code proof (0:20)
 Here is the kernel from our submission. Each thread finds its pixel from blockIdx times blockDim plus threadIdx, and a guard drops threads past the edge. It applies R transpose to find the source pixel, so every output pixel has exactly one writer. The launch rounds the grid up, and we check the error straight after because launches are asynchronous.
 
 SLIDE 6 (0:38)
-We built one variant per CUDA feature. The 2D grid beat the 1D grid, 1.55 against 2.96 milliseconds, because the 1D version pays a divide and modulo per thread. Not the cache: a 128 by 1 block is just as fast. Against one CPU core the kernel is 328 times faster, but end to end only 29.6, because copies take 91 percent of the time, so Amdahl caps us at 32.6. At 128 gigabytes per second, 40 percent of peak, the kernel is memory bound.
+We built one variant per CUDA feature. The 2D grid beat the 1D grid, 1.55 against 2.96 milliseconds, because the 1D version pays a divide and modulo per thread. Even against all of Colab's CPU cores the GPU wins, but a 14-thread laptop beats it end to end. Against one CPU core the kernel is 328 times faster, but end to end only 29.6, because copies take 91 percent of the time, so Amdahl caps us at 32.6. At 128 gigabytes per second, 40 percent of peak, the kernel is memory bound.
 
 SLIDE 7 (0:30)
 GPUDirect Storage lets NVMe DMA straight into GPU memory. The CPU keeps only the control path through cuFile, so the bounce buffer in host RAM goes away. So for the company, yes, but only for the bulk pipeline, and only if frames are raw or decoded on the GPU with nvJPEG. It does not help one photo, JPEGs decoded on the CPU, or images already in RAM.
@@ -44,7 +44,7 @@ SLIDE 13, SCALE (0:35)
 UNESCO, the OECD and Malaysia's AIGE agree on values, but give operators no number to report. The EU is closer: the AI Act flags models above ten to the twenty-five FLOP, and sites over 500 kilowatts must report PUE. So we propose SCALE, where each step is a Slurm setting and a reported number. Size right: stop adding GPUs when parallel efficiency drops. Carbon-aware: jobs that can wait days and be paused cut CO2 by up to 19 percent. Account every joule. Keep data lawful and local. Give fair-share access.
 
 SLIDE 14, limitations (0:28)
-Our limits: a one-core CPU baseline on a shared Colab VM, so our speed-ups belong to that setup, and no GDS test. Most model energy figures are estimates, and Google's fleet only saved 1 to 2 percent at peak-carbon hours. Next, we would run it on a GDS server and measure energy with Slurm. So: rotation is memory bound and PCIe sets the ceiling, and the cost of a FLOP depends on where and for whom it runs.
+Our limits: a one-core CPU baseline on a shared Colab VM, so our speed-ups belong to that setup, and no GDS test. Most model energy figures are estimates, so we measured ours: about 0.7 joules per 8K image on the T4. Google's fleet only saved 1 to 2 percent at peak-carbon hours. Next, a GDS server and Slurm energy accounting. So: rotation is memory bound and PCIe sets the ceiling, and the cost of a FLOP depends on where and for whom it runs.
 
 SLIDE 15, Q&A (0:03)
 Thank you. Any questions?

@@ -1,0 +1,5 @@
+kernel,threads,ms,speedup_vs_1core,parallel_efficiency,mismatch
+nearest,1,503.640,1.00,1.00,0
+nearest,2,469.995,1.07,0.54,0
+bilinear,1,1246.892,1.00,1.00,0
+bilinear,2,1108.255,1.13,0.56,0

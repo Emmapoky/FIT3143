@@ -1,7 +1,8 @@
 # Task 2: Ethical Implications of Scaling HPC for AI
 
 **FIT3143 Parallel Computing, Applied #2** | Monash University Malaysia | 30 September 2026<br>
-Erwyna Soo Wen Xin (36555789, esoo0013@student.monash.edu) and Taabish Farooq Bhat (35473932, ttaa0006@student.monash.edu)
+Erwyna Soo Wen Xin (36555789, esoo0013@student.monash.edu) and Taabish Farooq Bhat (35473932, ttaa0006@student.monash.edu)<br>
+**Task 2 author:** Erwyna Soo Wen Xin
 
 ## Summary
 

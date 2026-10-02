@@ -67,4 +67,4 @@ Each step maps to a scheduler setting and a reported number: Slurm ConsumedEnerg
 Same problem size, far fewer processors: with 1 to 8 GPUs instead of thousands, wall time grows roughly in proportion, so frontier-scale training is out of reach (about 3,000x less compute than the frontier). Gadi's demand at about 3x its allocation means queueing decides who can train, and so who can audit.
 
 **E. (Cross, asked of Taabish) How would you measure your kernel's energy?**
-Sample GPU power (nvidia-smi or DCGM) during the run and multiply by time. At about 70 W for 17 ms, that is roughly 1.2 J per 8K image, against about 509 ms of a CPU core. That is SCALE step A applied to our own Task 1 code.
+We measured it. nvidia-smi sampled board power every 50 ms while the 8K pipelines ran 100 times: idle 10.2 W, busy 41.1 W, so v2 nearest uses about 0.71 J per 8K image (17.16 ms), 0.53 J above idle. CPU energy could not be read on the Colab VM (no RAPL). That is SCALE step A applied to our own Task 1 code (results/energy_summary.txt).

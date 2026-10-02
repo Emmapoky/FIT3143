@@ -2,6 +2,8 @@
 
 **Team:** Erwyna Soo Wen Xin (36555789, esoo0013@student.monash.edu) and Taabish Farooq Bhat (35473932, ttaa0006@student.monash.edu)
 
+**Task 1 author:** Taabish Farooq Bhat
+
 **Artefacts:** `rotate_cuda.cu` (CUDA prototype, variants v0 to v6), `Applied2_Task1_Colab.ipynb` (build, run, sweeps, graphs), `rotate_cpu.c` (CPU check of the maths), `diagrams/` (D1 to D5), `code_snippets/`.
 
 **The problem.** Rotate a W x H RGB image counterclockwise by θ about its centre with R = [[cos θ, -sin θ], [sin θ, cos θ]]. Each output pixel depends only on the input image, so the task is **data-parallel** with no dependencies between pixels. An 8K frame (7680 x 4320 x 3 bytes) is 99.5 MB and has 33.2 million independent work items.

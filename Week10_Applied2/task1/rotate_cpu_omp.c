@@ -5,6 +5,7 @@
  * Team:
  *   Erwyna Soo Wen Xin  36555789  esoo0013@student.monash.edu
  *   Taabish Farooq Bhat 35473932  ttaa0006@student.monash.edu
+ * Task 1 (this file): Taabish Farooq Bhat
  *
  * Same maths and rounding as v0 in rotate_cuda.cu and rotate_cpu.c, but
  * the row loop is split across all CPU cores with OpenMP. One core is an
@@ -32,6 +33,7 @@ typedef struct {
     float cx, cy; /* centre of rotation */
 } Rot;
 
+/* Builds cos, sin and the image centre for a rotation in degrees. */
 static Rot make_rot(double deg, int w, int h)
 {
     Rot r;
@@ -54,6 +56,7 @@ static void src_coord(Rot r, int x, int y, float *sx, float *sy)
     *sy = r.cy + r.s * dx + r.c * dy;
 }
 
+/* Reads one channel of a source pixel, or 0 if it is off the image. */
 static float fetch(const u8 *src, int w, int h, int x, int y, int ch)
 {
     if (x < 0 || x >= w || y < 0 || y >= h)
@@ -81,6 +84,7 @@ static void rotate_nearest(const u8 *src, u8 *dst, int w, int h, Rot r)
         }
 }
 
+/* Bilinear rotation, rows split across threads like nearest. */
 static void rotate_bilinear(const u8 *src, u8 *dst, int w, int h, Rot r)
 {
 #pragma omp parallel for schedule(static)
@@ -103,6 +107,7 @@ static void rotate_bilinear(const u8 *src, u8 *dst, int w, int h, Rot r)
         }
 }
 
+/* Wall-clock time in milliseconds. */
 static double now_ms(void)
 {
     struct timespec t;
@@ -110,6 +115,7 @@ static double now_ms(void)
     return t.tv_sec * 1e3 + t.tv_nsec / 1e6;
 }
 
+/* How many threads OpenMP will use (1 if built without it). */
 static int max_threads(void)
 {
 #ifdef _OPENMP
@@ -119,6 +125,7 @@ static int max_threads(void)
 #endif
 }
 
+/* Sets the OpenMP thread count for the next timed run. */
 static void use_threads(int n)
 {
 #ifdef _OPENMP
@@ -142,6 +149,7 @@ static double time_it(int bl, const u8 *src, u8 *dst, int w, int h, Rot r,
     return (now_ms() - t0) / reps;
 }
 
+/* Times 8K rotation on 1 thread and on all threads, checks they match. */
 int main(int argc, char **argv)
 {
     double angle = argc > 1 ? atof(argv[1]) : 30.0;

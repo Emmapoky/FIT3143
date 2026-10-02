@@ -1,0 +1,5 @@
+Colab Tesla T4, 1 Oct 2026. GPU power sampled with nvidia-smi every 50 ms while
+./rotate_cuda --mode main --reps 100 ran (8K, 30 degrees). 432 samples.
+GPU idle 10.2 W, busy 41.1 W (374 samples above idle + 3 W)
+ENERGY v2 8K: 17.16 ms/image, 0.705 J/image, 0.530 J above idle
+CPU energy: RAPL not exposed on the Colab VM (not measurable)
