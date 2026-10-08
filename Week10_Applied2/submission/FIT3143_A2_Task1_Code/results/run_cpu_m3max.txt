@@ -1,0 +1,18 @@
+# rotate_cpu.c on one core of an Apple M3 Max (local check before the Colab run)
+# Build: cc -O2 -ffp-contract=off -o rotate_cpu rotate_cpu.c -lm   (Apple clang version 21.0.0 (clang-2100.1.1.101))
+# Date: 2026-10-08   Three runs of ./rotate_cpu 30
+
+## run 1
+8K timing: 7680x4320 RGB (99.5 MB), 30.0 deg, one core
+  nearest      108.3 ms  (306.3 Mpixel/s)
+  bilinear     284.9 ms  (116.5 Mpixel/s)
+
+## run 2
+8K timing: 7680x4320 RGB (99.5 MB), 30.0 deg, one core
+  nearest      113.3 ms  (292.9 Mpixel/s)
+  bilinear     295.7 ms  (112.2 Mpixel/s)
+
+## run 3
+8K timing: 7680x4320 RGB (99.5 MB), 30.0 deg, one core
+  nearest      107.8 ms  (307.7 Mpixel/s)
+  bilinear     288.8 ms  (114.9 Mpixel/s)

@@ -1,0 +1,260 @@
+<!doctype html><html><head><meta charset='utf-8'><title>FIT3143 Applied 2 Task2 Report</title><style>
+body { font-family: -apple-system, Helvetica, Arial, sans-serif;
+       font-size: 10.5pt; line-height: 1.45; color: #1F2933;
+       max-width: 180mm; margin: 0 auto; }
+h1 { font-size: 18pt; margin-bottom: 4pt; }
+h2 { font-size: 14pt; color: #2F6DB5; border-bottom: 1px solid #ccd;
+     padding-bottom: 2pt; margin-top: 18pt; }
+img { width: 100%; border: 1px solid #e3e6ea; margin: 6pt 0; }
+table { border-collapse: collapse; width: 100%; font-size: 9pt;
+        margin: 6pt 0; }
+th, td { border: 1px solid #c9ced6; padding: 3pt 5pt; vertical-align: top;
+         text-align: left; }
+th { background: #EEF3FA; }
+code { font-size: 9pt; background: #F3F4F6; padding: 0 2pt; }
+hr { border: none; border-top: 1px solid #e3e6ea; margin: 14pt 0; }
+p { margin: 5pt 0; }
+@page { size: A4; margin: 15mm 14mm; }
+</style></head><body><h1>Task 2: Ethical Implications of Scaling HPC for AI</h1>
+<p><strong>FIT3143 Parallel Computing, Applied #2</strong> | Monash University Malaysia | 30 September 2026<br>
+Erwyna Soo Wen Xin (36555789, esoo0013@student.monash.edu) and Taabish Farooq Bhat (35473932, ttaa0006@student.monash.edu)<br>
+<strong>Task 2 author:</strong> Erwyna Soo Wen Xin</p>
+<h2>Summary</h2>
+<p>Modern AI is a parallel computing workload: dense matrix operations spread across tens of thousands of GPUs joined by a high-speed interconnect. Scaling that workload creates four ethical problems, and each one has a parallel computing cause and a parallel computing fix.</p>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Core problem</th>
+<th>Parallel computing cause</th>
+<th>Headline number</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(a) Energy and environment</td>
+<td>Data-centre electricity could roughly triple by 2035</td>
+<td>Accelerated servers, low utilisation, grid carbon</td>
+<td>415 TWh (2024) to about 1,200 TWh (2035 Base) [1]</td>
+</tr>
+<tr>
+<td>(b) Governance, security, fairness</td>
+<td>Data and chips cross borders; low-resource languages are underserved</td>
+<td>Data-parallel training, gradient exchange, tokenisation</td>
+<td>Malay is 0.086% of Common Crawl [2]</td>
+</tr>
+<tr>
+<td>(c) Access</td>
+<td>Frontier AI needs a cluster only industry can buy</td>
+<td>Strong scaling needs many GPUs</td>
+<td>Over 90% of notable 2025 models from industry [3]</td>
+</tr>
+<tr>
+<td>(d) Frameworks</td>
+<td>Principles exist but lack metrics</td>
+<td>Scheduler, accounting and placement are the levers</td>
+<td>Our SCALE checklist (Chart C4)</td>
+</tr>
+</tbody>
+</table>
+<p>Method: every figure below was checked against its primary source on 30 September 2026. Where a claim from the unit's supplementary lecture did not survive checking, we say so (see the aviation comparison in (a) and the GPUs-per-gigawatt estimate).</p>
+<h2>(a) Environmental and energy impact</h2>
+<p><img src="charts/C2_iea_datacentre_electricity.png" alt="Chart C2: IEA data-centre electricity projection" /></p>
+<p><em>Chart C2. Source: IEA, Energy and AI, April 2025 [1]; 2025 point: IEA, Key Questions on Energy and AI, April 2026 [4]. Only the years published by the IEA are plotted; lines join published points.</em></p>
+<p><strong>Finding A1. Demand is rising fast, and GPU servers drive it.</strong> Data centres used about 415 TWh in 2024, around 1.5% of world electricity, and the IEA Base Case more than doubles this to about 945 TWh by 2030 [1]. The 2026 update already estimates 485 TWh for 2025, a 17% jump in one year [4]. <em>Why:</em> the growth is driven by accelerated servers. GPU server electricity grows about 30% a year in the Base Case against 9% for conventional servers [1]. <em>So what:</em> by 2035 the cases range from about 700 TWh (Headwinds) to above 1,700 TWh (Lift-Off), with High Efficiency at about 970 TWh (Chart C2). The spread between cases is bigger than today's total, so the choices cluster designers and users make now change the global total.</p>
+<p><strong>Finding A2. The footprint of a FLOP depends on the grid more than the chip.</strong> Frontier (USA) and LUMI (Finland) are almost the same machine: both are HPE Cray EX235a nodes with AMD MI250X GPUs on a Slingshot-11 interconnect. On the June 2026 lists Frontier is ranked 3rd (1.353 EFLOP/s at 24.6 MW) and LUMI 11th (379.7 PFLOP/s at 7.1 MW) [5], and on the Green500 they reach 54.98 and 53.43 GFLOPS/W respectively (Chart C1) [6]. Frontier also runs at a PUE of about 1.03 at peak with warm-water cooling [7]. So both are efficient in the narrow sense. The difference is outside the rack. LUMI runs on 100% hydropower and its waste heat covers up to 20% of Kajaani's district heating, with a potential saving of 12,400 t CO2 a year [8]. <em>So what:</em> GFLOPS/W and PUE describe how well a site turns electricity into computation. They say nothing about carbon intensity (gCO2e/kWh) or heat reuse. A responsible site must report both. <em>Alternative that loses:</em> ranking sites only by Green500 score would put Frontier ahead of LUMI, which hides the real carbon gap.</p>
+<p><strong>Finding A3. Single training runs are measurable, and early estimates were often wrong.</strong> Strubell et al. estimated 626,155 lb CO2e for a Transformer with neural architecture search [9]. Patterson et al. later showed the real search, run on TPUs in a cleaner data centre, emitted about 3.2 t, 88 times less [10]. They put GPT-3 training at 1,287 MWh and 552 t CO2e [10]. BLOOM (176B parameters) used 433 MWh on France's Jean Zay cluster at 57 gCO2e/kWh, giving 24.7 t (dynamic power only) or 50.5 t including idle power and hardware manufacture [11]. <em>Why the gap:</em> energy per run is similar in order of magnitude, but grid intensity differs by about 7.5 times (429 vs 57 g/kWh) [11]. Idle power alone was 29% of BLOOM's footprint [11], which is a utilisation problem, not a model problem. Patterson et al. later showed that choosing the model, machine, data centre and location well cut Google's training CO2e by 650 times over four years [12].</p>
+<p><strong>Finding A4. Inference and water are the hidden costs.</strong> Per 1,000 inferences, text classification uses about 0.002 kWh while image generation uses about 2.9 kWh [13]. Once a model is deployed at scale, inference can dominate lifetime energy. Water is the second hidden input: training GPT-3 in US data centres could directly evaporate about 700,000 litres of freshwater (5.4 million litres including water used to generate the electricity), and global AI could withdraw 4.2 to 6.6 billion m3 of water in 2027 [14].</p>
+<p><img src="charts/C1_top500_green500_efficiency.png" alt="Chart C1: TOP500 and Green500 June 2026" /></p>
+<p><em>Chart C1. Source: TOP500 and Green500 lists, June 2026, top500.org [5], [6]. LUMI hydropower and heat reuse: LUMI consortium [8].</em></p>
+<p><strong>Compare and contrast: the aviation claim.</strong> The supplementary lecture quotes a chart saying AI data centres emit more CO2 than aviation. We checked the source. The chart is built on an Accenture <em>projection for 2030</em>: AI could reach 3.4% of global CO2 emissions [73]. Accenture never mentions aviation; the comparison with aviation's roughly 2.5% today was added by media coverage [15]. The IEA's current estimate is about 180 Mt CO2 for <em>all</em> data centres in 2024, around 0.5% of combustion emissions, rising to 300 Mt (Base) or 500 Mt (Lift-Off) by 2035 [16], [1]. So the accurate claim is: &quot;data centres are one of the few sectors, with road transport and aviation, whose emissions are still rising&quot; [16], not &quot;they already exceed aviation&quot;. <em>Limitation:</em> both numbers are modelled estimates. Operators rarely publish per-site energy, which is exactly the gap Finding D2 addresses.</p>
+<p><strong>Local lens: Malaysia.</strong> Johor went from about 10 MW of data-centre capacity in early 2021 to about 1.3 GW by November 2024 [17]. The energy transition ministry told Parliament in July 2026 that data centres could use up to 31% of Peninsular electricity by 2035 (73,274 GWh), up from about 7% now [18]. By June 2026, 42 connected projects held 5.65 GW of contracted maximum demand but drew only 1.26 GW of actual load [19]. Johor stopped approving new Tier 1 and Tier 2 (high water use) data centres in November 2025 [20]. <em>So what:</em> unlike Kajaani, Johor has no cold climate for free cooling and no heating demand to absorb waste heat, and 79% of Malaysia's electricity still came from fossil fuels in 2025 [21]. The Frontier vs LUMI lesson therefore applies directly: the same GPUs in Johor carry a larger carbon and water cost per FLOP than in the Nordics.</p>
+<p><strong>Link to parallel computing.</strong> Energy = power x time. Power scales with the number of GPUs switched on; time scales with how well the job is parallelised. A job that scales poorly still keeps every GPU powered while it waits on communication (all-reduce over the interconnect) or the serial fraction. Meta's Llama 3 405B run on up to 16K H100 GPUs reached a Model FLOPs Utilisation of only 38 to 43%, and had 466 job interruptions in 54 days [22]. So more than half of the peak GPU throughput, and much of the energy behind it, did no useful model work. Industry now sizes these clusters in gigawatts, not FLOPs. An H100 is rated up to 700 W [23], and with host CPUs, NICs and power supplies each GPU draws about 1.3 kW; a 100,000 GPU cluster needs over 150 MW [24]. So 1 GW feeds roughly 650,000 H100-class GPUs, not a few thousand. At that scale the interconnect and failure rate, not the chip, set the limit.</p>
+<p><strong>Our recommendation (a).</strong> Report energy, carbon intensity and water per job and per site, not just GFLOPS/W. For Malaysian sites, make heat reuse or recycled water a condition of approval, following Johor's Tier 3/4 direction.</p>
+<h2>(b) Data governance, security and fairness</h2>
+<p><strong>Finding B1. Compute location decides whose law governs the data.</strong> About 75% of the world's AI supercomputer performance sits in the United States and about 15% in China [25]. The US alone hosts 5,427 data centres, more than ten times any other country [3]. <em>Why it matters:</em> when a Malaysian user's data trains a model on a foreign cluster, the data falls under that country's jurisdiction. Malaysia's PDPA was amended in 2024 to add mandatory breach notification, data protection officers and new cross-border transfer guidelines (April 2025) [26]. <em>Parallel computing link:</em> in data-parallel training each node holds a shard of the data and exchanges gradients through all-reduce. If nodes sit in different jurisdictions, data-derived information crosses borders every iteration, and gradients can leak training samples [27]. Federated learning keeps raw data on site and only moves model updates [28]. <em>Trade-off:</em> it costs many more communication rounds and slower convergence than a single-site cluster. <em>So what:</em> data residency becomes a job placement constraint for the scheduler, not just a legal note.</p>
+<p><strong>Finding B2. Chips are now treated as security assets, and Malaysia sits in the middle.</strong> US export controls since October 2022 restrict advanced AI chips by performance thresholds [29]. The January 2025 AI Diffusion rule, which would have capped chip imports for most countries outside a group of close US partners, was rescinded in May 2025 and replaced with narrower guidance on diversion [30]. Two months later Malaysia required a Strategic Trade Permit for every export, transshipment or transit of US-origin high-performance AI chips [31]. <em>Why:</em> compute is the one AI input that is physical, countable and traceable. <em>So what:</em> a Malaysian data centre must now prove where its GPUs go and who runs jobs on them. That is an accounting problem that cluster job logs can solve (see SCALE, step A). <em>Limitation:</em> export rules change often; the January 2026 US policy on H200-class sales to China shows how fast [32].</p>
+<p><strong>Finding B3. The training data is not fair to Malay speakers, and fixing it costs compute.</strong> In Common Crawl's September 2026 snapshot, English is 41.86% of pages and Malay is 0.086% [2]. Ahuja et al. found a significant gap between LLM performance in English and other languages, largest for low-resource languages with non-Latin scripts; GPT-4 narrows it but does not close it [33]. They also found tokenizer fertility of about 10 tokens per word for Tamil, so a Tamil prompt needs far more tokens, and so more inference FLOPs and cost, than the same prompt in English [33]. Regional responses include AI Singapore's SEA-LION, covering 11 Southeast Asian languages including Malay [34], and Malaysia's ILMU, launched in August 2025 [35]. <em>Parallel computing link:</em> the two classic fairness criteria from the lecture, demographic parity and equal opportunity [36], can be met in three places. Pre-processing (rebalancing or upsampling Malay text) adds training tokens, so more GPU hours. In-processing changes the loss and needs a full retrain. Post-processing adjusts decision thresholds after training [36] and needs no extra training FLOPs. <em>So what:</em> fairness has a compute budget. Labs that cannot afford a retrain can still apply post-processing, but a national model like ILMU exists because post-processing cannot add knowledge the data never had.</p>
+<p><strong>Our recommendation (b).</strong> Treat data residency as a scheduler placement rule. Publish a model card listing training data languages and where the training cluster was located.</p>
+<h2>(c) Socio-economic and accessibility challenges</h2>
+<p><img src="charts/C3_epoch_training_compute.png" alt="Chart C3: training compute of notable models" /></p>
+<p><em>Chart C3. Source: Epoch AI, Data on AI Models (notable models with a compute estimate, downloaded 30 Sep 2026) [38]; growth rate: Epoch AI Trends [39]. Reference line: EU AI Act Art. 51 [53]; Frontier Rmax, TOP500 June 2026 [5].</em></p>
+<p><strong>Finding C1. The compute gap between industry and academia is now about three orders of magnitude.</strong> Nearly 90% of notable AI models in 2024 came from industry, up from 60% in 2023 [37], and over 90% in 2025 [3]. In Epoch AI's database the largest academic-only model is GLM-130B (Tsinghua, 2022) at about 3.5 x 10^23 FLOP, while the largest 2026 estimate is about 10^27 FLOP [38], roughly 3,000 times more (Chart C3). Frontier training compute grows about 5 times a year and training cost about 3.5 times a year [39]. <em>Why:</em> the entry ticket is now a cluster. xAI's Colossus had 200,000 AI chips, cost about US$7 billion and needed 300 MW [25].</p>
+<p><strong>Finding C2. Academics work with 1 to 8 GPUs.</strong> In a 2024 survey of 50 researchers across 35 institutions, 85% had zero budget for cloud compute and typical access was 1 to 8 GPUs [40]. The same study replicated Pythia-1B, first trained on 64 GPUs in 3 days, on 4 GPUs in 18 days [40]. <em>Parallel computing link:</em> this is strong scaling run backwards. With fewer processors the work is the same, so wall time grows; it is feasible for small models but not for frontier ones. Besiroglu et al. find academic-only teams are now under-represented in compute-heavy topics such as foundation models [41]. <em>So what:</em> if only companies can train frontier models, only companies can audit them. Independent scrutiny is itself a fairness issue.</p>
+<p><strong>Finding C3. Shared national infrastructure helps, but is small and oversubscribed.</strong> Compare three public models:</p>
+<table>
+<thead>
+<tr>
+<th>Programme</th>
+<th>Scale</th>
+<th>Signal of demand</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NCI Gadi (Australia, NCRIS funded)</td>
+<td>776 GPUs, over 10 PF peak [42]</td>
+<td>Requests of 2.2 billion hours, nearly 3x the annual national allocation [43]</td>
+</tr>
+<tr>
+<td>EuroHPC (EU)</td>
+<td>19 AI Factories, over EUR 2.6 billion committed [44]</td>
+<td>Gigafactory call open to November 2026 [45]</td>
+</tr>
+<tr>
+<td>NAIRR pilot (US, since January 2024)</td>
+<td>13 agencies, 28 partners [46]</td>
+<td>Over 600 projects and 6,000 students supported [46]</td>
+</tr>
+</tbody>
+</table>
+<p><em>Compare and contrast:</em> Gadi's 776 GPUs are about 1/250 of Colossus's 200,000 chips, so public systems cannot match industry on scale. Their value is <em>allocation</em>: merit-based, fair-share queues open to any researcher. <em>So what:</em> for Malaysia, where private capacity is booming in Johor, a national allocation scheme would turn private capacity into public access. <em>Alternative that loses:</em> cloud credits alone expire and give no guaranteed queue priority; a fair-share allocation does.</p>
+<p><strong>Our recommendation (c).</strong> Make a share of approved data-centre capacity available to Malaysian universities through a national fair-share allocation, modelled on NCI's merit scheme.</p>
+<h2>(d) Frameworks and principles for responsible HPC</h2>
+<p><img src="charts/C4_SCALE_framework.png" alt="Chart C4: SCALE checklist" /></p>
+<p><em>Chart C4. Our synthesis. Evidence: S [22], [66]; C [64], [65]; A [7], [70], [54]; L [26], [53]; E [43], [40]. Tools: Slurm [60], [61], [71]. Principles: Green AI [57]; UNESCO [47]; OECD [48]; Malaysia AIGE [50].</em></p>
+<p><strong>Finding D1. The ethics frameworks agree on values but say little about compute.</strong> UNESCO's Recommendation (193 member states, November 2021) lists &quot;environment and ecosystems flourishing&quot; as a core value and has an Environment and Ecosystems policy area [47]. The OECD AI Principles (2019, updated 2024) open with &quot;inclusive growth, sustainable development and well-being&quot; [48]. Australia's first principle is &quot;human, societal and environmental wellbeing&quot; [49]. Malaysia's AIGE guidelines (MOSTI, September 2024) set seven principles: fairness; reliability, safety and control; privacy and security; inclusiveness; transparency; accountability; and pursuit of human benefit and happiness [50]. <em>Compare:</em> AIGE mentions environmental impact in its text but has no stand-alone environmental principle, and all four are voluntary. None of them names a metric a cluster operator could report. Practitioner guidance is more concrete. TierPoint lists seven elements of sustainable HPC, from environmental monitoring and heat reuse to workload optimisation and recycling [51], and SC25, the main HPC conference, featured Sandia's Elaine Raybourn on shaping the ethical future of HPC and AI [52]. <em>So what:</em> principles set direction, but they need an engineering layer underneath.</p>
+<p><strong>Finding D2. Regulation is starting to require numbers.</strong> The EU AI Act presumes a general-purpose model has systemic risk once training compute exceeds 10^25 FLOP [53], and its documentation duties include the computational resources and known or estimated energy use of training [53]. Separately, the EU Energy Efficiency Directive makes data centres of 500 kW or more report energy performance, including PUE, water use, renewable share and waste-heat reuse, to a European database [54], [55]. <em>Compare:</em> the AI Act regulates a <em>model</em> by its FLOP count; the Directive regulates a <em>site</em> by its kW. Together they cover both ends of the parallel stack. Malaysia has neither yet. Its National AI Action Plan 2026 to 2030 was released in July 2026, and an AI Governance Bill is still in public consultation [56]. <em>Limitation:</em> a FLOP threshold is a proxy. Efficiency gains mean a capable model can be trained under 10^25 FLOP.</p>
+<p><strong>Finding D3. Green AI turns efficiency into a research metric.</strong> Schwartz et al. argued that efficiency should be an evaluation criterion alongside accuracy, and that papers should report the floating point operations (FPO) needed for a result [57]. Varoquaux, Luccioni and Whittaker (FAccT 2025) go further: compute demand grows faster than model performance, and the bigger-is-better paradigm concentrates power; they ask every study to report compute cost, energy and memory for training and inference [58]. <em>Why it works:</em> once people have to report a number, they try to lower it. The Software Carbon Intensity specification, now ISO/IEC 21031:2024, gives a formula for this: SCI = ((E x I) + M) per R, that is, energy times grid intensity plus embodied carbon, per functional unit [59].</p>
+<p><strong>Finding D4. The scheduler is where we can actually enforce this.</strong> Three tools already exist in production HPC.</p>
+<ol>
+<li><em>Energy accounting.</em> Slurm's AcctGatherEnergyType plugins (RAPL, IPMI, GPU) record joules per job, and <code>sacct</code> reports them as ConsumedEnergy [60], [61]. NVIDIA DCGM gives per-job GPU energy through prologue and epilogue scripts [62]. <em>Limitation:</em> Slurm warns the figure is only exact for exclusive node allocations [61]. This matters because fewer than 30% of surveyed HPC users know their own energy use; Kamatar et al. propose charging allocations in energy or carbon instead of core-hours [63].</li>
+<li><em>Carbon-aware scheduling.</em> Google's carbon-intelligent system shifts flexible work using day-ahead carbon forecasts and &quot;virtual capacity curves&quot;; its fleet trial cut power by 1 to 2% in the highest-carbon hours [64]. Wiesner et al. showed that ML jobs which can wait until later in the week can cut emissions by up to about 19% when jobs can be paused and resumed [65]. <em>Why:</em> grid carbon intensity varies by hour and day, and many batch jobs have slack in their deadline.</li>
+<li><em>Power capping and idle power-down.</em> Capping GPUs from 250 W to 150 W for BERT training used 87.7% of the energy for 108.5% of the time [66]. Slurm's power-saving mode suspends idle nodes after SuspendTime [67]. <em>Alternative that loses:</em> buying offsets does not reduce grid load at peak hours, and the scheduler options above cost almost nothing.</li>
+</ol>
+<p><strong>Local lens: shared infrastructure as an equity policy.</strong> See (c): NCI Gadi, EuroHPC and the US NAIRR pilot show that public, fair-share access is a framework in its own right, not just a funding line.</p>
+<h3>Our proposed framework: SCALE</h3>
+<p>We combine the evidence above into a five-step checklist (Chart C4). Each step maps to a mechanism a cluster already has and a number it can report.</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>What to do</th>
+<th>Parallel computing mechanism</th>
+<th>Evidence</th>
+<th>Report</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>S</strong>ize right</td>
+<td>Stop adding GPUs when parallel efficiency drops. Use mixed precision and power caps.</td>
+<td>Amdahl's law, strong scaling, MFU</td>
+<td>Amdahl's serial fraction caps speedup [68]; Llama 3 MFU 38 to 43% [22]; FP16 halves memory [69]; power cap saves about 12% energy [66]</td>
+<td>Speedup and efficiency per job</td>
+</tr>
+<tr>
+<td><strong>C</strong>arbon-aware scheduling</td>
+<td>Hold deferrable jobs for low-carbon hours or sites.</td>
+<td>Deadline-aware batch queues</td>
+<td>Up to about 19% less CO2 [65]; 1 to 2% fleet peak cut [64]</td>
+<td>gCO2e/kWh at run time</td>
+</tr>
+<tr>
+<td><strong>A</strong>ccount every joule</td>
+<td>Turn on per-job energy accounting. Publish PUE, WUE and CUE.</td>
+<td>Slurm ConsumedEnergy, DCGM</td>
+<td>Frontier PUE 1.03 vs 1.54 average [7], [70]; EU EED reporting [54]</td>
+<td>kWh, litres, kgCO2e per job</td>
+</tr>
+<tr>
+<td><strong>L</strong>awful, local data</td>
+<td>Keep data in its jurisdiction; move the model, not the data.</td>
+<td>Federated or site-local training</td>
+<td>PDPA 2024 [26]; gradient leakage [27]; FedAvg [28]</td>
+<td>Audit trail per dataset</td>
+</tr>
+<tr>
+<td><strong>E</strong>quitable access</td>
+<td>Reserve fair-share capacity for small and public users.</td>
+<td>Slurm Fair Tree fair-share [71], national allocations</td>
+<td>Gadi oversubscribed about 3x [43]; NAIRR [46]</td>
+<td>Share of GPU hours to small groups</td>
+</tr>
+</tbody>
+</table>
+<p><em>Why a checklist and not another set of principles:</em> D1 shows the principles already exist. What is missing is a link from a principle to a scheduler setting. SCALE gives that link. <em>Alternatives that lose:</em> a pure carbon tax on compute would hit universities hardest (see c); a pure FLOP cap would freeze science along with frontier AI.</p>
+<h2>Limitations and future work</h2>
+<ol>
+<li><strong>Most AI energy numbers are estimates.</strong> Few operators publish per-job or per-model energy. GPT-4 and several 2025 and 2026 models appear in Epoch AI's data only as &quot;likely&quot; or &quot;speculative&quot; estimates [38]. We plotted them but labelled them as estimates. For our own Task 1 kernel we measured it: 0.71 J per 8K image on the Tesla T4 (41.1 W for 17.16 ms, GPU board power only, sampled with nvidia-smi; Task 1 <code>results/energy_summary.txt</code>). That is one GPU and one image, not a training run, but it shows per-job energy is cheap to record.</li>
+<li><strong>HPL is not an AI workload.</strong> Green500 GFLOPS/W is measured with FP64 LINPACK. AI training runs in BF16 or FP8 at a much higher throughput per watt, so our Frontier comparison in Chart C3 is an order-of-magnitude guide, not an exact equivalence.</li>
+<li><strong>Carbon-aware scheduling has limits.</strong> Its gains depend on how much the local grid varies and on job deadline slack. The Google fleet result was 1 to 2% at peak hours [64], much lower than single-region studies. Power capping also has a rebound risk: users may submit more jobs to make up for the slowdown [72].</li>
+<li><strong>Malaysian data is thin.</strong> Malaysia has no public equivalent of the EU data-centre energy database, so our Johor figures rely on parliamentary answers, analyst reports and news. That gap is itself one of our recommendations.</li>
+<li><strong>Future work.</strong> (i) Measure it ourselves: enable Slurm energy accounting on a small cluster and compare the energy of a strong-scaling sweep (1 to 16 GPUs) for our Task 1 CUDA kernel. (ii) Test a simple carbon-aware delay policy using hourly grid-intensity data for Peninsular Malaysia. (iii) Track the EU data-centre rating scheme proposed in September 2026 [54] and Malaysia's planned AI Governance Bill.</li>
+</ol>
+<h2>References</h2>
+<p>IEEE style. All online sources accessed 30 September 2026.</p>
+<p>[1] International Energy Agency, &quot;Energy and AI,&quot; IEA, Paris, France, Apr. 2025. [Online]. Available: https://www.iea.org/reports/energy-and-ai. Accessed: Sep. 30, 2026.</p>
+<p>[2] Common Crawl, &quot;Statistics of Common Crawl monthly archives: Distribution of languages (CC-MAIN-2026-39),&quot; commoncrawl.github.io, 2026. [Online]. Available: https://commoncrawl.github.io/cc-crawl-statistics/plots/languages. Accessed: Sep. 30, 2026.</p>
+<p>[3] Stanford Institute for Human-Centered AI, &quot;The AI Index 2026 annual report,&quot; Stanford, CA, USA, Apr. 2026. [Online]. Available: https://hai.stanford.edu/ai-index/2026-ai-index-report. Accessed: Sep. 30, 2026.</p>
+<p>[4] International Energy Agency, &quot;Key questions on energy and AI,&quot; IEA, Paris, France, Apr. 2026. [Online]. Available: https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary. Accessed: Sep. 30, 2026.</p>
+<p>[5] TOP500, &quot;TOP500 list, June 2026,&quot; top500.org, Jun. 2026. [Online]. Available: https://www.top500.org/lists/top500/list/2026/06/. Accessed: Sep. 30, 2026.</p>
+<p>[6] TOP500, &quot;Green500 list, June 2026,&quot; top500.org, Jun. 2026. [Online]. Available: https://www.top500.org/lists/green500/list/2026/06/. Accessed: Sep. 30, 2026.</p>
+<p>[7] Oak Ridge National Laboratory, &quot;Computer engineers at ORNL pioneer approaches to energy efficient supercomputing,&quot; ornl.gov, Sep. 10, 2024. [Online]. Available: https://www.ornl.gov/news/computer-engineers-ornl-pioneer-approaches-energy-efficient-supercomputing. Accessed: Sep. 30, 2026.</p>
+<p>[8] LUMI consortium, &quot;LUMI data center receives the Green Data Centre of the Year award,&quot; lumi-supercomputer.eu, Mar. 9, 2023. [Online]. Available: https://lumi-supercomputer.eu/lumi-data-center-receives-the-green-data-centre-of-the-year-award/. Accessed: Sep. 30, 2026.</p>
+<p>[9] E. Strubell, A. Ganesh, and A. McCallum, &quot;Energy and policy considerations for deep learning in NLP,&quot; in Proc. 57th Annu. Meeting Assoc. Comput. Linguistics (ACL), Florence, Italy, 2019, pp. 3645-3650, doi: 10.18653/v1/P19-1355.</p>
+<p>[10] D. Patterson et al., &quot;Carbon emissions and large neural network training,&quot; arXiv:2104.10350, Apr. 2021. [Online]. Available: https://arxiv.org/abs/2104.10350. Accessed: Sep. 30, 2026.</p>
+<p>[11] A. S. Luccioni, S. Viguier, and A.-L. Ligozat, &quot;Estimating the carbon footprint of BLOOM, a 176B parameter language model,&quot; J. Mach. Learn. Res., vol. 24, pp. 1-15, 2023. [Online]. Available: https://jmlr.org/papers/volume24/23-0069/23-0069.pdf. Accessed: Sep. 30, 2026.</p>
+<p>[12] D. Patterson et al., &quot;The carbon footprint of machine learning training will plateau, then shrink,&quot; Computer, vol. 55, no. 7, pp. 18-28, Jul. 2022, doi: 10.1109/MC.2022.3148714.</p>
+<p>[13] A. S. Luccioni, Y. Jernite, and E. Strubell, &quot;Power hungry processing: Watts driving the cost of AI deployment?&quot; in Proc. ACM Conf. Fairness, Accountability, Transparency (FAccT), Rio de Janeiro, Brazil, 2024. [Online]. Available: https://arxiv.org/abs/2311.16863. Accessed: Sep. 30, 2026.</p>
+<p>[14] P. Li, J. Yang, M. A. Islam, and S. Ren, &quot;Making AI less 'thirsty',&quot; Commun. ACM, vol. 68, no. 7, pp. 54-61, Jul. 2025, doi: 10.1145/3724499.</p>
+<p>[15] M. Giles, &quot;By 2030, AI data centers could take a bigger share of CO2 emissions than aviation,&quot; Sherwood News, Jun. 27, 2025. [Online]. Available: https://sherwood.news/world/by-2030-ai-data-centers-could-take-a-bigger-share-of-co-emissions-than/. Accessed: Sep. 30, 2026.</p>
+<p>[16] International Energy Agency, &quot;AI and climate change,&quot; in Energy and AI, IEA, Paris, France, Apr. 2025. [Online]. Available: https://www.iea.org/reports/energy-and-ai/ai-and-climate-change. Accessed: Sep. 30, 2026.</p>
+<p>[17] S. Loo, &quot;Data centres, energy demand and sustainability: Can Malaysia strike the right balance?&quot; ISEAS Perspective, no. 2025/43, ISEAS Yusof Ishak Institute, Singapore, Jun. 12, 2025. [Online]. Available: https://www.iseas.edu.sg/articles-commentaries/iseas-perspective/2025-43-data-centres-energy-demand-and-sustainability-can-malaysia-strike-the-right-balance-by-sara-loo. Accessed: Sep. 30, 2026.</p>
+<p>[18] Bernama, &quot;Electricity consumption of data centres expected to surge to 31 pct by 2035,&quot; BernamaBiz, Jul. 1, 2026 (reporting the Ministry of Energy Transition and Water Transformation reply to Parliament, Jun. 30, 2026). [Online]. Available: https://www.bernamabiz.com/news.php?id=2575423. Accessed: Oct. 1, 2026.</p>
+<p>[19] TNGlobal, &quot;MBSB sees data center demand to drive Malaysia's power capacity upcycle,&quot; technode.global, Sep. 14, 2026. [Online]. Available: https://technode.global/2026/09/14/mbsb-sees-data-center-demand-to-drive-malaysias-power-capacity-upcycle/. Accessed: Sep. 30, 2026.</p>
+<p>[20] J. Shadiqe, &quot;Johor shuts door on water-guzzling data centres, tightens approval rules,&quot; New Straits Times, Nov. 27, 2025 (statement in the Johor State Assembly). [Online]. Available: https://www.nst.com.my/news/nation/2025/11/1324188/johor-shuts-door-water-guzzling-data-centres-tightens-approval-rules. Accessed: Oct. 1, 2026.</p>
+<p>[21] Ember, &quot;Malaysia: Electricity data,&quot; ember-energy.org, Apr. 22, 2026. [Online]. Available: https://ember-energy.org/countries-and-regions/malaysia/. Accessed: Sep. 30, 2026.</p>
+<p>[22] Llama Team, AI @ Meta, &quot;The Llama 3 herd of models,&quot; arXiv:2407.21783, Jul. 2024. [Online]. Available: https://arxiv.org/abs/2407.21783. Accessed: Sep. 30, 2026.</p>
+<p>[23] NVIDIA, &quot;NVIDIA H100 Tensor Core GPU,&quot; nvidia.com. [Online]. Available: https://www.nvidia.com/en-us/data-center/h100/. Accessed: Sep. 30, 2026.</p>
+<p>[24] D. Patel and D. Nishball, &quot;100,000 H100 clusters: Power, network topology, Ethernet vs InfiniBand, reliability, failures, checkpointing,&quot; SemiAnalysis, Jun. 17, 2024. [Online]. Available: https://newsletter.semianalysis.com/p/100000-h100-clusters-power-network. Accessed: Sep. 30, 2026.</p>
+<p>[25] K. F. Pilz, J. Sanders, R. Rahman, and L. Heim, &quot;Trends in AI supercomputers,&quot; arXiv:2504.16026, Apr. 2025. [Online]. Available: https://arxiv.org/abs/2504.16026. Accessed: Sep. 30, 2026.</p>
+<p>[26] Mayer Brown, &quot;From legislative reform to practical guidance: Key amendments to Malaysia's PDPA and the launch of cross-border transfer guidelines,&quot; mayerbrown.com, Jul. 2025. [Online]. Available: https://www.mayerbrown.com/en/insights/publications/2025/07/from-legislative-reform-to-practical-guidance-key-amendments-to-malaysias-pdpa-and-the-launch-of-cross-border-transfer-guidelines. Accessed: Sep. 30, 2026.</p>
+<p>[27] L. Zhu, Z. Liu, and S. Han, &quot;Deep leakage from gradients,&quot; in Proc. Adv. Neural Inf. Process. Syst. (NeurIPS), vol. 32, 2019. [Online]. Available: https://arxiv.org/abs/1906.08935. Accessed: Sep. 30, 2026.</p>
+<p>[28] B. McMahan, E. Moore, D. Ramage, S. Hampson, and B. A. y Arcas, &quot;Communication-efficient learning of deep networks from decentralized data,&quot; in Proc. 20th Int. Conf. Artif. Intell. Statist. (AISTATS), PMLR vol. 54, 2017, pp. 1273-1282.</p>
+<p>[29] Bureau of Industry and Security, &quot;Implementation of additional export controls: Certain advanced computing and semiconductor manufacturing items; supercomputer and semiconductor end use; entity list modification,&quot; Federal Register, vol. 87, p. 62186, Oct. 13, 2022. [Online]. Available: https://www.federalregister.gov/documents/2022/10/13/2022-21658/implementation-of-additional-export-controls-certain-advanced-computing-and-semiconductor. Accessed: Sep. 30, 2026.</p>
+<p>[30] Bureau of Industry and Security, &quot;Department of Commerce announces rescission of Biden-era artificial intelligence diffusion rule, strengthens chip-related export controls,&quot; bis.gov, May 13, 2025. [Online]. Available: https://www.bis.gov/press-release/department-commerce-announces-rescission-biden-era-artificial-intelligence-diffusion-rule-strengthens. Accessed: Sep. 30, 2026.</p>
+<p>[31] Ministry of Investment, Trade and Industry Malaysia, &quot;Malaysia regulates trade of US AI chips,&quot; press statement, Jul. 14, 2025. [Online]. Available: https://www.miti.gov.my/miti/resources/Media%20Release/%5BFINAL%5D_MITI_Press_Stmt_Malaysia_Regulates_Trade_of_US_AI_Chips_2025-07-14.pdf. Accessed: Sep. 30, 2026.</p>
+<p>[32] Bureau of Industry and Security, &quot;Department of Commerce revises license review policy for semiconductors exported to China,&quot; bis.gov, Jan. 13, 2026. [Online]. Available: https://www.bis.gov/press-release/department-commerce-revises-license-review-policy-semiconductors-exported-china. Accessed: Sep. 30, 2026.</p>
+<p>[33] K. Ahuja et al., &quot;MEGA: Multilingual evaluation of generative AI,&quot; in Proc. Conf. Empirical Methods Natural Lang. Process. (EMNLP), Singapore, 2023, pp. 4232-4267, doi: 10.18653/v1/2023.emnlp-main.258.</p>
+<p>[34] R. Ng et al., &quot;SEA-LION: Southeast Asian languages in one network,&quot; arXiv:2504.05747, Apr. 2025. [Online]. Available: https://arxiv.org/abs/2504.05747. Accessed: Sep. 30, 2026.</p>
+<p>[35] Bernama, &quot;PM launches ILMU, Malaysia's own large language model,&quot; bernama.com, Aug. 12, 2025. [Online]. Available: https://www.bernama.com/en/news.php?id=2455958. Accessed: Sep. 30, 2026.</p>
+<p>[36] M. Hardt, E. Price, and N. Srebro, &quot;Equality of opportunity in supervised learning,&quot; in Proc. Adv. Neural Inf. Process. Syst. (NeurIPS), vol. 29, 2016. [Online]. Available: https://arxiv.org/abs/1610.02413. Accessed: Sep. 30, 2026.</p>
+<p>[37] N. Maslej et al., &quot;The AI Index 2025 annual report,&quot; Stanford Institute for Human-Centered AI, Stanford, CA, USA, Apr. 2025. [Online]. Available: https://hai.stanford.edu/ai-index/2025-ai-index-report. Accessed: Sep. 30, 2026.</p>
+<p>[38] Epoch AI, &quot;Data on AI models,&quot; epoch.ai, updated Sep. 30, 2026. [Online]. Available: https://epoch.ai/data/notable-ai-models. Accessed: Sep. 30, 2026.</p>
+<p>[39] Epoch AI, &quot;Trends in artificial intelligence,&quot; epoch.ai, updated Feb. 5, 2026. [Online]. Available: https://epoch.ai/trends. Accessed: Sep. 30, 2026.</p>
+<p>[40] A. Khandelwal et al., &quot;$100K or 100 days: Trade-offs when pre-training with academic resources,&quot; in Proc. Conf. Lang. Model. (COLM), 2025. [Online]. Available: https://arxiv.org/abs/2410.23261. Accessed: Sep. 30, 2026.</p>
+<p>[41] T. Besiroglu et al., &quot;The compute divide in machine learning: A threat to academic contribution and scrutiny?&quot; arXiv:2401.02452, Jan. 2024. [Online]. Available: https://arxiv.org/abs/2401.02452. Accessed: Sep. 30, 2026.</p>
+<p>[42] National Computational Infrastructure, &quot;HPC systems: Gadi,&quot; nci.org.au. [Online]. Available: https://nci.org.au/infrastructure/hpc-systems. Accessed: Sep. 30, 2026.</p>
+<p>[43] National Computational Infrastructure, &quot;Record demand highlights Australia's growing need for supercomputing power,&quot; nci.org.au. [Online]. Available: https://nci.org.au/news-events/news/record-demand-highlights-australias-growing-need-supercomputing-power. Accessed: Sep. 30, 2026.</p>
+<p>[44] European Commission, &quot;EU expands network of AI Factories, strengthening its AI Continent ambition,&quot; digital-strategy.ec.europa.eu, Oct. 10, 2025. [Online]. Available: https://digital-strategy.ec.europa.eu/en/news/eu-expands-network-ai-factories-strengthening-its-ai-continent-ambition. Accessed: Sep. 30, 2026.</p>
+<p>[45] EuroHPC Joint Undertaking, &quot;EuroHPC Joint Undertaking launches AI Gigafactories call,&quot; eurohpc-ju.europa.eu, Jul. 30, 2026. [Online]. Available: https://www.eurohpc-ju.europa.eu/eurohpc-joint-undertaking-launches-ai-gigafactories-call-2026-07-30_en. Accessed: Sep. 30, 2026.</p>
+<p>[46] U.S. National Science Foundation, &quot;National Artificial Intelligence Research Resource (NAIRR),&quot; nsf.gov. [Online]. Available: https://www.nsf.gov/focus-areas/ai/nairr. Accessed: Sep. 30, 2026.</p>
+<p>[47] UNESCO, &quot;Recommendation on the ethics of artificial intelligence,&quot; Paris, France, Nov. 2021. [Online]. Available: https://www.unesco.org/en/artificial-intelligence/recommendation-ethics. Accessed: Sep. 30, 2026.</p>
+<p>[48] OECD, &quot;OECD AI principles,&quot; adopted May 2019, updated May 2024. [Online]. Available: https://oecd.ai/en/ai-principles. Accessed: Sep. 30, 2026.</p>
+<p>[49] Department of Industry, Science and Resources, &quot;Australia's AI ethics principles,&quot; Australian Government, Canberra, 2019. [Online]. Available: https://www.industry.gov.au/publications/australias-ai-ethics-principles. Accessed: Sep. 30, 2026.</p>
+<p>[50] Ministry of Science, Technology and Innovation (MOSTI), &quot;The national guidelines on AI governance and ethics,&quot; Putrajaya, Malaysia, Sep. 2024. [Online]. Available: https://mastic.mosti.gov.my/storage/2024/09/THE-NATIONAL-GUIDELINES-ON-AI-GOVERNANCE-ETHICS.pdf. Accessed: Sep. 30, 2026.</p>
+<p>[51] M. Pacheco, &quot;How to advance sustainable high performance computing,&quot; TierPoint, May 30, 2024, updated Dec. 11, 2025. [Online]. Available: https://www.tierpoint.com/blog/data-center/sustainable-high-performance-computing/. Accessed: Sep. 30, 2026.</p>
+<p>[52] SC25 Communications, &quot;Shaping the ethical future of HPC and AI,&quot; sc25.supercomputing.org, Apr. 8, 2025. [Online]. Available: https://sc25.supercomputing.org/2025/04/shaping-the-ethical-future-of-hpc-and-ai/. Accessed: Sep. 30, 2026.</p>
+<p>[53] Regulation (EU) 2024/1689 of the European Parliament and of the Council laying down harmonised rules on artificial intelligence (Artificial Intelligence Act), Off. J. Eur. Union, L series, Jul. 12, 2024, Art. 51 and Annex XI. [Online]. Available: https://eur-lex.europa.eu/eli/reg/2024/1689/oj. Accessed: Sep. 30, 2026.</p>
+<p>[54] European Commission, &quot;Energy performance of data centres,&quot; energy.ec.europa.eu. [Online]. Available: https://energy.ec.europa.eu/topics/energy-efficiency/energy-efficiency-targets-directive-and-rules/energy-efficiency-directive/energy-performance-data-centres_en. Accessed: Sep. 30, 2026.</p>
+<p>[55] Commission Delegated Regulation (EU) 2024/1364 of 14 March 2024 on the first phase of the establishment of a common Union rating scheme for data centres, Off. J. Eur. Union, L series, May 2024. [Online]. Available: https://eur-lex.europa.eu/eli/reg_del/2024/1364/oj. Accessed: Sep. 30, 2026.</p>
+<p>[56] Ministry of Digital Malaysia, &quot;AI Malaysia: Main driver towards an AI nation 2030,&quot; digital.gov.my, Jul. 2026. [Online]. Available: https://www.digital.gov.my/en-GB/siaran/AI-Malaysia-Pemacu-Utama-Menuju-Negara-AI-2030. Accessed: Sep. 30, 2026.</p>
+<p>[57] R. Schwartz, J. Dodge, N. A. Smith, and O. Etzioni, &quot;Green AI,&quot; Commun. ACM, vol. 63, no. 12, pp. 54-63, Dec. 2020, doi: 10.1145/3381831.</p>
+<p>[58] G. Varoquaux, A. S. Luccioni, and M. Whittaker, &quot;Hype, sustainability, and the price of the bigger-is-better paradigm in AI,&quot; in Proc. ACM Conf. Fairness, Accountability, Transparency (FAccT), Athens, Greece, 2025, pp. 61-75, doi: 10.1145/3715275.3732006.</p>
+<p>[59] Green Software Foundation, &quot;Software Carbon Intensity (SCI) specification v1.1.0,&quot; adopted as ISO/IEC 21031:2024. [Online]. Available: https://sci.greensoftware.foundation/. Accessed: Sep. 30, 2026.</p>
+<p>[60] SchedMD, &quot;slurm.conf: AcctGatherEnergyType,&quot; Slurm Workload Manager documentation. [Online]. Available: https://slurm.schedmd.com/slurm.conf.html. Accessed: Sep. 30, 2026.</p>
+<p>[61] SchedMD, &quot;sacct: ConsumedEnergy,&quot; Slurm Workload Manager documentation. [Online]. Available: https://slurm.schedmd.com/sacct.html. Accessed: Sep. 30, 2026.</p>
+<p>[62] NVIDIA, &quot;DCGM user guide: Feature overview (job statistics),&quot; docs.nvidia.com. [Online]. Available: https://docs.nvidia.com/datacenter/dcgm/latest/user-guide/feature-overview.html. Accessed: Sep. 30, 2026.</p>
+<p>[63] A. Kamatar et al., &quot;Core hours and carbon credits: Incentivizing sustainability in HPC,&quot; arXiv:2501.09557, Jan. 2025. [Online]. Available: https://arxiv.org/abs/2501.09557. Accessed: Sep. 30, 2026.</p>
+<p>[64] A. Radovanovic et al., &quot;Carbon-aware computing for datacenters,&quot; IEEE Trans. Power Syst., vol. 38, no. 2, pp. 1270-1280, Mar. 2023, doi: 10.1109/TPWRS.2022.3173250.</p>
+<p>[65] P. Wiesner, I. Behnke, D. Scheinert, K. Gontarska, and L. Thamsen, &quot;Let's wait awhile: How temporal workload shifting can reduce carbon emissions in the cloud,&quot; in Proc. 22nd Int. Middleware Conf., 2021, pp. 260-272, doi: 10.1145/3464298.3493399.</p>
+<p>[66] J. McDonald, B. Li, N. Frey, D. Tiwari, V. Gadepally, and S. Samsi, &quot;Great power, great responsibility: Recommendations for reducing energy for training language models,&quot; in Findings Assoc. Comput. Linguistics: NAACL 2022, Seattle, WA, USA, 2022, pp. 1962-1970, doi: 10.18653/v1/2022.findings-naacl.151.</p>
+<p>[67] SchedMD, &quot;Slurm power saving guide,&quot; Slurm Workload Manager documentation. [Online]. Available: https://slurm.schedmd.com/power_save.html. Accessed: Sep. 30, 2026.</p>
+<p>[68] G. M. Amdahl, &quot;Validity of the single processor approach to achieving large scale computing capabilities,&quot; in Proc. AFIPS Spring Joint Comput. Conf., 1967, pp. 483-485, doi: 10.1145/1465482.1465560.</p>
+<p>[69] P. Micikevicius et al., &quot;Mixed precision training,&quot; in Proc. Int. Conf. Learn. Represent. (ICLR), 2018. [Online]. Available: https://arxiv.org/abs/1710.03740. Accessed: Sep. 30, 2026.</p>
+<p>[70] Uptime Institute, &quot;Uptime Institute global data center survey 2025,&quot; Keynote Rep. 180, Jul. 2025. [Online]. Available: https://intelligence.uptimeinstitute.com/resource/uptime-institute-global-data-center-survey-2025. Accessed: Sep. 30, 2026.</p>
+<p>[71] SchedMD, &quot;Fair Tree fairshare algorithm,&quot; Slurm Workload Manager documentation. [Online]. Available: https://slurm.schedmd.com/fair_tree.html. Accessed: Sep. 30, 2026.</p>
+<p>[72] D. Zhao et al., &quot;Sustainable supercomputing for AI: GPU power capping at HPC scale,&quot; in Proc. ACM Symp. Cloud Comput. (SoCC), 2023, pp. 588-596, doi: 10.1145/3620678.3624793.</p>
+<p>[73] S. Jamison, S. Podder, A. Burden, B. Ghosh, S. Ramani, S. K. Singh, and M. Robinson, &quot;Powering sustainable AI: Balancing growth with environmental responsibility,&quot; Accenture, 2025. [Online]. Available: https://www.accenture.com/content/dam/accenture/final/corporate/corporate-initiatives/sustainability/document/Powering-Sustainable-AI.pdf. Accessed: Oct. 1, 2026.</p>
+</body></html>

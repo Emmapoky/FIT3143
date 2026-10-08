@@ -4,7 +4,7 @@
 
 **Task 1 author:** Taabish Farooq Bhat
 
-**Artefacts:** `rotate_cuda.cu` (CUDA prototype, variants v0 to v6), `Applied2_Task1_Colab.ipynb` (build, run, sweeps, graphs), `rotate_cpu.c` (CPU check of the maths), `diagrams/` (D1 to D5), `code_snippets/`.
+**Artefacts:** `rotate_cuda.cu` (CUDA prototype, variants v0 to v6), `Applied2_Task1_Colab.ipynb` (build, run, sweeps, graphs), `rotate_cpu.c` (CPU check of the maths, timed on an M3 Max), `rotate_cpu_omp.c` (OpenMP baseline on all CPU cores), `diagrams/` (D1 to D5), `results/` (CSVs, run logs, energy log, graphs g1 to g6).
 
 **The problem.** Rotate a W x H RGB image counterclockwise by θ about its centre with R = [[cos θ, -sin θ], [sin θ, cos θ]]. Each output pixel depends only on the input image, so the task is **data-parallel** with no dependencies between pixels. An 8K frame (7680 x 4320 x 3 bytes) is 99.5 MB and has 33.2 million independent work items.
 
@@ -58,7 +58,7 @@ At about 12 GB/s, one 8K frame takes roughly 8 ms each way. The kernel only has 
 - **Grid:** every block of the launch. For 8K it is ceil(7680/16) x ceil(4320/16) = 480 x 270 = **129,600 blocks, 33,177,600 threads**. Blocks are independent, so they can be scheduled on any of the T4's 40 SMs in any order [8].
 - **Index maths:** `x = blockIdx.x * blockDim.x + threadIdx.x` (same for y). A guard `if (x >= W || y >= H) return;` handles the grid rounded up past the image edge. Only warps on the image border diverge.
 
-**Sample codes: one CUDA feature per variant, and how each changes speed-up** (full code in `rotate_cuda.cu`, slide versions in `code_snippets/`):
+**Sample codes: one CUDA feature per variant, and how each changes speed-up** (full code in `rotate_cuda.cu`):
 
 | Variant | Feature | Expected effect on speed-up (mechanism) |
 |---|---|---|
@@ -78,7 +78,7 @@ At about 12 GB/s, one 8K frame takes roughly 8 ms each way. The kernel only has 
 1. **Kernel-only speed-up.** Rotation does roughly 2 flops per byte (nearest) to 7 flops per byte (bilinear). That is far below the T4's balance point of 8.1 TFLOPS / 320 GB/s ≈ 25 flops/byte [9], [8]. So the kernel is **memory-bound** and the roofline caps it by bandwidth, not FLOPS [19]. Against a CPU that already saturates dual-channel DDR5 (76.8 GB/s), the ceiling is roughly the bandwidth ratio: about 4x for a T4 (320 GB/s) and about 44x for an H100 (3.35 TB/s). Against our *single-core* baseline the gap is far larger, because one core can neither saturate DRAM nor issue millions of independent gathers at once. The GPU has tens of thousands of threads in flight to hide latency.
 2. **End-to-end speed-up** (H2D + kernel + D2H). By Amdahl's law [18], the copies are a part that more GPU cores cannot shrink. Even with an infinitely fast kernel, S_max = T_cpu / (T_H2D + T_D2H).
 
-**Prediction for 8K, checked against the Colab run.** Our local check (`rotate_cpu.c`, `-O2`, one core of an Apple M3 Max) took **113 ms (nearest)** and **290 ms (bilinear)**. On a T4, copies take about 99.5 MB / 12 GB/s ≈ 8.3 ms each way, and the kernel is at least 199 MB / 320 GB/s ≈ 0.62 ms. That gives a kernel-only ceiling of about 180x but an end-to-end ceiling of only about 113 / 17.2 ≈ **6.6x**, with copies above 90% of GPU time. The Colab CPU is a slower core than the M3 Max (509 ms vs 113 ms for nearest), which is why the measured end-to-end speed-up is larger than this estimate. The measured values from the Colab run (graphs g1 to g6) are the ones on the slides:
+**Prediction for 8K, checked against the Colab run.** Our local check (`rotate_cpu.c`, `-O2`, one core of an Apple M3 Max, three runs in `results/run_cpu_m3max.txt`) took **108 to 113 ms (nearest)** and **285 to 296 ms (bilinear)**. On a T4, copies take about 99.5 MB / 12 GB/s ≈ 8.3 ms each way, and the kernel is at least 199 MB / 320 GB/s ≈ 0.62 ms. That gives a kernel-only ceiling of about 180x but an end-to-end ceiling of only about 113 / 17.2 ≈ **6.6x**, with copies above 90% of GPU time. The Colab CPU is a slower core than the M3 Max (509 ms vs about 110 ms for nearest), which is why the measured end-to-end speed-up is larger than this estimate. The measured values from the Colab run (graphs g1 to g6) are the ones on the slides:
 
 | 8K, 30° | CPU (ms) | H2D (ms) | Kernel (ms) | D2H (ms) | Kernel SU | E2E SU |
 |---|---|---|---|---|---|---|
@@ -129,7 +129,7 @@ Measured on a Tesla T4 (Colab), one CPU core, mean of 10 runs after warm-up, 0 m
 ## Limitations and future work
 
 - **Canvas and format.** The output keeps the input size, so rotated corners are cropped (no "expand to fit" option). Only 8-bit RGB and binary PPM are supported; there is no JPEG decode.
-- **Baseline fairness.** The CPU baseline is single-threaded. An OpenMP or SIMD CPU version would give a fairer "best CPU" comparison.
+- **Baseline fairness.** Our speed-ups are against one CPU core. We also ran an OpenMP version (`rotate_cpu_omp.c`) on both of Colab's vCPUs: 470.0 ms for 8K nearest, only 1.07x faster than one thread, so the T4 is still 27x faster end to end (`results/run_cpu_omp.txt`). A many-core server CPU would narrow this gap.
 - **Timing noise.** Colab is a shared VM. We report the mean of 10 runs after a warm-up; adding standard deviation would show the spread.
 - **v5a overlap depends on θ.** Large angles need most of the source before any band can start. Streams across images (v5b) is the better design for throughput.
 - **v6 texture precision.** The 8-bit filter weights mean v6 is close to, but not bit-identical with, the CPU bilinear result.

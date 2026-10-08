@@ -1,0 +1,4 @@
+C1: Source: TOP500 and Green500 lists, June 2026, top500.org [5], [6]. LUMI hydropower and heat reuse: LUMI consortium [8].
+C2: Source: IEA, Energy and AI, April 2025 [1]; 2025 point: IEA, Key Questions on Energy and AI, April 2026 [4]. Only the years published by the IEA are plotted; lines join published points.
+C3: Source: Epoch AI, Data on AI Models (notable models with a compute estimate, downloaded 30 Sep 2026) [38]; growth rate: Epoch AI Trends [39]. Reference line: EU AI Act Art. 51 [53]; Frontier Rmax, TOP500 June 2026 [5].
+C4: Our synthesis. Evidence: S [22], [66]; C [64], [65]; A [7], [70], [54]; L [26], [53]; E [43], [40]. Tools: Slurm [60], [61], [71]. Principles: Green AI [57]; UNESCO [47]; OECD [48]; Malaysia AIGE [50].

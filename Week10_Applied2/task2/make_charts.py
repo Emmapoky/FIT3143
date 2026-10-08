@@ -1,7 +1,8 @@
 """Charts for FIT3143 Applied 2, Task 2 (Ethics of scaling HPC for AI).
 
 Every number below is copied from the cited source. Run: python3 make_charts.py
-Output: charts/C1_*.png ... charts/C4_*.png (16:9, white background).
+Output: charts/C1_*.png ... charts/C4_*.png (16:9, white background), no
+source text inside the images, plus charts/chart_sources.txt for captions.
 """
 import os
 import matplotlib
@@ -34,8 +35,13 @@ plt.rcParams.update({
 SIZE = (16, 9)
 
 
-def source(fig, text):
-    fig.text(0.01, 0.015, text, fontsize=12, color=GREY, ha="left", va="bottom", wrap=True)
+SOURCES = {}
+
+
+def source(chart, text):
+    """Record a chart's source. Sources go in the slide footer or the report
+    caption, never inside the image; see charts/chart_sources.txt."""
+    SOURCES[chart] = text
 
 
 def save(fig, name):
@@ -61,7 +67,7 @@ def c1():
     eff = [s[3] for s in systems]
     power = [s[2] for s in systems]
     fig, (a1, a2) = plt.subplots(1, 2, figsize=SIZE, gridspec_kw={"width_ratios": [1.15, 1]})
-    fig.subplots_adjust(left=0.13, right=0.97, top=0.82, bottom=0.17, wspace=0.55)
+    fig.subplots_adjust(left=0.13, right=0.97, top=0.82, bottom=0.15, wspace=0.55)
     cols = [GREY, GREY, VERMIL, GREY, GREEN, BLUE]
     y = range(len(systems))[::-1]
     a1.barh(list(y), eff, color=cols)
@@ -78,11 +84,11 @@ def c1():
     a2.set_title("Power: what the grid\nactually has to supply", loc="left", fontsize=19)
     fig.suptitle("Same MI250X silicon, different planet cost: the grid and heat reuse decide the footprint",
                  x=0.01, ha="left", fontsize=21, fontweight="bold")
-    fig.text(0.01, 0.075,
+    fig.text(0.01, 0.03,
              "Frontier (Tennessee, US grid) and LUMI (Kajaani, Finland, hydropower, waste heat to district heating) share the "
              "HPE Cray EX235a / AMD MI250X / Slingshot-11 design.",
              fontsize=13, color="#222222")
-    source(fig, "Source: TOP500 and Green500 lists, June 2026, top500.org [5], [6]. LUMI hydropower and heat reuse: LUMI consortium [8].")
+    source("C1", "Source: TOP500 and Green500 lists, June 2026, top500.org [5], [6]. LUMI hydropower and heat reuse: LUMI consortium [8].")
     save(fig, "C1_top500_green500_efficiency.png")
 
 
@@ -93,7 +99,7 @@ def c1():
 # 2035: Base about 1200, Lift-Off above 1700, High Efficiency about 970, Headwinds about 700.
 def c2():
     fig, ax = plt.subplots(figsize=SIZE)
-    fig.subplots_adjust(left=0.08, right=0.80, top=0.90, bottom=0.14)
+    fig.subplots_adjust(left=0.08, right=0.80, top=0.90, bottom=0.12)
     ax.plot([2024, 2030, 2035], [415, 945, 1200], "-o", color=BLUE, lw=4, ms=11, label="Base Case")
     ax.plot([2025], [485], "D", color=PURPLE, ms=13, zorder=5, label="2025 actual estimate (IEA, April 2026)")
     ax.annotate("485 TWh in 2025\n(+17% in one year)", (2025, 485), xytext=(2025.6, 330), fontsize=15, color=PURPLE,
@@ -114,9 +120,9 @@ def c2():
     ax.legend(loc="upper left", frameon=False)
     ax.set_title("Data-centre electricity could roughly triple by 2035; efficiency is the swing factor",
                  loc="left", x=-0.06)
-    fig.text(0.08, 0.075, "Accelerated (GPU) servers: +30% per year in the Base Case, vs +9% for conventional servers.",
+    fig.text(0.08, 0.03, "Accelerated (GPU) servers: +30% per year in the Base Case, vs +9% for conventional servers.",
              fontsize=14, color="#222222")
-    source(fig, "Source: IEA, Energy and AI, April 2025 [1]; 2025 point: IEA, Key Questions on Energy and AI, April 2026 [4]. Only the years published by the IEA are plotted; lines join published points.")
+    source("C2", "Source: IEA, Energy and AI, April 2025 [1]; 2025 point: IEA, Key Questions on Energy and AI, April 2026 [4]. Only the years published by the IEA are plotted; lines join published points.")
     save(fig, "C2_iea_datacentre_electricity.png")
 
 
@@ -164,7 +170,7 @@ def c4():
         ax.text(x + 0.2, 5.25, body, fontsize=14.5, va="top", linespacing=1.35)
         ax.text(x + 0.2, 3.35, evidence[i], fontsize=12.5, va="top", color="#333333", linespacing=1.3, style="italic")
         ax.text(x + 0.2, 1.2, metric, fontsize=14, va="bottom", color=c, fontweight="bold")
-    source(fig, "Our synthesis. Evidence: S [22], [66]; C [64], [65]; A [7], [70], [54]; L [26], [53]; E [43], [40]. "
+    source("C4", "Our synthesis. Evidence: S [22], [66]; C [64], [65]; A [7], [70], [54]; L [26], [53]; E [43], [40]. "
                 "Tools: Slurm [60], [61], [71]. Principles: Green AI [57]; UNESCO [47]; OECD [48]; Malaysia AIGE [50].")
     save(fig, "C4_SCALE_framework.png")
 
@@ -189,7 +195,7 @@ def c3():
         return d.year + (d.timetuple().tm_yday-1) / 365.25
 
     fig, ax = plt.subplots(figsize=SIZE)
-    fig.subplots_adjust(left=0.09, right=0.97, top=0.90, bottom=0.14)
+    fig.subplots_adjust(left=0.09, right=0.97, top=0.90, bottom=0.08)
     style = {"Industry": (BLUE, "Industry only"), "Academia": (ORANGE, "Academia only"),
              "Mixed": ("#BBBBBB", "Collaborations and other")}
     for key in ["Mixed", "Industry", "Academia"]:
@@ -226,10 +232,14 @@ def c3():
     ax.legend(loc="lower right", frameon=False, markerscale=1.6)
     ax.set_title("Frontier training compute grows about 5x a year; the top academic model is about 3,000x smaller",
                  loc="left", x=-0.07, fontsize=21, pad=18)
-    source(fig, "Source: Epoch AI, Data on AI Models (notable models with a compute estimate, downloaded 30 Sep 2026) [38]; "
+    source("C3", "Source: Epoch AI, Data on AI Models (notable models with a compute estimate, downloaded 30 Sep 2026) [38]; "
                 "growth rate: Epoch AI Trends [39]. Reference line: EU AI Act Art. 51 [53]; Frontier Rmax, TOP500 June 2026 [5].")
     save(fig, "C3_epoch_training_compute.png")
 
 
 if __name__ == "__main__":
     c1(); c2(); c3(); c4()
+    with open(os.path.join(OUT, "chart_sources.txt"), "w") as f:
+        for chart in sorted(SOURCES):
+            f.write(f"{chart}: {SOURCES[chart]}\n")
+    print("wrote chart_sources.txt")

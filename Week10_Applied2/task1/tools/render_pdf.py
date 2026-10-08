@@ -3,7 +3,7 @@ render_pdf.py
 Turns Task1_Answers.md into Task1_Answers.html and Task1_Answers.pdf
 (markdown-it-py for HTML, headless Google Chrome for the PDF).
 Erwyna Soo Wen Xin (36555789), Taabish Farooq Bhat (35473932)
-Run: python3 tools/render_pdf.py
+Run: python3 tools/render_pdf.py [other.md]
 """
 
 import os
@@ -34,22 +34,29 @@ p { margin: 5pt 0; }
 """
 
 
-def main():
-    md = open(os.path.join(ROOT, "Task1_Answers.md")).read()
+def main(md_path=None):
+    # Default is Task 1; pass another .md (e.g. ../task2/Task2_Report.md)
+    # to render it with the same style next to the source file.
+    md_path = md_path or os.path.join(ROOT, "Task1_Answers.md")
+    md_path = os.path.abspath(md_path)
+    base = os.path.splitext(md_path)[0]
+    md = open(md_path).read()
     body = MarkdownIt("commonmark").enable("table").render(md)
+    title = os.path.basename(base).replace("_", " ")
     html = ("<!doctype html><html><head><meta charset='utf-8'>"
-            "<title>FIT3143 Applied 2 Task 1</title><style>" + CSS +
+            "<title>FIT3143 Applied 2 " + title + "</title><style>" + CSS +
             "</style></head><body>" + body + "</body></html>")
-    html_path = os.path.join(ROOT, "Task1_Answers.html")
+    html_path = base + ".html"
     with open(html_path, "w") as f:
         f.write(html)
-    pdf_path = os.path.join(ROOT, "Task1_Answers.pdf")
+    pdf_path = base + ".pdf"
     subprocess.run([CHROME, "--headless", "--disable-gpu",
                     "--no-pdf-header-footer",
                     "--print-to-pdf=" + pdf_path, "file://" + html_path],
-                   check=True, capture_output=True)
+                   check=True, capture_output=True, timeout=180)
     print("wrote", html_path, "and", pdf_path)
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    main(sys.argv[1] if len(sys.argv) > 1 else None)
