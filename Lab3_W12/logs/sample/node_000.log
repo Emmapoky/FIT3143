@@ -1,0 +1,38 @@
+EV charging node 0 at (0,0), 6 ports, threshold 1 free, version 2
+neighbours: 3(1,0) 1(0,1)
+arrival 0.25, departure 0.35 per port per cycle
+
+cycle 26: 1 free and every neighbour at or under threshold, report #1 sent
+  base station answer after 0.520 ms: EVs forwarded to 2(0,2) 4(1,1) 6(2,0), 2 hops away
+cycle 29: termination message from base station
+
+Year  Month Day Hour Minute Second  Availability
+2026  10    16  22   55     37      3
+2026  10    16  22   55     47      5
+2026  10    16  22   55     57      4
+2026  10    16  22   56     07      3
+2026  10    16  22   56     17      3
+2026  10    16  22   56     27      3
+2026  10    16  22   56     37      3
+2026  10    16  22   56     47      4
+2026  10    16  22   56     57      4
+2026  10    16  22   57     07      2
+2026  10    16  22   57     17      4
+2026  10    16  22   57     27      3
+2026  10    16  22   57     37      3
+2026  10    16  22   57     47      3
+2026  10    16  22   57     57      4
+2026  10    16  22   58     07      5
+2026  10    16  22   58     17      5
+2026  10    16  22   58     27      3
+2026  10    16  22   58     37      3
+2026  10    16  22   58     47      5
+2026  10    16  22   58     57      5
+2026  10    16  22   59     07      5
+2026  10    16  22   59     17      4
+2026  10    16  22   59     27      4
+2026  10    16  22   59     37      2
+2026  10    16  22   59     47      1
+2026  10    16  22   59     57      4
+2026  10    16  23   00     07      4
+2026  10    16  23   00     17      4

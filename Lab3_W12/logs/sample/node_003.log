@@ -1,0 +1,46 @@
+EV charging node 3 at (1,0), 6 ports, threshold 1 free, version 2
+neighbours: 0(0,0) 6(2,0) 4(1,1)
+arrival 0.90, departure 0.05 per port per cycle
+
+cycle 1: 0 free, neighbour 6 has 4 free, EVs redirected there
+cycle 4: 0 free, neighbour 6 has 4 free, EVs redirected there
+cycle 7: 1 free, neighbour 6 has 5 free, EVs redirected there
+cycle 10: 1 free, neighbour 6 has 4 free, EVs redirected there
+cycle 13: 0 free, neighbour 0 has 3 free, EVs redirected there
+cycle 16: 1 free, neighbour 0 has 5 free, EVs redirected there
+cycle 19: 0 free, neighbour 6 has 4 free, EVs redirected there
+cycle 22: 1 free, neighbour 0 has 5 free, EVs redirected there
+cycle 25: 0 free, neighbour 6 has 3 free, EVs redirected there
+cycle 28: 0 free, neighbour 6 has 5 free, EVs redirected there
+cycle 29: termination message from base station
+
+Year  Month Day Hour Minute Second  Availability
+2026  10    16  22   55     37      0
+2026  10    16  22   55     47      0
+2026  10    16  22   55     57      0
+2026  10    16  22   56     07      0
+2026  10    16  22   56     17      0
+2026  10    16  22   56     27      0
+2026  10    16  22   56     37      1
+2026  10    16  22   56     47      1
+2026  10    16  22   56     57      0
+2026  10    16  22   57     07      1
+2026  10    16  22   57     17      1
+2026  10    16  22   57     27      1
+2026  10    16  22   57     37      0
+2026  10    16  22   57     47      0
+2026  10    16  22   57     57      1
+2026  10    16  22   58     07      1
+2026  10    16  22   58     17      1
+2026  10    16  22   58     27      1
+2026  10    16  22   58     37      0
+2026  10    16  22   58     47      0
+2026  10    16  22   58     57      1
+2026  10    16  22   59     07      1
+2026  10    16  22   59     17      1
+2026  10    16  22   59     27      1
+2026  10    16  22   59     37      0
+2026  10    16  22   59     47      0
+2026  10    16  22   59     57      1
+2026  10    16  23   00     07      0
+2026  10    16  23   00     17      0

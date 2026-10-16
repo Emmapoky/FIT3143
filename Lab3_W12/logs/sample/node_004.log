@@ -1,0 +1,53 @@
+EV charging node 4 at (1,1), 6 ports, threshold 1 free, version 2
+neighbours: 1(0,1) 7(2,1) 3(1,0) 5(1,2)
+arrival 0.90, departure 0.05 per port per cycle
+
+cycle 1: 0 free and every neighbour at or under threshold, report #1 sent
+  base station answer after 0.794 ms: EVs forwarded to 0(0,0) 2(0,2) 6(2,0) 8(2,2), 2 hops away
+cycle 5: 0 free and every neighbour at or under threshold, report #2 sent
+  base station answer after 0.766 ms: EVs forwarded to 0(0,0) 2(0,2) 6(2,0) 8(2,2), 2 hops away
+cycle 8: 1 free and every neighbour at or under threshold, report #3 sent
+  base station answer after 0.509 ms: EVs forwarded to 0(0,0) 2(0,2) 6(2,0) 8(2,2), 2 hops away
+cycle 11: 0 free and every neighbour at or under threshold, report #4 sent
+  base station answer after 0.517 ms: EVs forwarded to 0(0,0) 2(0,2) 6(2,0) 8(2,2), 2 hops away
+cycle 14: 1 free and every neighbour at or under threshold, report #5 sent
+  base station answer after 0.508 ms: EVs forwarded to 0(0,0) 2(0,2) 6(2,0) 8(2,2), 2 hops away
+cycle 17: 0 free and every neighbour at or under threshold, report #6 sent
+  base station answer after 0.747 ms: EVs forwarded to 0(0,0) 2(0,2) 6(2,0) 8(2,2), 2 hops away
+cycle 20: 1 free and every neighbour at or under threshold, report #7 sent
+  base station answer after 0.526 ms: EVs forwarded to 0(0,0) 2(0,2) 6(2,0) 8(2,2), 2 hops away
+cycle 23: 0 free, neighbour 1 has 2 free, EVs redirected there
+cycle 27: 1 free and every neighbour at or under threshold, report #8 sent
+  base station answer after 0.514 ms: EVs forwarded to 2(0,2) 6(2,0) 8(2,2), 2 hops away
+cycle 29: termination message from base station
+
+Year  Month Day Hour Minute Second  Availability
+2026  10    16  22   55     37      0
+2026  10    16  22   55     47      0
+2026  10    16  22   55     57      1
+2026  10    16  22   56     07      2
+2026  10    16  22   56     17      0
+2026  10    16  22   56     27      1
+2026  10    16  22   56     37      1
+2026  10    16  22   56     47      1
+2026  10    16  22   56     57      0
+2026  10    16  22   57     07      0
+2026  10    16  22   57     17      0
+2026  10    16  22   57     27      0
+2026  10    16  22   57     37      1
+2026  10    16  22   57     47      1
+2026  10    16  22   57     57      0
+2026  10    16  22   58     07      0
+2026  10    16  22   58     17      0
+2026  10    16  22   58     27      0
+2026  10    16  22   58     37      1
+2026  10    16  22   58     47      1
+2026  10    16  22   58     57      0
+2026  10    16  22   59     07      0
+2026  10    16  22   59     17      0
+2026  10    16  22   59     27      0
+2026  10    16  22   59     37      0
+2026  10    16  22   59     47      2
+2026  10    16  22   59     57      1
+2026  10    16  23   00     07      1
+2026  10    16  23   00     17      2

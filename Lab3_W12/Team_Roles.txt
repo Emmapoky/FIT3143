@@ -1,0 +1,59 @@
+FIT3143 Lab #3: Distributed Wireless Sensor Network (EV charging grid)
+Team: Erwyna Soo Wen Xin (36555789, esoo0013@student.monash.edu)
+      Taabish Farooq Bhat (35473932, ttaa0006@student.monash.edu)
+
+Class: Week 12 lab. Submit BEFORE class starts (5% per day late).
+Worth 14 marks. 7 min talk (HD needs 6 to 7 min), then about 2 min Q&A.
+Rubric: methodology 50% (Task 1 15, Task 2 15, Task 3 20),
+presentation 10%, Q&A 40%. Either of us can be asked about ANY part.
+
+----------------------------------------------------------------
+TAABISH: Task 1, EV charging nodes  (presents about 3:15)
+----------------------------------------------------------------
+Files you own: main.c (topology set up), node.c (the node + ports).
+Slides you present: architecture, inside a node, virtual topology,
+message flow, the three node versions, Task 3b line topology.
+
+Know without notes:
+- why one MPI process per node and one OpenMP thread per port
+- MPI_Comm_split (why the base station must call it too) and
+  MPI_Cart_create (periods 0,0, reorder 0) and MPI_Cart_shift (PROC_NULL)
+- why thread 0 is the only MPI caller (MPI_THREAD_FUNNELED)
+- why no mutex on the shared array (one writer per slot, atomics)
+- v1 blocking vs v2 nonblocking vs v3 neighbour collective, and which
+  one we chose and the number that justifies it
+- what is in the report and why it is ONE message (derived datatype)
+
+----------------------------------------------------------------
+ERWYNA: Task 2, base station + Task 3 analysis  (presents about 3:30)
+----------------------------------------------------------------
+Files you own: base_station.c, common.c, scripts/ (experiments, graphs,
+diagrams, code cards), the Canva deck, the AI declaration, the upload.
+Slides you present: title, base station model, base station versions,
+logging + shutdown, Task 3 method, Task 3a grid, extra findings,
+limitations, Q&A.
+
+Know without notes:
+- the window rule (node 0, neighbours 1 and 3, candidates 2, 4, 6)
+- why the ring search is O(d) and not a scan of the grid
+- BS v1 probe vs v2 Irecv vs v3 persistent + Testsome, and the graph
+- why two phase shutdown (TERMINATE, ACK, SHUTDOWN) and not one message
+- how delay was measured and why MPI_Wtime was NOT used for one way delay
+- what grows with grid size and what stays flat, and why
+
+----------------------------------------------------------------
+BOTH
+----------------------------------------------------------------
+- wsn.h is shared: tags, structs, versions. Both of us must know it.
+- Run it once yourself before class:
+    make
+    mpirun --oversubscribe -np 10 ./wsn 3 3 -L logs/demo -o logs/demo/bs.log
+  then open logs/demo/bs.log and one node log.
+- CAAS: run caas/wsn_demo.job and caas/wsn_sweep.job, copy the job folder
+  down UNEDITED, screenshot sacct. Do NOT submit a job file we never ran.
+- Q&A: verdict, then mechanism, then OUR number. Parallel computing terms
+  (rank, communicator, nonblocking, progress, contention, serialisation,
+  oversubscription), no everyday analogies. Name the problem before the fix.
+- Never contradict our own slide. Know the limitations slide.
+- Two timed run throughs, target 6:30 to 6:50.
+- AI declaration: Erwyna does it separately.
