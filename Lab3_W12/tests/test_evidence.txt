@@ -37,3 +37,13 @@ Team: Erwyna Soo Wen Xin (36555789), Taabish Farooq Bhat (35473932)
    c) Base station v3 answers were ~250 us slow: a persistent send started with MPI_Start
       was only progressed at our next MPI call, one poll sleep later. Added one MPI_Test
       straight after MPI_Start.
+   d) Node versions were not compared fairly: the cooldown and EV divert counters were
+      aged at the END of the cycle. In v1 the base station's answer arrives inside that
+      same cycle (blocking wait), in v2/v3 it arrives between cycles, so v1 got one cycle
+      less cooldown and divert and sent about twice the reports (29 vs 13 on a 4x4, same
+      seed). Both counters now age at the START of the cycle. After the fix the same seed
+      gives 11 / 11 / 11 reports for v1 / v2 / v3. Every result in results/ was re-run
+      AFTER this fix (the earlier runs were deleted, not mixed in).
+
+6. After fix (d): all 9 version pairs, 1x1, 1x8, 8x1, 2x7, saturated and idle re-run, all
+   exit 0; ASan + UBSan re-run for v1/v2/v3 on saturated 3x3: 0 errors.

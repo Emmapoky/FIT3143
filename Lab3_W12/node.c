@@ -551,6 +551,22 @@ static void sample_cycle(Node *n) {
     int congested = free_ports <= n->cfg->threshold;
     if (congested) n->stats[S_C(C_CONGESTED)] += 1;
 
+    // Taabish: count the cooldown down BEFORE deciding, not after. In v1 the
+    // answer lands inside this same call, in v2 it lands between cycles, so
+    // decrementing at the end gave v1 one cycle less cooldown (and one cycle
+    // less divert) and about twice the reports, so the versions were not
+    // being compared fairly.
+    if (n->cooldown_left > 0) n->cooldown_left--;
+    // same reason for the divert counter: it must age by one cycle per
+    // cycle in every version, whenever the answer that set it arrived
+    int d;
+    #pragma omp atomic read seq_cst
+    d = pt->divert;
+    if (d > 0) {
+        #pragma omp atomic write seq_cst
+        pt->divert = d - 1;
+    }
+
     if (n->cfg->node_version == NODE_V_COLLECTIVE) {
         collective_cycle(n);
     } else if (congested && !n->stop_initiating && !n->q_active && !n->r_active
@@ -559,14 +575,6 @@ static void sample_cycle(Node *n) {
         else start_nb_exchange(n);
     }
 
-    if (n->cooldown_left > 0) n->cooldown_left--;
-    int d;
-    #pragma omp atomic read seq_cst
-    d = pt->divert;
-    if (d > 0) {
-        #pragma omp atomic write seq_cst
-        pt->divert = d - 1;
-    }
 }
 
 static int ports_done(Node *n, int tick) {

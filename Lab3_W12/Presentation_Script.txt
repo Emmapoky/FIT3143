@@ -1,0 +1,142 @@
+FIT3143 Lab #3 - talk script (target 6:30, hard limit 7:00)
+Erwyna Soo Wen Xin (36555789) and Taabish Farooq Bhat (35473932)
+
+Same text is in each slide's Canva speaker notes. Say it in your own words,
+do not read the slide. All numbers come from results/*.csv (3 seeds each);
+if a number on a slide and in here disagree, the CSV is right.
+
+Timing: Erwyna about 3:23, Taabish about 3:21, total about 6:44.
+
+----------------------------------------------------------------
+SLIDE 1  Title  (Erwyna, 0:10)
+----------------------------------------------------------------
+Hi, I'm Erwyna and this is Taabish. We built the EV charging sensor
+network in Open MPI and OpenMP. Taabish starts with the charging nodes.
+
+----------------------------------------------------------------
+SLIDE 2  Architecture  (Taabish, 0:28)
+----------------------------------------------------------------
+Every charging node is one MPI process, and the base station is one more
+process, the last rank. The nodes sit in a rows by cols Cartesian grid, so
+a node only talks to its up, down, left and right neighbours, like a real
+radio range. Any node can still report straight to the base station.
+
+----------------------------------------------------------------
+SLIDE 3  Inside a node  (Taabish, 0:28)
+----------------------------------------------------------------
+Inside each node is an OpenMP team of k plus 1 threads. Thread 0 is the
+only one that calls MPI, so MPI_THREAD_FUNNELED is enough. Threads 1 to k
+are the charging ports. Each cycle a port gets or loses a car and writes
+its own slot of the shared array. One writer per slot, with OpenMP
+atomics, so we need no mutex.
+
+----------------------------------------------------------------
+SLIDE 4  Virtual topology  (Taabish, 0:25)
+----------------------------------------------------------------
+MPI_Comm_split takes the base station out of the grid. MPI_Cart_create
+builds the grid with no wrap, because a station on the edge of the map has
+nobody past it. MPI_Cart_shift gives the four neighbours, and edges come
+back as MPI_PROC_NULL, so border nodes need no special case. With rows set
+to 1, the same code gives the line topology.
+
+----------------------------------------------------------------
+SLIDE 5  When a node fills up  (Taabish, 0:28)
+----------------------------------------------------------------
+When free ports drop to the threshold, the node asks its neighbours. If
+one has room, the cars go there and nothing reaches the base station. Only
+if every neighbour is full too does the node send one report. The report
+is one derived datatype of 176 bytes, with the time, the node, every
+neighbour's state, and the messages and bytes it exchanged.
+
+----------------------------------------------------------------
+SLIDE 6  Three node versions  (Taabish, 0:32)
+----------------------------------------------------------------
+We built three ways to ask. Version 1 blocks in MPI_Probe, so the node
+runs no cycles while it waits: 5 ms blocked per node per run. Version 3
+uses MPI_Neighbor_allgather every cycle, so it never has to ask, but it
+sends 3.16 messages per node per cycle against 1.90, and it
+blocks inside the collective, 52 ms per node per run. Version 2, Isend and Irecv with Testall,
+never blocks, so we chose it.
+
+----------------------------------------------------------------
+SLIDE 7  Base station decision  (Erwyna, 0:30)
+----------------------------------------------------------------
+The base station is one process with one thread doing all the MPI. Say
+node 0 reports, and its neighbours are 1 and 3. If both of them reported
+inside the window W, their reports already covered 2, 4 and 6, so the
+answer is no nodes nearby. Otherwise we send all the free nodes two hops
+away, and if none are free we widen to three hops, then four.
+
+----------------------------------------------------------------
+SLIDE 8  Base station versions  (Erwyna, 0:40)
+----------------------------------------------------------------
+We built three receive loops and hit them with every node reporting.
+Version 1, probe plus blocking send, is a serial queue: report delay climbs
+from about 1 to 3.5 ms at 64 nodes. Version 2, one Irecv on any source, is
+the fastest at 0.15 to 0.21 ms. Version 3 arms one persistent receive per
+node and drains them with MPI_Testsome, 0.27 to 0.31 ms, and flat. We kept
+version 3 because it does the least work per report, about half of version
+2, so the base station has more headroom as the grid grows. The 0.1 ms it
+gives up is smaller than our 200 microsecond poll.
+
+----------------------------------------------------------------
+SLIDE 9  Log and shutdown  (Erwyna, 0:28)
+----------------------------------------------------------------
+Every report is logged with the reporter, its neighbours, the messages and
+the answer, and the run ends with a summary and a per node table. For
+shutdown, the base station sends TERMINATE, waits until every node has
+said nothing of its own is still in flight, and only then sends SHUTDOWN.
+So nothing is moving when MPI_Finalize runs.
+
+----------------------------------------------------------------
+SLIDE 10  How we measured  (Erwyna, 0:22)
+----------------------------------------------------------------
+Every message carries its send time, so we get a one way delay for each of
+the eight message types, plus round trips on one clock. MPI_Wtime is not
+global on our machines, so we use the system clock. We ran 32 grid sizes
+and 32 line sizes, three seeds each.
+
+----------------------------------------------------------------
+SLIDE 11  Task 3a: grid size  (Erwyna, 0:38)
+----------------------------------------------------------------
+Neighbour round trip stays nearly flat, 0.65 to 0.77 ms from 4 to 64
+nodes, because a node never has more than four neighbours, whatever the
+grid size. Report round trip to the base station only goes from 0.49 to
+0.64 ms, so the base station keeps up. What does grow is termination,
+0.17 to 0.73 ms, because the base station sends one message per node, so
+that is O(n). The dashed line is where we have more ranks than cores.
+
+----------------------------------------------------------------
+SLIDE 12  Task 3b: line topology  (Taabish, 0:35)
+----------------------------------------------------------------
+For the line we ran the same code with rows set to 1, from 1 by 2 up to 1
+by 64. A node now has at most two neighbours, not four. The neighbour round
+trip barely changes, 0.66 against 0.68 ms, because our 200 microsecond poll
+costs more than the extra two messages. The big difference is traffic: with
+only two neighbours, both are full more often, so the line sends 2.4 times
+the reports, 1.47 per node against 0.60 in the grid, and the base station
+does more work.
+
+----------------------------------------------------------------
+SLIDE 13  Extra findings  (Erwyna, 0:30)
+----------------------------------------------------------------
+Two extra experiments. On the left, a longer window means more past
+reports still count, so more answers become no nodes nearby: from 2 percent
+at a quarter cycle up to 18 percent at 8 cycles, then it levels off. On the
+right, polling: with no sleep the neighbour round trip drops to 0.17 ms, but
+the run burns 39 CPU seconds, against 4 at our 200 microsecond sleep for
+0.66 ms. Taabish closes with limitations.
+
+----------------------------------------------------------------
+SLIDE 14  Limitations and future work  (Taabish, 0:25)
+----------------------------------------------------------------
+The base station is a single point of failure that every report goes
+through. Past 13 nodes our laptop has more processes than cores. And MPI
+assumes reliable links, which real radios do not give. Next we would split
+the base station by region, use one collective for termination, and run
+the full sweep across CAAS machines.
+
+----------------------------------------------------------------
+SLIDE 15  Questions  (Erwyna, 0:05)
+----------------------------------------------------------------
+Thank you. We are happy to take questions.

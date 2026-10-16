@@ -4,8 +4,8 @@ Q&A is 40% of the mark. Each answer: **verdict, then mechanism, then our
 number or our line of code**. Parallel computing terms, no analogies. Never
 contradict the deck. Say each answer out loud in under 25 seconds.
 
-Numbers marked [N] come from `results/summary_*.csv`; check them against
-the deck before class.
+Every number comes from `results/*.csv` (3 seeds per point) and matches
+the deck.
 
 ---
 
@@ -40,10 +40,11 @@ that allows that; MULTIPLE would add internal locking to every MPI call.
 
 **6. Blocking vs nonblocking: which did you pick and why?**
 Version 2, nonblocking. Version 1 blocks the comms thread inside MPI_Probe,
-so the node runs no cycles while it waits ([N] ms blocked per node per run,
+so the node runs no cycles while it waits (5.0 ms blocked per node per run,
 v2 is 0). Version 1's round trip is actually a little shorter because a
 blocked probe wakes instantly while v2 polls every 200 us: that is a poll
-interval cost, and graph 7 shows we can buy it back with CPU.
+interval cost, and the polling graph (slide 13) shows we can buy it back
+with CPU: 0.17 ms at no sleep, but 39 CPU s per run instead of 4.
 
 **7. Could version 1 deadlock?**
 The wait loop answers neighbour requests while it waits, so two full
@@ -55,8 +56,9 @@ detail, which is one reason v2 uses MPI_Isend.
 **8. What does version 3 trade?**
 No request at congestion time: every node already has its neighbours'
 counts from `MPI_Neighbor_allgather`. But it sends 4 messages per node per
-cycle whether anyone is full or not ([N]x the messages of v2), and the
-collective forces every node into lockstep. The stop needs an
+cycle whether anyone is full or not (3.16 per node per cycle against 1.90,
+1.66x), and the collective forces every node into lockstep (52 ms blocked
+per node per run). The stop needs an
 `MPI_Allreduce` first so all nodes leave the cycle loop on the same cycle.
 
 **9. What is in your report and why one message?**
@@ -82,11 +84,20 @@ inside W, and send ALL that remain (tied distance). If none, widen to 3
 hops, 4 hops. Ring walk is O(d), not a grid scan.
 
 **12. Why three versions, and which won?**
-v1 probe + blocking send + line buffered log: a serial queue, report delay
-grows linearly with nodes ([N] ms at 64). v2 one Irecv(ANY_SOURCE): fast to
-36 nodes, then bursts back up in MPI's unexpected message queue, worst case
-[N] ms at 64. v3 persistent receive per node + MPI_Testsome + persistent
-answers + 1 MB log buffer: flat, [N] ms at 64, and [N] us per report.
+Saturated load, 9 to 64 nodes. v1 probe + blocking send + line buffered
+log: a serial queue, report delay grows from 0.95 to 3.5 ms, about 180 us of
+base station work per report. v2 one Irecv(ANY_SOURCE): fastest delivery,
+0.15 to 0.21 ms, about 25 us of work per report. v3 persistent receive per
+node + MPI_Testsome + persistent answers + 1 MB log buffer: 0.27 to 0.31 ms,
+flat, and only 8 to 18 us of work per report. We kept v3: half the base
+station work, so it has the most headroom as N grows, and the 0.1 ms it gives
+up to v2 is below our 200 us poll. Honest answer if pushed: on pure delay v2
+wins at this scale.
+
+**12b. Why is v3 a little slower than v2 on delay?**
+Likely cost of MPI_Testsome scanning n posted requests every pass, against
+one request for v2, and a burst completing together is then handled one
+after another. We did not profile it further; the difference is about 0.1 ms.
 
 **13. What does MPI_Testsome give you over MPI_Test?**
 One call returns every completed receive out of the n posted ones, so a
@@ -129,16 +140,17 @@ only NTP synced, so there the round trips are the trustworthy numbers.
 Neighbour messages stay roughly flat: a node has at most 4 neighbours
 whatever the grid size, so per node work is O(1). Base station messages
 grow, because all reports converge on one rank: O(N) arrivals into one
-serial receiver. Past 13 nodes the laptop also has more processes than
+serial receiver. Measured: neighbour round trip 0.65 to 0.77 ms, report round
+trip 0.49 to 0.64 ms, terminate 0.17 to 0.73 ms from 4 to 64 nodes. Past 13 nodes the laptop also has more processes than
 cores, so part of the growth is oversubscription, which CAAS removes.
 
 **20. Line topology? (3b)**
-Degree drops from 4 to 2, so a neighbour exchange is 2 messages not 4 and
-its round trip is a bit shorter. But with only 2 neighbours a full node
-finds both neighbours full more often, so lines send more reports per node
-to the base station. Diameter is N - 1 instead of about 2 sqrt(N), so the
-base station's 2 hop candidates are less likely to exist, and far ones
-are further away.
+Degree drops from 4 to 2, so a neighbour exchange is 2 messages, not 4. The
+round trip barely moves (0.66 vs 0.68 ms) because the 200 us poll dominates,
+not the message count. The real change is traffic: with only 2 neighbours a
+full node finds both full more often, so the line sends 2.4x the reports
+(1.47 per node vs 0.60). Diameter is N - 1 instead of about 2 sqrt(N), so
+base station candidates sit further away.
 
 **21. Biggest limitation?**
 The single base station is a serial bottleneck and a single point of

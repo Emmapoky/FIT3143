@@ -3,44 +3,48 @@ neighbours: 4(1,1) 0(0,0) 2(0,2)
 arrival 0.90, departure 0.05 per port per cycle
 
 cycle 1: 0 free, neighbour 2 has 5 free, EVs redirected there
-cycle 4: 0 free, neighbour 0 has 4 free, EVs redirected there
+cycle 3: 1 free, neighbour 0 has 4 free, EVs redirected there
+cycle 5: 1 free, neighbour 2 has 4 free, EVs redirected there
 cycle 8: 0 free, neighbour 0 has 4 free, EVs redirected there
-cycle 11: 0 free, neighbour 0 has 2 free, EVs redirected there
+cycle 10: 1 free, neighbour 2 has 3 free, EVs redirected there
+cycle 12: 1 free, neighbour 0 has 3 free, EVs redirected there
 cycle 14: 1 free, neighbour 2 has 4 free, EVs redirected there
-cycle 17: 0 free, neighbour 0 has 5 free, EVs redirected there
-cycle 20: 0 free, neighbour 2 has 5 free, EVs redirected there
-cycle 23: 0 free, neighbour 2 has 5 free, EVs redirected there
+cycle 16: 1 free, neighbour 0 has 5 free, EVs redirected there
+cycle 18: 1 free, neighbour 2 has 5 free, EVs redirected there
+cycle 20: 1 free, neighbour 0 has 5 free, EVs redirected there
+cycle 22: 1 free, neighbour 0 has 5 free, EVs redirected there
+cycle 24: 0 free, neighbour 0 has 4 free, EVs redirected there
 cycle 26: 0 free, neighbour 4 has 2 free, EVs redirected there
-cycle 29: 0 free, neighbour 0 has 4 free, EVs redirected there
+cycle 28: 1 free, neighbour 0 has 4 free, EVs redirected there
 cycle 29: termination message from base station
 
 Year  Month Day Hour Minute Second  Availability
-2026  10    16  22   55     37      0
-2026  10    16  22   55     47      0
-2026  10    16  22   55     57      1
-2026  10    16  22   56     07      0
-2026  10    16  22   56     17      1
-2026  10    16  22   56     27      1
-2026  10    16  22   56     37      2
-2026  10    16  22   56     47      0
-2026  10    16  22   56     57      1
-2026  10    16  22   57     07      1
-2026  10    16  22   57     17      0
-2026  10    16  22   57     27      0
-2026  10    16  22   57     37      0
-2026  10    16  22   57     47      1
-2026  10    16  22   57     57      1
-2026  10    16  22   58     07      1
-2026  10    16  22   58     17      0
-2026  10    16  22   58     27      0
-2026  10    16  22   58     37      1
-2026  10    16  22   58     47      0
-2026  10    16  22   58     57      2
-2026  10    16  22   59     07      2
-2026  10    16  22   59     17      0
-2026  10    16  22   59     27      0
-2026  10    16  22   59     37      0
-2026  10    16  22   59     47      0
-2026  10    16  22   59     57      1
-2026  10    16  23   00     07      1
-2026  10    16  23   00     17      0
+2026  10    16  23   25     42      0
+2026  10    16  23   25     52      0
+2026  10    16  23   26     02      1
+2026  10    16  23   26     12      0
+2026  10    16  23   26     22      1
+2026  10    16  23   26     32      1
+2026  10    16  23   26     42      2
+2026  10    16  23   26     52      0
+2026  10    16  23   27     02      1
+2026  10    16  23   27     12      1
+2026  10    16  23   27     22      1
+2026  10    16  23   27     32      1
+2026  10    16  23   27     42      1
+2026  10    16  23   27     52      1
+2026  10    16  23   28     02      1
+2026  10    16  23   28     12      1
+2026  10    16  23   28     22      1
+2026  10    16  23   28     32      1
+2026  10    16  23   28     42      2
+2026  10    16  23   28     52      1
+2026  10    16  23   29     02      1
+2026  10    16  23   29     12      1
+2026  10    16  23   29     22      1
+2026  10    16  23   29     32      0
+2026  10    16  23   29     42      0
+2026  10    16  23   29     52      0
+2026  10    16  23   30     02      1
+2026  10    16  23   30     12      1
+2026  10    16  23   30     22      1

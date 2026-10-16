@@ -1,6 +1,6 @@
 ==========================================================================
  FIT3143 Lab 3 base station log
- started            2026-10-16 22:56:19.060
+ started            2026-10-16 23:25:25.540
  grid               2 x 7 = 14 charging nodes + 1 base station (2D grid)
  ports per node     6, congested when free <= 1
  cycle              100 ms real = 10 s simulated, 20 cycles
@@ -10,42 +10,52 @@
  message sizes      report 176 B, answer 544 B
 ==========================================================================
 
-[2026-10-16 22:56:19.964] REPORT #1 from node 10 (1,3), its report #1, cycle 9, sim t+0.9 s
-  congestion found  2026-10-16 22:56:19.963
+[2026-10-16 23:25:26.444] REPORT #1 from node 10 (1,3), its report #1, cycle 9, sim t+0.9 s
+  congestion found  2026-10-16 23:25:26.444
   reporter          free 0 of 6 ports (threshold 1), node version 2
   neighbours        3(0,3) free 0 | 9(1,2) free 0 | 11(1,4) free 1
-  neighbour msgs    3 out (120 B), 3 in (120 B), exchange took 0.524 ms
-  report            176 B, one way delay 0.286 ms
+  neighbour msgs    3 out (120 B), 3 in (120 B), exchange took 0.812 ms
+  report            176 B, one way delay 0.481 ms
   window check      0 of 3 neighbours reported in the last 0.30 s [3:no 9:no 11:no]
   ANSWER            4 nearest available node(s), 2 hops: 2(0,2) free ? 4(0,4) free ? 8(1,1) free ? 12(1,5) free ?
-  base station      decided, answered and logged in 0.024 ms
+  base station      decided, answered and logged in 0.030 ms
 
-[2026-10-16 22:56:20.264] REPORT #2 from node 10 (1,3), its report #2, cycle 12, sim t+1.2 s
-  congestion found  2026-10-16 22:56:20.263
+[2026-10-16 23:25:26.643] REPORT #2 from node 10 (1,3), its report #2, cycle 11, sim t+1.1 s
+  congestion found  2026-10-16 23:25:26.643
   reporter          free 0 of 6 ports (threshold 1), node version 2
-  neighbours        3(0,3) free 1 | 9(1,2) free 0 | 11(1,4) free 0
-  neighbour msgs    3 out (120 B), 3 in (120 B), exchange took 0.483 ms
-  report            176 B, one way delay 0.460 ms
+  neighbours        3(0,3) free 1 | 9(1,2) free 1 | 11(1,4) free 1
+  neighbour msgs    3 out (120 B), 3 in (120 B), exchange took 0.554 ms
+  report            176 B, one way delay 0.502 ms
   window check      0 of 3 neighbours reported in the last 0.30 s [3:no 9:no 11:no]
   ANSWER            4 nearest available node(s), 2 hops: 2(0,2) free ? 4(0,4) free ? 8(1,1) free ? 12(1,5) free ?
-  base station      decided, answered and logged in 0.020 ms
+  base station      decided, answered and logged in 0.013 ms
 
-[2026-10-16 22:56:20.564] REPORT #3 from node 10 (1,3), its report #3, cycle 15, sim t+1.5 s
-  congestion found  2026-10-16 22:56:20.563
+[2026-10-16 23:25:26.844] REPORT #3 from node 10 (1,3), its report #3, cycle 13, sim t+1.3 s
+  congestion found  2026-10-16 23:25:26.843
   reporter          free 1 of 6 ports (threshold 1), node version 2
-  neighbours        3(0,3) free 1 | 9(1,2) free 0 | 11(1,4) free 1
-  neighbour msgs    3 out (120 B), 3 in (120 B), exchange took 0.558 ms
-  report            176 B, one way delay 0.504 ms
+  neighbours        3(0,3) free 1 | 9(1,2) free 1 | 11(1,4) free 1
+  neighbour msgs    3 out (120 B), 3 in (120 B), exchange took 0.498 ms
+  report            176 B, one way delay 0.388 ms
   window check      0 of 3 neighbours reported in the last 0.30 s [3:no 9:no 11:no]
   ANSWER            4 nearest available node(s), 2 hops: 2(0,2) free ? 4(0,4) free ? 8(1,1) free ? 12(1,5) free ?
-  base station      decided, answered and logged in 0.010 ms
+  base station      decided, answered and logged in 0.014 ms
 
-[2026-10-16 22:56:20.864] REPORT #4 from node 10 (1,3), its report #4, cycle 18, sim t+1.8 s
-  congestion found  2026-10-16 22:56:20.863
-  reporter          free 1 of 6 ports (threshold 1), node version 2
+[2026-10-16 23:25:27.244] REPORT #4 from node 10 (1,3), its report #4, cycle 17, sim t+1.7 s
+  congestion found  2026-10-16 23:25:27.244
+  reporter          free 0 of 6 ports (threshold 1), node version 2
   neighbours        3(0,3) free 1 | 9(1,2) free 1 | 11(1,4) free 0
-  neighbour msgs    3 out (120 B), 3 in (120 B), exchange took 0.294 ms
-  report            176 B, one way delay 0.478 ms
+  neighbour msgs    3 out (120 B), 3 in (120 B), exchange took 1.345 ms
+  report            176 B, one way delay 0.364 ms
+  window check      0 of 3 neighbours reported in the last 0.30 s [3:no 9:no 11:no]
+  ANSWER            4 nearest available node(s), 2 hops: 2(0,2) free ? 4(0,4) free ? 8(1,1) free ? 12(1,5) free ?
+  base station      decided, answered and logged in 0.013 ms
+
+[2026-10-16 23:25:27.443] REPORT #5 from node 10 (1,3), its report #5, cycle 19, sim t+1.9 s
+  congestion found  2026-10-16 23:25:27.443
+  reporter          free 0 of 6 ports (threshold 1), node version 2
+  neighbours        3(0,3) free 1 | 9(1,2) free 1 | 11(1,4) free 0
+  neighbour msgs    3 out (120 B), 3 in (120 B), exchange took 0.561 ms
+  report            176 B, one way delay 0.341 ms
   window check      0 of 3 neighbours reported in the last 0.30 s [3:no 9:no 11:no]
   ANSWER            4 nearest available node(s), 2 hops: 2(0,2) free ? 4(0,4) free ? 8(1,1) free ? 12(1,5) free ?
   base station      decided, answered and logged in 0.012 ms
@@ -54,46 +64,46 @@
  PER NODE
  node  (x,y)  cycles congested queries local reports sent recv  query_rtt_ms report_rtt_ms blocked_s
     0 ( 0, 0)     19         0       0     0       0     2     3         0.000         0.000    0.0000
-    1 ( 0, 1)     19         2       1     1       0     4     5         0.545         0.000    0.0000
-    2 ( 0, 2)     19         0       0     0       0    15    16         0.000         0.000    0.0000
-    3 ( 0, 3)     19        19       7     7       0    29    30         0.573         0.000    0.0000
-    4 ( 0, 4)     19         2       1     1       0    18    19         0.375         0.000    0.0000
+    1 ( 0, 1)     19         2       1     1       0     4     5         0.556         0.000    0.0000
+    2 ( 0, 2)     19         0       0     0       0    19    20         0.000         0.000    0.0000
+    3 ( 0, 3)     19        18       9     9       0    38    39         0.608         0.000    0.0000
+    4 ( 0, 4)     19         2       1     1       0    23    24         0.538         0.000    0.0000
     5 ( 0, 5)     19         0       0     0       0     3     4         0.000         0.000    0.0000
     6 ( 0, 6)     19         0       0     0       0     1     2         0.000         0.000    0.0000
     7 ( 1, 0)     19         0       0     0       0     1     2         0.000         0.000    0.0000
-    8 ( 1, 1)     19         0       0     0       0     8     9         0.000         0.000    0.0000
-    9 ( 1, 2)     19        15       6     6       0    25    26         0.491         0.000    0.0000
-   10 ( 1, 3)     19        17       6     2       4    43    44         0.525         0.578    0.0000
-   11 ( 1, 4)     19        19       7     7       0    30    31         0.750         0.000    0.0000
-   12 ( 1, 5)     19         1       1     1       0    11    12         0.499         0.000    0.0000
+    8 ( 1, 1)     19         0       0     0       0    10    11         0.000         0.000    0.0000
+    9 ( 1, 2)     19        15       8     8       0    34    35         0.710         0.000    0.0000
+   10 ( 1, 3)     19        17       9     4       5    60    61         0.658         0.568    0.0000
+   11 ( 1, 4)     19        19      10    10       0    42    43         0.656         0.000    0.0000
+   12 ( 1, 5)     19         1       1     1       0    14    15         0.511         0.000    0.0000
    13 ( 1, 6)     19         0       0     0       0     2     3         0.000         0.000    0.0000
 
 ==========================================================================
  SUMMARY
  simulation time        2.001 s (20 cycles requested)
- congested node cycles  75 of 266 sampled
- neighbour exchanges    29 (25 solved locally by a neighbour with room)
- alerts (reports)       4
-   answered with nodes  4
+ congested node cycles  74 of 266 sampled
+ neighbour exchanges    39 (34 solved locally by a neighbour with room)
+ alerts (reports)       5
+   answered with nodes  5
    none nearby          0
    none anywhere        0
- messages / events      224 messages, 10176 bytes in total
-   base station         18 in, 32 out (incl. 14 TERMINATE, 14 SHUTDOWN, 14 ACK)
+ messages / events      286 messages, 13296 bytes in total
+   base station         19 in, 33 out (incl. 14 TERMINATE, 14 SHUTDOWN, 14 ACK)
  clock                  system real time clock for stamps (MPI_Wtime global: no).
                         One way delays are exact on one machine; across machines
                         trust the round trips (query_rtt, report_rtt) first.
 
  delay per message type   count     mean_us      min_us      max_us
- req                         87      387.64      229.84     1290.08
- reply                       87      178.17        2.86      994.92
- query_rtt                   29      578.33      293.97     1405.00
- report                       4      431.95      286.10      503.78
- response                     4      140.01       10.01      287.06
- report_rtt                   4      577.51      493.05      793.93
- terminate                   14      171.58       40.05      270.13
- bs_process                   4       16.45       10.01       23.84
+ req                        117      407.89      214.10     1338.96
+ reply                      117      217.13        1.19     1060.96
+ query_rtt                   39      647.29      483.04     1351.83
+ report                       5      415.13      340.94      501.87
+ response                     5      148.96        7.87      260.11
+ report_rtt                   5      568.10      509.02      746.97
+ terminate                   14      170.13       95.13      248.91
+ bs_process                   5       16.45       12.16       30.04
 
  node comms thread blocked in MPI   0.0000 s per node on average
- cycle start lateness              mean 0.131 ms, worst 0.320 ms
+ cycle start lateness              mean 0.132 ms, worst 0.305 ms
  shutdown                          14 of 14 ACKs, all requests completed and freed
 ==========================================================================

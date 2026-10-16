@@ -61,9 +61,10 @@ waits for every node's ACK, then sends SHUTDOWN. No CTRL+C needed.
 | `logs/e1_grid/`, `logs/e2_line/`, ... | base station log of every seed 1 run behind the graphs |
 | `results/*.csv` | one row per run, written by the base station; `summary_*.csv` = seed averages |
 | `results/run_experiments.out` | console output of the experiment runner |
-| `graphs/graph*.png` | Task 3 graphs; `graphs/per_type/` one graph per message type |
-| `graphs/diagram*.png`, `graphs/code/` | slide diagrams and code cards (drawn from the source) |
-| `scripts/` | `run_experiments.py`, `make_graphs.py`, `make_diagrams.py`, `make_code_cards.py` |
+| `graphs/slides/` | everything on the slides: `v*` diagrams, `c*` code cards, `l*` log cards, `g*` graphs, `a*` appendix graphs (all text at least 30 px on the slide) |
+| `graphs/graph*.png`, `graphs/per_type/` | earlier full size graphs, one per message type |
+| `scripts/` | `run_experiments.py` (E1 to E5), `make_slide_visuals.py` (every slide image), older `make_graphs.py`, `make_diagrams.py`, `make_code_cards.py` |
+| `Presentation_Script.txt` | timed talk script, same text as the Canva speaker notes (about 6:44) |
 | `caas/` | CAAS job files (see the CAAS section) |
 | `tests/test_evidence.txt` | edge cases, sanitizer and leak checks, bugs found |
 
@@ -71,6 +72,50 @@ waits for every node's ACK, then sends SHUTDOWN. No CTRL+C needed.
 
 ```bash
 make
-python3 scripts/run_experiments.py      # E1 to E5, about 70 minutes on a laptop, resumable
-python3 scripts/make_graphs.py
+python3 scripts/run_experiments.py      # E1 to E5, about 41 minutes on a laptop, resumable
+python3 scripts/make_slide_visuals.py graphs
 ```
+
+---
+
+## Versions (rubric: blocking and nonblocking, at least three for the base station)
+
+| Version | Node side (`-V`) | Base station side (`-B`) |
+|---|---|---|
+| 1 | `MPI_Send` + blocking `MPI_Probe`/`MPI_Recv` wait loop (still answers neighbours while waiting, so no deadlock) | `MPI_Iprobe` poll, then blocking `MPI_Recv` + `MPI_Send`, one disk write per log line |
+| 2 | `MPI_Irecv` posted first, then `MPI_Isend`, then `MPI_Testall` while cycles keep running | one `MPI_Irecv(MPI_ANY_SOURCE)` kept posted, answers with `MPI_Isend` |
+| 3 | `MPI_Neighbor_allgather` on the Cartesian communicator every cycle, `MPI_Allreduce` to agree on the stop | one persistent `MPI_Recv_init` per node + `MPI_Testsome`, persistent `MPI_Send_init` answers, 1 MB buffered log |
+
+Chosen: node v2, base station v3 (see `graphs/slides/g01_node_versions.png`,
+`g02_bs_versions.png`). Every version uses the same decision code, so the
+comparison isolates the MPI pattern.
+
+| Measured (3 seeds) | v1 | v2 | v3 |
+|---|---|---|---|
+| Node: ms blocked in MPI per node per run (grid, all sizes) | 5.0 | 0 | 52.3 |
+| Node: messages per node per cycle | 1.90 | 1.90 | 3.16 |
+| Base station: report delay, 9 to 64 nodes, saturated (ms) | 0.95 to 3.5 | 0.15 to 0.21 | 0.27 to 0.31 |
+| Base station: work per report (us) | about 180 | about 25 | 8 to 18 |
+
+Base station v2 delivers reports about 0.1 ms faster than v3; we kept v3
+because it does half the work per report, so it has more headroom as the
+grid grows, and the 0.1 ms is below the 200 us poll interval.
+
+## CAAS
+
+`caas/wsn_demo.job` (one 3x3 run, all logs) and `caas/wsn_sweep.job` (all 32
+grids and 32 lines, node v1/v2/v3) run on 2 CAAS nodes with `--map-by node`
+so neighbour and base station messages cross the network.
+
+**Status: written but NOT run yet.** We could not reach CAAS from the laptop
+used for the local experiments. To run:
+
+```bash
+scp -r Lab3_W12 <authcate>@student-caas-headnode.rep.monash.edu:~
+ssh <authcate>@student-caas-headnode.rep.monash.edu
+cd Lab3_W12/caas && sbatch wsn_demo.job && sbatch wsn_sweep.job
+squeue -u $USER
+```
+
+Copy the `caas/job<id>/` and `caas/demo<id>/` folders back UNEDITED and
+screenshot `sacct`. Do not submit a job file we never ran.

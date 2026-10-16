@@ -271,6 +271,45 @@ def cards():
     print(sizes)
 
 
+# ===================================================================== log cards
+def text_card(name, caption, lines, W, colour_fn=None):
+    """Plain monospace card (real program output), MIN pt, wrapped to fit W."""
+    maxc = int((W - 60) / 18.6)
+    rows = []
+    for x in lines:
+        x = x.rstrip()
+        while len(x) > maxc:
+            cut = x.rfind(" ", 0, maxc)
+            cut = cut if cut > maxc // 2 else maxc
+            rows.append(x[:cut])
+            x = "      " + x[cut:].lstrip()
+        rows.append(x)
+    lh = 42
+    H = 80 + lh * len(rows) + 20
+    fig, ax = canvas(W, H)
+    t(ax, 20, H - 38, caption, MIN, YEL, bold=True)
+    for i, x in enumerate(rows):
+        c = colour_fn(x) if colour_fn else WHITE
+        t(ax, 20, H - 100 - i * lh, x, MIN, c, mono=True)
+    save(fig, name)
+    return H
+
+
+def log_cards():
+    log = open(os.path.join(ROOT, "logs", "sample", "base_station.log")).read().split("\n")
+    i0 = next(i for i, l in enumerate(log) if "REPORT #2 " in l)
+    block = [l for l in log[i0:i0 + 10]]
+    text_card("l01_report.png", "logs/sample/base_station.log: one report as the base station logged it",
+              block, 1740, lambda x: YEL if "ANSWER" in x else CYAN if "REPORT" in x else WHITE)
+    j0 = next(i for i, l in enumerate(log) if "delay per message type" in l)
+    text_card("l02_delays.png", "same log, end of run: delay per message type (3x3, node v2, bs v3)",
+              [l for l in log[j0:j0 + 9]], 1740, lambda x: YEL if "count" in x else WHITE)
+    nl = open(os.path.join(ROOT, "logs", "sample", "node_004.log")).read().split("\n")
+    k0 = next(i for i, l in enumerate(nl) if l.startswith("Year"))
+    text_card("l03_table1.png", "logs/sample/node_004.log: spec Table 1, 10 s per cycle",
+              nl[k0:k0 + 9], 1000, lambda x: YEL if x.startswith("Year") else WHITE)
+
+
 # ======================================================================= graphs
 def load(name):
     p = os.path.join(RES, name)
@@ -347,15 +386,19 @@ def g_node_versions(grid):
 
 
 def g_bs_versions(rows):
-    fig, axes = chart(1000, 800, left=0.15, bottom=0.15, top=0.9)
-    a = axes[0]
-    s = series(rows, "report_mean_us", by="bs_v")
-    names = {"1": "v1 probe", "2": "v2 Irecv", "3": "v3 persistent"}
-    for v in ("1", "2", "3"):
-        line(a, s[v], VCOL[v], names[v])
-    a.set_xlabel("charging nodes (saturated load)")
-    a.set_ylabel("report delay, mean (ms)")
-    legend(a)
+    # two panels on purpose: v2 wins on delay, v3 wins on base station work per
+    # report, and the slide has to show that trade off, not hide it
+    fig, axes = chart(1000, 800, ncols=2, left=0.1, bottom=0.15, top=0.86, wspace=0.35)
+    names = {"1": "v1", "2": "v2", "3": "v3"}
+    for a, col, unit, ttl in ((axes[0], "report_mean_us", 1000.0, "report delay (ms)"),
+                              (axes[1], "bs_process_mean_us", 1.0, "BS work (us)")):
+        s = series(rows, col, by="bs_v")
+        for v in ("1", "2", "3"):
+            line(a, s[v], VCOL[v], names[v], unit=unit)
+        a.set_xlabel("nodes")
+        a.set_ylim(0, None)
+        title(a, ttl)
+    legend(axes[0])
     save(fig, "g02_bs_versions.png")
 
 
@@ -365,7 +408,10 @@ def g_grid(grid):
     v2 = [r for r in grid if r["node_v"] == "2"]
     line(a, series(v2, "query_rtt_mean_us")["2"], CYAN, "neighbour round trip")
     line(a, series(v2, "report_rtt_mean_us")["2"], YEL, "report round trip")
+    line(a, series(v2, "terminate_mean_us")["2"], CORAL, "terminate (one way)")
     a.axvline(13.5, color=WHITE, ls=":", lw=2)
+    a.set_ylim(0, None)
+    a.text(15, 0.04, "more ranks than cores", fontsize=MIN, color=WHITE)
     a.set_xlabel("charging nodes in the grid")
     a.set_ylabel("mean delay (ms)")
     legend(a)
@@ -379,9 +425,12 @@ def g_line(grid, line_rows):
         v2 = [r for r in rows if r["node_v"] == "2"]
         line(a, series(v2, "query_rtt_mean_us")["2"], c, f"{nm}: neighbour", band=False, ls=ls)
         line(a, series(v2, "report_rtt_mean_us")["2"], c, f"{nm}: report", band=False, ls=":")
+    a.set_ylim(0, None)
     a.set_xlabel("charging nodes")
     a.set_ylabel("mean round trip (ms)")
-    legend(a)
+    lg = a.legend(fontsize=MIN, loc="lower center", ncol=2, frameon=True, facecolor=NAVY, edgecolor=GREY)
+    for tx in lg.get_texts():
+        tx.set_color(WHITE)
     save(fig, "g04_line.png")
 
 
@@ -395,6 +444,8 @@ def g_extra(win, poll, cpu):
     ws = sorted(g)
     a.plot(ws, [sum(g[w]) / len(g[w]) for w in ws], color=CORAL, lw=4, marker="o", ms=8)
     a.set_xscale("log")
+    a.set_xticks([0.25, 1, 4, 20])
+    a.set_xticklabels(["0.25", "1", "4", "20"])
     a.set_xlabel("window W (cycles)")
     title(a, "% answers 'none nearby'")
     a = axes[1]
@@ -410,9 +461,12 @@ def g_extra(win, poll, cpu):
         if v == "2":
             a.plot(cpus, lat, color=CYAN, lw=4, marker="o", ms=8)
             for x, cx, ly in zip(xs, cpus, lat):
-                if x in (0, 50, 200, 2000):
-                    a.annotate(f"{x} us", (cx, ly), textcoords="offset points", xytext=(10, 8),
-                               fontsize=MIN, color=WHITE)
+                off = {0: (-10, 22, "right"), 50: (14, 10, "left"), 200: (14, 14, "left"),
+                       2000: (18, -10, "left")}
+                if x in off:
+                    dx, dy, ha = off[x]
+                    a.annotate(f"{x} us", (cx, ly), textcoords="offset points", xytext=(dx, dy),
+                               fontsize=MIN, color=WHITE, ha=ha)
     a.set_xlabel("CPU seconds per 3 s run")
     title(a, "v2 neighbour round trip (ms)")
     save(fig, "g05_extra.png")
@@ -432,7 +486,7 @@ def appendix(rows, tag, label):
             a.set_xlabel("nodes")
             a.locator_params(nbins=4)
         axes[0].set_ylabel("mean delay (ms)")
-        legend(axes[0])
+        legend(axes[1] if gi == 1 else axes[2])
         save(fig, f"a{tag}{gi + 1}_{label}.png")
 
 
@@ -442,6 +496,7 @@ if __name__ == "__main__":
         v01_architecture(); v02_node(); v03_sequence(); v04_rule(); v05_shutdown()
     if "cards" in what:
         cards()
+        log_cards()
     if "graphs" in what:
         grid, ln = load("e1_grid.csv"), load("e2_line.csv")
         if grid:
