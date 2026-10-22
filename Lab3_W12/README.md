@@ -103,19 +103,30 @@ grid grows, and the 0.1 ms is below the 200 us poll interval.
 
 ## CAAS
 
-`caas/wsn_demo.job` (one 3x3 run, all logs) and `caas/wsn_sweep.job` (all 32
-grids and 32 lines, node v1/v2/v3) run on 2 CAAS nodes with `--map-by node`
-so neighbour and base station messages cross the network.
+Run on Monash CAAS on 23 October 2026 (Open MPI 4.1.5 module `openmpi`, `srun`
+launcher, same as Lab 2). All outputs are in `caas/` exactly as the jobs wrote them.
 
-**Status: written but NOT run yet.** We could not reach CAAS from the laptop
-used for the local experiments. To run:
+| Job | What | Result |
+|---|---|---|
+| 200672 | `wsn_demo.job`: one 3x3 run on 2 nodes, base station log and 9 node logs (`caas/demo200672/`) | COMPLETED |
+| 200673, 200674, 200675 | `wsn_sweep.job` with `VER=1`, `2`, `3`: 32 grids and 32 lines each on 4 nodes, base station v3, seed 1 (`caas/job<id>_v<n>/`, CSVs `e1_grid_caas.csv`, `e2_line_caas.csv`, 64 logs each) | all 192 runs COMPLETED, no FAILED lines |
+| 200554 | first demo attempt | FAILED after 2 s: Open MPI `mpirun` could not start its daemons on the compute nodes. Kept in `caas/failed_attempt_200554/`. The job files were then changed from `mpirun` to `srun` (as in Lab 2). |
+
+`caas/sacct_lab3.txt` is the `sacct` record of every job and step, including the failed attempt.
+
+Two limits shaped the job files: the CAAS partition allows 20 minutes per job (so
+the sweep is one job per node version), and a CAAS node has 16 CPUs (so the demo
+uses 5 tasks x 3 CPUs per node with `-k 2`).
+
+What CAAS showed (node v2, grid, `slides` A9): neighbour round trip about 0.8 to
+0.9 ms against 0.65 to 0.77 ms on the laptop, terminate about 0.4 to 1.7 ms against
+0.17 to 0.73 ms, and the line still sends about 2.8x the grid's reports (laptop
+2.4x). Same trends, with the network adding delay.
+
+To rerun:
 
 ```bash
-scp -r Lab3_W12 <authcate>@student-caas-headnode.rep.monash.edu:~
-ssh <authcate>@student-caas-headnode.rep.monash.edu
-cd Lab3_W12/caas && sbatch wsn_demo.job && sbatch wsn_sweep.job
-squeue -u $USER
+cd Lab3_W12/caas
+sbatch wsn_demo.job
+for v in 1 2 3; do sbatch --export=ALL,VER=$v wsn_sweep.job; done
 ```
-
-Copy the `caas/job<id>/` and `caas/demo<id>/` folders back UNEDITED and
-screenshot `sacct`. Do not submit a job file we never ran.

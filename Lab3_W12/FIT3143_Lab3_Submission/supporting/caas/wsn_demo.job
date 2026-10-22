@@ -1,0 +1,28 @@
+#!/bin/bash
+#SBATCH --job-name=fit3143_lab3_demo
+#SBATCH --time=00:10:00
+#SBATCH --mem=4G
+#SBATCH --nodes=2
+#SBATCH --ntasks=10
+#SBATCH --ntasks-per-node=5
+#SBATCH --cpus-per-task=3
+#SBATCH --partition=defq
+#SBATCH --output=wsn_demo.%j.out
+####################################################################
+# FIT3143 Lab #3 - one 3x3 run across 2 CAAS nodes with every log on:
+# the base station log, all 9 node logs (Table 1 format) and stdout.
+# CAAS nodes have 16 cpus, so 5 tasks x 3 cpus = 15 per node: -k 2 gives
+# 2 port threads + 1 comms thread per node, one cpu each, no oversubscription.
+#
+# Team: Erwyna Soo Wen Xin (36555789), Taabish Farooq Bhat (35473932)
+# Submit: sbatch wsn_demo.job
+####################################################################
+module load openmpi 2>/dev/null || module load gcc/openmpi 2>/dev/null || true
+OUT=demo${SLURM_JOB_ID}
+mkdir -p $OUT/node_logs
+cd ..
+mpicc -O2 -std=gnu11 main.c node.c base_station.c common.c -o caas/$OUT/wsn -fopenmp || exit 1
+cd caas/$OUT
+echo "nodes: $SLURM_JOB_NODELIST   date: $(date)"
+export OMP_WAIT_POLICY=passive
+srun --ntasks=$SLURM_NTASKS --cpus-per-task=3 --distribution=cyclic ./wsn 3 3 -k 2 -c 30 -s hotspot -V 2 -B 3 -L node_logs -o base_station.log

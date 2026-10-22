@@ -1,0 +1,229 @@
+nodes: student-caas-n[08-09]   date: Fri Oct 23 03:23:36 AEDT 2026
+[node 2 (0,2)] cycle 3: me and all 2 neighbours full, reporting to base station
+[node 2 (0,2)] base station says: no nodes available anywhere
+[node 2 (0,2)] cycle 5: me and all 2 neighbours full, reporting to base station
+[node 2 (0,2)] base station says go to: 0(0,0) (2 hops)
+[node 2 (0,2)] cycle 7: me and all 2 neighbours full, reporting to base station
+[node 2 (0,2)] base station says go to: 0(0,0) (2 hops)
+[node 2 (0,2)] cycle 9: me and all 2 neighbours full, reporting to base station
+[node 2 (0,2)] base station says go to: 8(2,2) (2 hops)
+[node 2 (0,2)] cycle 11: me and all 2 neighbours full, reporting to base station
+[node 2 (0,2)] base station says go to: 8(2,2) (2 hops)
+[node 2 (0,2)] cycle 16: me and all 2 neighbours full, reporting to base station
+[node 2 (0,2)] base station says: no nodes available anywhere
+[node 2 (0,2)] cycle 24: me and all 2 neighbours full, reporting to base station
+[node 2 (0,2)] base station says go to: 0(0,0) 8(2,2) (2 hops)
+[node 3 (1,0)] cycle 1: me and all 3 neighbours full, reporting to base station
+[node 3 (1,0)] base station says go to: 1(0,1) 5(1,2) 7(2,1) (2 hops)
+[node 3 (1,0)] cycle 3: full (0 free), EVs sent to neighbour 0 (2 free)
+[node 3 (1,0)] cycle 5: full (0 free), EVs sent to neighbour 0 (2 free)
+[node 3 (1,0)] cycle 7: full (0 free), EVs sent to neighbour 0 (2 free)
+[node 3 (1,0)] cycle 9: me and all 3 neighbours full, reporting to base station
+[node 3 (1,0)] base station says: no nodes available nearby
+[node 3 (1,0)] cycle 11: full (0 free), EVs sent to neighbour 0 (2 free)
+[node 3 (1,0)] cycle 13: full (1 free), EVs sent to neighbour 6 (2 free)
+[node 3 (1,0)] cycle 15: me and all 3 neighbours full, reporting to base station
+[node 3 (1,0)] base station says: no nodes available nearby
+[node 3 (1,0)] cycle 17: full (0 free), EVs sent to neighbour 0 (2 free)
+[node 3 (1,0)] cycle 19: full (1 free), EVs sent to neighbour 0 (2 free)
+[node 3 (1,0)] cycle 21: full (1 free), EVs sent to neighbour 0 (2 free)
+[node 3 (1,0)] cycle 23: full (0 free), EVs sent to neighbour 0 (2 free)
+[node 3 (1,0)] cycle 25: full (1 free), EVs sent to neighbour 0 (2 free)
+[node 3 (1,0)] cycle 27: full (0 free), EVs sent to neighbour 0 (2 free)
+[node 3 (1,0)] cycle 29: full (0 free), EVs sent to neighbour 0 (2 free)
+[node 5 (1,2)] cycle 1: full (0 free), EVs sent to neighbour 2 (2 free)
+[node 5 (1,2)] cycle 3: me and all 3 neighbours full, reporting to base station
+[node 5 (1,2)] base station says: no nodes available anywhere
+[node 5 (1,2)] cycle 5: me and all 3 neighbours full, reporting to base station
+[node 5 (1,2)] base station says: no nodes available nearby
+[node 5 (1,2)] cycle 7: full (0 free), EVs sent to neighbour 8 (2 free)
+[node 5 (1,2)] cycle 9: full (0 free), EVs sent to neighbour 8 (2 free)
+[node 5 (1,2)] cycle 11: full (0 free), EVs sent to neighbour 8 (2 free)
+[node 5 (1,2)] cycle 13: full (0 free), EVs sent to neighbour 2 (2 free)
+[node 5 (1,2)] cycle 15: full (0 free), EVs sent to neighbour 2 (2 free)
+[node 5 (1,2)] cycle 17: full (0 free), EVs sent to neighbour 8 (2 free)
+[node 5 (1,2)] cycle 19: full (0 free), EVs sent to neighbour 2 (2 free)
+[node 5 (1,2)] cycle 21: full (0 free), EVs sent to neighbour 2 (2 free)
+[node 5 (1,2)] cycle 23: full (0 free), EVs sent to neighbour 2 (2 free)
+[node 5 (1,2)] cycle 25: me and all 3 neighbours full, reporting to base station
+[node 5 (1,2)] base station says: no nodes available nearby
+[node 5 (1,2)] cycle 27: me and all 3 neighbours full, reporting to base station
+[node 5 (1,2)] base station says: no nodes available nearby
+[node 5 (1,2)] cycle 29: full (0 free), EVs sent to neighbour 8 (2 free)
+[node 7 (2,1)] cycle 1: me and all 3 neighbours full, reporting to base station
+[node 7 (2,1)] base station says go to: 2(0,2) (3 hops)
+[node 7 (2,1)] cycle 3: full (0 free), EVs sent to neighbour 6 (2 free)
+[node 7 (2,1)] cycle 5: full (0 free), EVs sent to neighbour 6 (2 free)
+[node 7 (2,1)] cycle 7: full (0 free), EVs sent to neighbour 8 (2 free)
+[node 7 (2,1)] cycle 9: full (0 free), EVs sent to neighbour 6 (2 free)
+[node 7 (2,1)] cycle 11: full (0 free), EVs sent to neighbour 6 (2 free)
+[node 7 (2,1)] cycle 13: full (0 free), EVs sent to neighbour 6 (2 free)
+[node 7 (2,1)] cycle 15: full (0 free), EVs sent to neighbour 6 (2 free)
+[node 7 (2,1)] cycle 17: full (0 free), EVs sent to neighbour 6 (2 free)
+[node 7 (2,1)] cycle 19: full (0 free), EVs sent to neighbour 8 (2 free)
+[node 7 (2,1)] cycle 21: full (0 free), EVs sent to neighbour 8 (2 free)
+[node 7 (2,1)] cycle 23: full (0 free), EVs sent to neighbour 6 (2 free)
+[node 7 (2,1)] cycle 25: me and all 3 neighbours full, reporting to base station
+[node 7 (2,1)] base station says: no nodes available nearby
+[node 7 (2,1)] cycle 27: full (0 free), EVs sent to neighbour 6 (2 free)
+[node 7 (2,1)] cycle 29: full (1 free), EVs sent to neighbour 8 (2 free)
+[base station] report from node 3 -> 3 candidate(s) at 2 hops
+[base station] report from node 4 -> 2 candidate(s) at 2 hops
+[base station] report from node 6 -> 1 candidate(s) at 2 hops
+[base station] report from node 7 -> 1 candidate(s) at 3 hops
+[base station] report from node 8 -> 1 candidate(s) at 2 hops
+[base station] report from node 0 -> 1 candidate(s) at 2 hops
+[base station] report from node 4 -> 1 candidate(s) at 2 hops
+[base station] report from node 5 -> no nodes available anywhere
+[base station] report from node 2 -> no nodes available anywhere
+[base station] report from node 8 -> no nodes available nearby
+[base station] report from node 6 -> no nodes available anywhere
+[base station] report from node 4 -> 1 candidate(s) at 2 hops
+[base station] report from node 2 -> 1 candidate(s) at 2 hops
+[base station] report from node 5 -> no nodes available nearby
+[base station] report from node 8 -> 1 candidate(s) at 4 hops
+[base station] report from node 4 -> 1 candidate(s) at 2 hops
+[base station] report from node 2 -> 1 candidate(s) at 2 hops
+[base station] report from node 6 -> 1 candidate(s) at 2 hops
+[base station] report from node 0 -> no nodes available anywhere
+[base station] report from node 4 -> 1 candidate(s) at 2 hops
+[base station] report from node 3 -> no nodes available nearby
+[base station] report from node 2 -> 1 candidate(s) at 2 hops
+[base station] report from node 1 -> no nodes available nearby
+[base station] report from node 0 -> no nodes available nearby
+[base station] report from node 4 -> 1 candidate(s) at 2 hops
+[base station] report from node 2 -> 1 candidate(s) at 2 hops
+[base station] report from node 8 -> 1 candidate(s) at 2 hops
+[base station] report from node 0 -> 1 candidate(s) at 2 hops
+[base station] report from node 4 -> 1 candidate(s) at 2 hops
+[base station] report from node 6 -> 1 candidate(s) at 4 hops
+[base station] report from node 8 -> 1 candidate(s) at 2 hops
+[base station] report from node 0 -> 1 candidate(s) at 2 hops
+[base station] report from node 4 -> 1 candidate(s) at 2 hops
+[base station] report from node 3 -> no nodes available nearby
+[base station] report from node 2 -> no nodes available anywhere
+[base station] report from node 4 -> no nodes available anywhere
+[base station] report from node 4 -> 3 candidate(s) at 2 hops
+[base station] report from node 6 -> 2 candidate(s) at 2 hops
+[base station] report from node 8 -> 1 candidate(s) at 2 hops
+[base station] report from node 0 -> 1 candidate(s) at 2 hops
+[base station] report from node 4 -> 1 candidate(s) at 2 hops
+[base station] report from node 6 -> 1 candidate(s) at 4 hops
+[base station] report from node 4 -> 3 candidate(s) at 2 hops
+[base station] report from node 2 -> 2 candidate(s) at 2 hops
+[base station] report from node 6 -> 2 candidate(s) at 2 hops
+[base station] report from node 8 -> 1 candidate(s) at 4 hops
+[base station] report from node 4 -> 1 candidate(s) at 2 hops
+[base station] report from node 5 -> no nodes available nearby
+[base station] report from node 7 -> no nodes available nearby
+[base station] report from node 0 -> no nodes available anywhere
+[base station] report from node 2 -> no nodes available anywhere
+[base station] report from node 6 -> no nodes available anywhere
+[base station] report from node 8 -> no nodes available nearby
+[base station] report from node 4 -> no nodes available anywhere
+[base station] report from node 5 -> no nodes available nearby
+[base station] report from node 2 -> no nodes available anywhere
+[base station] report from node 6 -> no nodes available anywhere
+[base station] report from node 4 -> 1 candidate(s) at 2 hops
+[base station] report from node 0 -> no nodes available anywhere
+[base station] 3x3, node v2, bs v3: 3.00 s, 59 reports (36 with nodes, 10 none nearby, 13 none anywhere), 761 messages. Log: base_station.log
+[node 1 (0,1)] cycle 1: full (0 free), EVs sent to neighbour 2 (2 free)
+[node 1 (0,1)] cycle 3: full (1 free), EVs sent to neighbour 0 (2 free)
+[node 1 (0,1)] cycle 5: full (1 free), EVs sent to neighbour 0 (2 free)
+[node 1 (0,1)] cycle 7: full (1 free), EVs sent to neighbour 0 (2 free)
+[node 1 (0,1)] cycle 9: me and all 3 neighbours full, reporting to base station
+[node 1 (0,1)] base station says: no nodes available nearby
+[node 1 (0,1)] cycle 11: full (0 free), EVs sent to neighbour 0 (2 free)
+[node 1 (0,1)] cycle 13: full (0 free), EVs sent to neighbour 2 (2 free)
+[node 1 (0,1)] cycle 15: full (0 free), EVs sent to neighbour 2 (2 free)
+[node 1 (0,1)] cycle 17: full (0 free), EVs sent to neighbour 0 (2 free)
+[node 1 (0,1)] cycle 19: full (0 free), EVs sent to neighbour 0 (2 free)
+[node 1 (0,1)] cycle 21: full (0 free), EVs sent to neighbour 0 (2 free)
+[node 1 (0,1)] cycle 23: full (0 free), EVs sent to neighbour 0 (2 free)
+[node 1 (0,1)] cycle 25: full (0 free), EVs sent to neighbour 0 (2 free)
+[node 1 (0,1)] cycle 27: full (1 free), EVs sent to neighbour 0 (2 free)
+[node 1 (0,1)] cycle 29: full (1 free), EVs sent to neighbour 0 (2 free)
+[node 2 (0,2)] cycle 26: me and all 2 neighbours full, reporting to base station
+[node 2 (0,2)] base station says: no nodes available anywhere
+[node 2 (0,2)] cycle 28: me and all 2 neighbours full, reporting to base station
+[node 2 (0,2)] base station says: no nodes available anywhere
+[node 4 (1,1)] cycle 1: me and all 4 neighbours full, reporting to base station
+[node 4 (1,1)] base station says go to: 2(0,2) 8(2,2) (2 hops)
+[node 4 (1,1)] cycle 3: me and all 4 neighbours full, reporting to base station
+[node 4 (1,1)] base station says go to: 2(0,2) (2 hops)
+[node 4 (1,1)] cycle 5: me and all 4 neighbours full, reporting to base station
+[node 4 (1,1)] base station says go to: 0(0,0) (2 hops)
+[node 4 (1,1)] cycle 7: me and all 4 neighbours full, reporting to base station
+[node 4 (1,1)] base station says go to: 0(0,0) (2 hops)
+[node 4 (1,1)] cycle 9: me and all 4 neighbours full, reporting to base station
+[node 4 (1,1)] base station says go to: 8(2,2) (2 hops)
+[node 4 (1,1)] cycle 11: me and all 4 neighbours full, reporting to base station
+[node 4 (1,1)] base station says go to: 8(2,2) (2 hops)
+[node 4 (1,1)] cycle 13: me and all 4 neighbours full, reporting to base station
+[node 4 (1,1)] base station says go to: 6(2,0) (2 hops)
+[node 4 (1,1)] cycle 15: me and all 4 neighbours full, reporting to base station
+[node 4 (1,1)] base station says go to: 2(0,2) (2 hops)
+[node 4 (1,1)] cycle 17: me and all 4 neighbours full, reporting to base station
+[node 4 (1,1)] base station says: no nodes available anywhere
+[node 4 (1,1)] cycle 19: me and all 4 neighbours full, reporting to base station
+[node 4 (1,1)] base station says go to: 0(0,0) 6(2,0) 8(2,2) (2 hops)
+[node 4 (1,1)] cycle 21: me and all 4 neighbours full, reporting to base station
+[node 4 (1,1)] base station says go to: 2(0,2) (2 hops)
+[node 4 (1,1)] cycle 23: me and all 4 neighbours full, reporting to base station
+[node 4 (1,1)] base station says go to: 0(0,0) 2(0,2) 8(2,2) (2 hops)
+[node 4 (1,1)] cycle 25: me and all 4 neighbours full, reporting to base station
+[node 4 (1,1)] base station says go to: 0(0,0) (2 hops)
+[node 4 (1,1)] cycle 27: me and all 4 neighbours full, reporting to base station
+[node 4 (1,1)] base station says: no nodes available anywhere
+[node 4 (1,1)] cycle 29: me and all 4 neighbours full, reporting to base station
+[node 4 (1,1)] base station says go to: 0(0,0) (2 hops)
+[node 6 (2,0)] cycle 1: me and all 2 neighbours full, reporting to base station
+[node 6 (2,0)] base station says go to: 8(2,2) (2 hops)
+[node 6 (2,0)] cycle 4: me and all 2 neighbours full, reporting to base station
+[node 6 (2,0)] base station says: no nodes available anywhere
+[node 6 (2,0)] cycle 7: me and all 2 neighbours full, reporting to base station
+[node 6 (2,0)] base station says go to: 0(0,0) (2 hops)
+[node 6 (2,0)] cycle 14: me and all 2 neighbours full, reporting to base station
+[node 6 (2,0)] base station says go to: 2(0,2) (4 hops)
+[node 6 (2,0)] cycle 19: me and all 2 neighbours full, reporting to base station
+[node 6 (2,0)] base station says go to: 0(0,0) 8(2,2) (2 hops)
+[node 6 (2,0)] cycle 21: me and all 2 neighbours full, reporting to base station
+[node 6 (2,0)] base station says go to: 2(0,2) (4 hops)
+[node 6 (2,0)] cycle 24: me and all 2 neighbours full, reporting to base station
+[node 6 (2,0)] base station says go to: 0(0,0) 8(2,2) (2 hops)
+[node 6 (2,0)] cycle 26: me and all 2 neighbours full, reporting to base station
+[node 6 (2,0)] base station says: no nodes available anywhere
+[node 6 (2,0)] cycle 28: me and all 2 neighbours full, reporting to base station
+[node 6 (2,0)] base station says: no nodes available anywhere
+[node 8 (2,2)] cycle 1: me and all 2 neighbours full, reporting to base station
+[node 8 (2,2)] base station says go to: 2(0,2) (2 hops)
+[node 8 (2,2)] cycle 3: me and all 2 neighbours full, reporting to base station
+[node 8 (2,2)] base station says: no nodes available nearby
+[node 8 (2,2)] cycle 5: me and all 2 neighbours full, reporting to base station
+[node 8 (2,2)] base station says go to: 0(0,0) (4 hops)
+[node 8 (2,2)] cycle 12: me and all 2 neighbours full, reporting to base station
+[node 8 (2,2)] base station says go to: 6(2,0) (2 hops)
+[node 8 (2,2)] cycle 14: me and all 2 neighbours full, reporting to base station
+[node 8 (2,2)] base station says go to: 2(0,2) (2 hops)
+[node 8 (2,2)] cycle 19: me and all 2 neighbours full, reporting to base station
+[node 8 (2,2)] base station says go to: 2(0,2) (2 hops)
+[node 8 (2,2)] cycle 24: me and all 2 neighbours full, reporting to base station
+[node 8 (2,2)] base station says go to: 0(0,0) (4 hops)
+[node 8 (2,2)] cycle 26: me and all 2 neighbours full, reporting to base station
+[node 8 (2,2)] base station says: no nodes available nearby
+[node 0 (0,0)] cycle 1: me and all 2 neighbours full, reporting to base station
+[node 0 (0,0)] base station says go to: 2(0,2) (2 hops)
+[node 0 (0,0)] cycle 7: me and all 2 neighbours full, reporting to base station
+[node 0 (0,0)] base station says: no nodes available anywhere
+[node 0 (0,0)] cycle 9: me and all 2 neighbours full, reporting to base station
+[node 0 (0,0)] base station says: no nodes available nearby
+[node 0 (0,0)] cycle 12: me and all 2 neighbours full, reporting to base station
+[node 0 (0,0)] base station says go to: 6(2,0) (2 hops)
+[node 0 (0,0)] cycle 14: me and all 2 neighbours full, reporting to base station
+[node 0 (0,0)] base station says go to: 2(0,2) (2 hops)
+[node 0 (0,0)] cycle 19: me and all 2 neighbours full, reporting to base station
+[node 0 (0,0)] base station says go to: 2(0,2) (2 hops)
+[node 0 (0,0)] cycle 25: me and all 2 neighbours full, reporting to base station
+[node 0 (0,0)] base station says: no nodes available anywhere
+[node 0 (0,0)] cycle 29: me and all 2 neighbours full, reporting to base station
+[node 0 (0,0)] base station says: no nodes available anywhere

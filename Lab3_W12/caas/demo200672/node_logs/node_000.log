@@ -1,0 +1,52 @@
+EV charging node 0 at (0,0), 2 ports, threshold 1 free, version 2
+neighbours: 3(1,0) 1(0,1)
+arrival 0.25, departure 0.35 per port per cycle
+
+cycle 1: 1 free and every neighbour at or under threshold, report #1 sent
+  base station answer after 0.555 ms: EVs forwarded to 2(0,2), 2 hops away
+cycle 7: 1 free and every neighbour at or under threshold, report #2 sent
+  base station answer after 0.815 ms: no nodes available anywhere
+cycle 9: 1 free and every neighbour at or under threshold, report #3 sent
+  base station answer after 0.551 ms: no nodes available nearby
+cycle 12: 1 free and every neighbour at or under threshold, report #4 sent
+  base station answer after 0.815 ms: EVs forwarded to 6(2,0), 2 hops away
+cycle 14: 1 free and every neighbour at or under threshold, report #5 sent
+  base station answer after 0.815 ms: EVs forwarded to 2(0,2), 2 hops away
+cycle 19: 1 free and every neighbour at or under threshold, report #6 sent
+  base station answer after 0.816 ms: EVs forwarded to 2(0,2), 2 hops away
+cycle 25: 1 free and every neighbour at or under threshold, report #7 sent
+  base station answer after 0.550 ms: no nodes available anywhere
+cycle 29: 1 free and every neighbour at or under threshold, report #8 sent
+  base station answer after 0.551 ms: no nodes available anywhere
+cycle 29: termination message from base station
+
+Year  Month Day Hour Minute Second  Availability
+2026  10    23  03   23     46      1
+2026  10    23  03   23     56      2
+2026  10    23  03   24     06      2
+2026  10    23  03   24     16      2
+2026  10    23  03   24     26      2
+2026  10    23  03   24     36      2
+2026  10    23  03   24     46      1
+2026  10    23  03   24     56      1
+2026  10    23  03   25     06      1
+2026  10    23  03   25     16      2
+2026  10    23  03   25     26      2
+2026  10    23  03   25     36      1
+2026  10    23  03   25     46      1
+2026  10    23  03   25     56      1
+2026  10    23  03   26     06      2
+2026  10    23  03   26     16      2
+2026  10    23  03   26     26      2
+2026  10    23  03   26     36      2
+2026  10    23  03   26     46      1
+2026  10    23  03   26     56      2
+2026  10    23  03   27     06      2
+2026  10    23  03   27     16      2
+2026  10    23  03   27     26      2
+2026  10    23  03   27     36      2
+2026  10    23  03   27     46      1
+2026  10    23  03   27     56      2
+2026  10    23  03   28     06      2
+2026  10    23  03   28     16      2
+2026  10    23  03   28     26      1

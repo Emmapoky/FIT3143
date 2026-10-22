@@ -1,38 +1,40 @@
 #!/bin/bash
 #SBATCH --job-name=fit3143_lab3
-#SBATCH --time=01:30:00
+#SBATCH --time=00:20:00
 #SBATCH --mem=16G
-#SBATCH --nodes=2
-#SBATCH --ntasks=32
+#SBATCH --nodes=4
+#SBATCH --ntasks=64
 #SBATCH --ntasks-per-node=16
 #SBATCH --cpus-per-task=1
 #SBATCH --partition=defq
 #SBATCH --output=wsn_sweep.%j.out
 ####################################################################
-# FIT3143 Lab #3 - WSN simulator on CAAS, Task 3 sweeps across 2 nodes.
+# FIT3143 Lab #3 - WSN simulator on CAAS, Task 3 sweeps across 4 nodes.
 #
 # Team: Erwyna Soo Wen Xin (36555789), Taabish Farooq Bhat (35473932)
 # Written by: Erwyna Soo Wen Xin
 #
-# Same 32 grids and 32 lines as scripts/run_experiments.py, node v1/v2/v3
-# with base station v3, one seed (seed 1) to fit the time limit.
-# --map-by node places ranks round robin over the 2 machines, so neighbour
+# Same 32 grids and 32 lines as scripts/run_experiments.py, base station v3,
+# one seed (seed 1) to fit the 20 minute partition limit. ONE node version per
+# job (VER=1, 2 or 3), so three jobs make the full sweep.
+# srun --distribution=cyclic places ranks round robin over the 4 machines, so neighbour
 # and base station messages really cross the network instead of being
 # shared memory copies inside one laptop.
 #
-# Submit from this folder:  sbatch wsn_sweep.job
+# Submit from this folder:  sbatch --export=ALL,VER=2 wsn_sweep.job   (then VER=1, VER=3)
 # Everything lands in caas/job<id>/. Copy that folder down UNEDITED.
 ####################################################################
 module load openmpi 2>/dev/null || module load gcc/openmpi 2>/dev/null || true
 
-OUT=job${SLURM_JOB_ID}
+VER=${VER:?set VER=1, 2 or 3 with sbatch --export=ALL,VER=n}
+OUT=job${SLURM_JOB_ID}_v${VER}
 mkdir -p $OUT/logs
 cd ..
 mpicc -O2 -std=gnu11 main.c node.c base_station.c common.c -o caas/$OUT/wsn -fopenmp || exit 1
 cd caas/$OUT
 
 echo "nodes: $SLURM_JOB_NODELIST   tasks: $SLURM_NTASKS   date: $(date)"
-mpirun --version | head -1
+srun --version | head -1
 export OMP_WAIT_POLICY=passive
 
 GRIDS="2x2 2x3 3x3 2x5 3x4 2x7 4x4 3x6 4x5 3x7 2x11 4x6 5x5 3x9 4x7 5x6 4x8 5x7 6x6 4x10 6x7 5x9 6x8 7x7 5x10 6x9 7x8 4x15 5x12 6x10 2x31 8x8"
@@ -41,15 +43,15 @@ COMMON="-c 30 -p 100 -s uniform -a 0.6 -d 0.2 -q -B 3 -S 1"
 
 for g in $GRIDS; do
   r=${g%x*}; c=${g#*x}; np=$(( r * c + 1 ))
-  for v in 1 2 3; do
-    mpirun --oversubscribe --map-by node -np $np ./wsn $r $c $COMMON -V $v \
+  for v in $VER; do
+    srun --overcommit --ntasks=$np --cpus-per-task=1 --distribution=cyclic ./wsn $r $c $COMMON -V $v \
       -r e1_grid_caas.csv -o logs/grid_${g}_v${v}.log || echo "FAILED grid $g v$v"
   done
 done
 for n in $LINES; do
   np=$(( n + 1 ))
-  for v in 1 2 3; do
-    mpirun --oversubscribe --map-by node -np $np ./wsn 1 $n $COMMON -V $v \
+  for v in $VER; do
+    srun --overcommit --ntasks=$np --cpus-per-task=1 --distribution=cyclic ./wsn 1 $n $COMMON -V $v \
       -r e2_line_caas.csv -o logs/line_1x${n}_v${v}.log || echo "FAILED line 1x$n v$v"
   done
 done

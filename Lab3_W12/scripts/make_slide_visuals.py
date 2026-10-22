@@ -472,6 +472,20 @@ def g_extra(win, poll, cpu):
     save(fig, "g05_extra.png")
 
 
+def g_caas(laptop, caas):
+    # same experiment, same code: laptop (shared memory, 14 cores) against CAAS (4 machines, network)
+    fig, axes = chart(1000, 800, ncols=2, left=0.1, bottom=0.15, top=0.86, wspace=0.35)
+    for a, col, ttl in ((axes[0], "query_rtt_mean_us", "neighbour RTT (ms)"),
+                        (axes[1], "terminate_mean_us", "terminate (ms)")):
+        line(a, series(laptop, col)["2"], CYAN, "laptop", band=False)
+        line(a, series(caas, col)["2"], YEL, "CAAS", band=False)
+        a.set_xlabel("nodes")
+        a.set_ylim(0, None)
+        title(a, ttl)
+    legend(axes[0], "lower right")
+    save(fig, "g06_caas.png")
+
+
 def appendix(rows, tag, label):
     groups = [("one way delays", [("req", "request"), ("reply", "reply"), ("report", "report"), ("response", "answer")]),
               ("round trips + others", [("query_rtt", "neighbour RTT"), ("report_rtt", "report RTT"),
@@ -508,5 +522,8 @@ if __name__ == "__main__":
         if grid and ln:
             g_line(grid, ln)
             appendix(ln, "2", "line")
+        cp = os.path.join(ROOT, "caas", "job200674_v2", "e1_grid_caas.csv")
+        if grid and os.path.exists(cp):
+            g_caas([r for r in grid if r["node_v"] == "2"], list(csv.DictReader(open(cp))))
         if load("e4_window.csv") and load("e5_poll.csv"):
             g_extra(load("e4_window.csv"), load("e5_poll.csv"), load("e5_poll_cpu.csv"))

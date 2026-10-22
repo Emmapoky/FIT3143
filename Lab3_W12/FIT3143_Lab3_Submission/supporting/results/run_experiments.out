@@ -1,0 +1,714 @@
+== E1
+  e1_grid v1 seed 1                        2x2     3.1s  ok
+  e1_grid v1 seed 2                        2x2     3.1s  ok
+  e1_grid v1 seed 3                        2x2     3.1s  ok
+  e1_grid v2 seed 1                        2x2     3.4s  ok
+  e1_grid v2 seed 2                        2x2     3.1s  ok
+  e1_grid v2 seed 3                        2x2     3.1s  ok
+  e1_grid v3 seed 1                        2x2     3.2s  ok
+  e1_grid v3 seed 2                        2x2     3.2s  ok
+  e1_grid v3 seed 3                        2x2     3.2s  ok
+  e1_grid v1 seed 1                        2x3     3.1s  ok
+  e1_grid v1 seed 2                        2x3     3.1s  ok
+  e1_grid v1 seed 3                        2x3     3.1s  ok
+  e1_grid v2 seed 1                        2x3     3.1s  ok
+  e1_grid v2 seed 2                        2x3     3.1s  ok
+  e1_grid v2 seed 3                        2x3     3.1s  ok
+  e1_grid v3 seed 1                        2x3     3.2s  ok
+  e1_grid v3 seed 2                        2x3     3.2s  ok
+  e1_grid v3 seed 3                        2x3     3.2s  ok
+  e1_grid v1 seed 1                        3x3     3.2s  ok
+  e1_grid v1 seed 2                        3x3     3.1s  ok
+  e1_grid v1 seed 3                        3x3     3.1s  ok
+  e1_grid v2 seed 1                        3x3     3.1s  ok
+  e1_grid v2 seed 2                        3x3     3.1s  ok
+  e1_grid v2 seed 3                        3x3     3.1s  ok
+  e1_grid v3 seed 1                        3x3     3.2s  ok
+  e1_grid v3 seed 2                        3x3     3.2s  ok
+  e1_grid v3 seed 3                        3x3     3.2s  ok
+  e1_grid v1 seed 1                        2x5     3.2s  ok
+  e1_grid v1 seed 2                        2x5     3.1s  ok
+  e1_grid v1 seed 3                        2x5     3.1s  ok
+  e1_grid v2 seed 1                        2x5     3.1s  ok
+  e1_grid v2 seed 2                        2x5     3.1s  ok
+  e1_grid v2 seed 3                        2x5     3.1s  ok
+  e1_grid v3 seed 1                        2x5     3.2s  ok
+  e1_grid v3 seed 2                        2x5     3.2s  ok
+  e1_grid v3 seed 3                        2x5     3.2s  ok
+  e1_grid v1 seed 1                        3x4     3.2s  ok
+  e1_grid v1 seed 2                        3x4     3.2s  ok
+  e1_grid v1 seed 3                        3x4     3.2s  ok
+  e1_grid v2 seed 1                        3x4     3.2s  ok
+  e1_grid v2 seed 2                        3x4     3.2s  ok
+  e1_grid v2 seed 3                        3x4     3.2s  ok
+  e1_grid v3 seed 1                        3x4     3.2s  ok
+  e1_grid v3 seed 2                        3x4     3.2s  ok
+  e1_grid v3 seed 3                        3x4     3.2s  ok
+  e1_grid v1 seed 1                        2x7     3.3s  ok
+  e1_grid v1 seed 2                        2x7     3.2s  ok
+  e1_grid v1 seed 3                        2x7     3.2s  ok
+  e1_grid v2 seed 1                        2x7     3.2s  ok
+  e1_grid v2 seed 2                        2x7     3.3s  ok
+  e1_grid v2 seed 3                        2x7     3.2s  ok
+  e1_grid v3 seed 1                        2x7     3.3s  ok
+  e1_grid v3 seed 2                        2x7     3.3s  ok
+  e1_grid v3 seed 3                        2x7     3.3s  ok
+  e1_grid v1 seed 1                        4x4     3.2s  ok
+  e1_grid v1 seed 2                        4x4     3.2s  ok
+  e1_grid v1 seed 3                        4x4     3.2s  ok
+  e1_grid v2 seed 1                        4x4     3.2s  ok
+  e1_grid v2 seed 2                        4x4     3.3s  ok
+  e1_grid v2 seed 3                        4x4     3.2s  ok
+  e1_grid v3 seed 1                        4x4     3.3s  ok
+  e1_grid v3 seed 2                        4x4     3.3s  ok
+  e1_grid v3 seed 3                        4x4     3.3s  ok
+  e1_grid v1 seed 1                        3x6     3.3s  ok
+  e1_grid v1 seed 2                        3x6     3.3s  ok
+  e1_grid v1 seed 3                        3x6     3.3s  ok
+  e1_grid v2 seed 1                        3x6     3.2s  ok
+  e1_grid v2 seed 2                        3x6     3.3s  ok
+  e1_grid v2 seed 3                        3x6     3.2s  ok
+  e1_grid v3 seed 1                        3x6     3.3s  ok
+  e1_grid v3 seed 2                        3x6     3.3s  ok
+  e1_grid v3 seed 3                        3x6     3.3s  ok
+  e1_grid v1 seed 1                        4x5     3.3s  ok
+  e1_grid v1 seed 2                        4x5     3.3s  ok
+  e1_grid v1 seed 3                        4x5     3.2s  ok
+  e1_grid v2 seed 1                        4x5     3.3s  ok
+  e1_grid v2 seed 2                        4x5     3.3s  ok
+  e1_grid v2 seed 3                        4x5     3.3s  ok
+  e1_grid v3 seed 1                        4x5     3.3s  ok
+  e1_grid v3 seed 2                        4x5     3.3s  ok
+  e1_grid v3 seed 3                        4x5     3.3s  ok
+  e1_grid v1 seed 1                        3x7     3.2s  ok
+  e1_grid v1 seed 2                        3x7     3.3s  ok
+  e1_grid v1 seed 3                        3x7     3.3s  ok
+  e1_grid v2 seed 1                        3x7     3.3s  ok
+  e1_grid v2 seed 2                        3x7     3.3s  ok
+  e1_grid v2 seed 3                        3x7     3.2s  ok
+  e1_grid v3 seed 1                        3x7     3.3s  ok
+  e1_grid v3 seed 2                        3x7     3.3s  ok
+  e1_grid v3 seed 3                        3x7     3.3s  ok
+  e1_grid v1 seed 1                        2x11    3.2s  ok
+  e1_grid v1 seed 2                        2x11    3.3s  ok
+  e1_grid v1 seed 3                        2x11    3.3s  ok
+  e1_grid v2 seed 1                        2x11    3.3s  ok
+  e1_grid v2 seed 2                        2x11    3.3s  ok
+  e1_grid v2 seed 3                        2x11    3.3s  ok
+  e1_grid v3 seed 1                        2x11    3.3s  ok
+  e1_grid v3 seed 2                        2x11    3.3s  ok
+  e1_grid v3 seed 3                        2x11    3.3s  ok
+  e1_grid v1 seed 1                        4x6     3.3s  ok
+  e1_grid v1 seed 2                        4x6     3.3s  ok
+  e1_grid v1 seed 3                        4x6     3.3s  ok
+  e1_grid v2 seed 1                        4x6     3.3s  ok
+  e1_grid v2 seed 2                        4x6     3.3s  ok
+  e1_grid v2 seed 3                        4x6     3.3s  ok
+  e1_grid v3 seed 1                        4x6     3.3s  ok
+  e1_grid v3 seed 2                        4x6     3.3s  ok
+  e1_grid v3 seed 3                        4x6     3.3s  ok
+  e1_grid v1 seed 1                        5x5     3.3s  ok
+  e1_grid v1 seed 2                        5x5     3.4s  ok
+  e1_grid v1 seed 3                        5x5     3.4s  ok
+  e1_grid v2 seed 1                        5x5     3.3s  ok
+  e1_grid v2 seed 2                        5x5     3.3s  ok
+  e1_grid v2 seed 3                        5x5     3.4s  ok
+  e1_grid v3 seed 1                        5x5     3.4s  ok
+  e1_grid v3 seed 2                        5x5     3.3s  ok
+  e1_grid v3 seed 3                        5x5     3.3s  ok
+  e1_grid v1 seed 1                        3x9     3.3s  ok
+  e1_grid v1 seed 2                        3x9     3.4s  ok
+  e1_grid v1 seed 3                        3x9     3.3s  ok
+  e1_grid v2 seed 1                        3x9     3.3s  ok
+  e1_grid v2 seed 2                        3x9     3.4s  ok
+  e1_grid v2 seed 3                        3x9     3.3s  ok
+  e1_grid v3 seed 1                        3x9     3.4s  ok
+  e1_grid v3 seed 2                        3x9     3.4s  ok
+  e1_grid v3 seed 3                        3x9     3.4s  ok
+  e1_grid v1 seed 1                        4x7     3.3s  ok
+  e1_grid v1 seed 2                        4x7     3.4s  ok
+  e1_grid v1 seed 3                        4x7     3.3s  ok
+  e1_grid v2 seed 1                        4x7     3.4s  ok
+  e1_grid v2 seed 2                        4x7     3.4s  ok
+  e1_grid v2 seed 3                        4x7     3.4s  ok
+  e1_grid v3 seed 1                        4x7     3.4s  ok
+  e1_grid v3 seed 2                        4x7     3.4s  ok
+  e1_grid v3 seed 3                        4x7     3.4s  ok
+  e1_grid v1 seed 1                        5x6     3.3s  ok
+  e1_grid v1 seed 2                        5x6     3.3s  ok
+  e1_grid v1 seed 3                        5x6     3.4s  ok
+  e1_grid v2 seed 1                        5x6     3.4s  ok
+  e1_grid v2 seed 2                        5x6     3.3s  ok
+  e1_grid v2 seed 3                        5x6     3.3s  ok
+  e1_grid v3 seed 1                        5x6     3.4s  ok
+  e1_grid v3 seed 2                        5x6     3.4s  ok
+  e1_grid v3 seed 3                        5x6     3.4s  ok
+  e1_grid v1 seed 1                        4x8     3.4s  ok
+  e1_grid v1 seed 2                        4x8     3.4s  ok
+  e1_grid v1 seed 3                        4x8     3.4s  ok
+  e1_grid v2 seed 1                        4x8     3.4s  ok
+  e1_grid v2 seed 2                        4x8     3.4s  ok
+  e1_grid v2 seed 3                        4x8     3.4s  ok
+  e1_grid v3 seed 1                        4x8     3.4s  ok
+  e1_grid v3 seed 2                        4x8     3.4s  ok
+  e1_grid v3 seed 3                        4x8     3.4s  ok
+  e1_grid v1 seed 1                        5x7     3.4s  ok
+  e1_grid v1 seed 2                        5x7     3.4s  ok
+  e1_grid v1 seed 3                        5x7     3.4s  ok
+  e1_grid v2 seed 1                        5x7     3.4s  ok
+  e1_grid v2 seed 2                        5x7     3.4s  ok
+  e1_grid v2 seed 3                        5x7     3.4s  ok
+  e1_grid v3 seed 1                        5x7     3.4s  ok
+  e1_grid v3 seed 2                        5x7     3.4s  ok
+  e1_grid v3 seed 3                        5x7     3.5s  ok
+  e1_grid v1 seed 1                        6x6     3.5s  ok
+  e1_grid v1 seed 2                        6x6     3.4s  ok
+  e1_grid v1 seed 3                        6x6     3.4s  ok
+  e1_grid v2 seed 1                        6x6     3.4s  ok
+  e1_grid v2 seed 2                        6x6     3.4s  ok
+  e1_grid v2 seed 3                        6x6     3.4s  ok
+  e1_grid v3 seed 1                        6x6     3.4s  ok
+  e1_grid v3 seed 2                        6x6     3.4s  ok
+  e1_grid v3 seed 3                        6x6     3.4s  ok
+  e1_grid v1 seed 1                        4x10    3.5s  ok
+  e1_grid v1 seed 2                        4x10    3.5s  ok
+  e1_grid v1 seed 3                        4x10    3.5s  ok
+  e1_grid v2 seed 1                        4x10    3.5s  ok
+  e1_grid v2 seed 2                        4x10    3.4s  ok
+  e1_grid v2 seed 3                        4x10    3.4s  ok
+  e1_grid v3 seed 1                        4x10    3.4s  ok
+  e1_grid v3 seed 2                        4x10    3.4s  ok
+  e1_grid v3 seed 3                        4x10    3.4s  ok
+  e1_grid v1 seed 1                        6x7     3.5s  ok
+  e1_grid v1 seed 2                        6x7     3.5s  ok
+  e1_grid v1 seed 3                        6x7     3.5s  ok
+  e1_grid v2 seed 1                        6x7     3.5s  ok
+  e1_grid v2 seed 2                        6x7     3.4s  ok
+  e1_grid v2 seed 3                        6x7     3.5s  ok
+  e1_grid v3 seed 1                        6x7     3.5s  ok
+  e1_grid v3 seed 2                        6x7     3.5s  ok
+  e1_grid v3 seed 3                        6x7     3.5s  ok
+  e1_grid v1 seed 1                        5x9     3.5s  ok
+  e1_grid v1 seed 2                        5x9     3.5s  ok
+  e1_grid v1 seed 3                        5x9     3.5s  ok
+  e1_grid v2 seed 1                        5x9     3.5s  ok
+  e1_grid v2 seed 2                        5x9     3.5s  ok
+  e1_grid v2 seed 3                        5x9     3.5s  ok
+  e1_grid v3 seed 1                        5x9     3.6s  ok
+  e1_grid v3 seed 2                        5x9     3.6s  ok
+  e1_grid v3 seed 3                        5x9     3.5s  ok
+  e1_grid v1 seed 1                        6x8     3.6s  ok
+  e1_grid v1 seed 2                        6x8     3.6s  ok
+  e1_grid v1 seed 3                        6x8     3.6s  ok
+  e1_grid v2 seed 1                        6x8     3.5s  ok
+  e1_grid v2 seed 2                        6x8     3.6s  ok
+  e1_grid v2 seed 3                        6x8     3.5s  ok
+  e1_grid v3 seed 1                        6x8     3.5s  ok
+  e1_grid v3 seed 2                        6x8     3.5s  ok
+  e1_grid v3 seed 3                        6x8     3.5s  ok
+  e1_grid v1 seed 1                        7x7     3.5s  ok
+  e1_grid v1 seed 2                        7x7     3.5s  ok
+  e1_grid v1 seed 3                        7x7     3.5s  ok
+  e1_grid v2 seed 1                        7x7     3.5s  ok
+  e1_grid v2 seed 2                        7x7     3.6s  ok
+  e1_grid v2 seed 3                        7x7     3.5s  ok
+  e1_grid v3 seed 1                        7x7     3.5s  ok
+  e1_grid v3 seed 2                        7x7     3.5s  ok
+  e1_grid v3 seed 3                        7x7     3.5s  ok
+  e1_grid v1 seed 1                        5x10    3.6s  ok
+  e1_grid v1 seed 2                        5x10    3.5s  ok
+  e1_grid v1 seed 3                        5x10    3.5s  ok
+  e1_grid v2 seed 1                        5x10    3.5s  ok
+  e1_grid v2 seed 2                        5x10    3.5s  ok
+  e1_grid v2 seed 3                        5x10    3.5s  ok
+  e1_grid v3 seed 1                        5x10    3.5s  ok
+  e1_grid v3 seed 2                        5x10    3.6s  ok
+  e1_grid v3 seed 3                        5x10    3.5s  ok
+  e1_grid v1 seed 1                        6x9     3.6s  ok
+  e1_grid v1 seed 2                        6x9     3.6s  ok
+  e1_grid v1 seed 3                        6x9     3.6s  ok
+  e1_grid v2 seed 1                        6x9     3.6s  ok
+  e1_grid v2 seed 2                        6x9     3.6s  ok
+  e1_grid v2 seed 3                        6x9     3.6s  ok
+  e1_grid v3 seed 1                        6x9     3.6s  ok
+  e1_grid v3 seed 2                        6x9     3.6s  ok
+  e1_grid v3 seed 3                        6x9     3.6s  ok
+  e1_grid v1 seed 1                        7x8     3.6s  ok
+  e1_grid v1 seed 2                        7x8     3.6s  ok
+  e1_grid v1 seed 3                        7x8     3.6s  ok
+  e1_grid v2 seed 1                        7x8     3.6s  ok
+  e1_grid v2 seed 2                        7x8     3.6s  ok
+  e1_grid v2 seed 3                        7x8     3.6s  ok
+  e1_grid v3 seed 1                        7x8     3.6s  ok
+  e1_grid v3 seed 2                        7x8     3.6s  ok
+  e1_grid v3 seed 3                        7x8     3.6s  ok
+  e1_grid v1 seed 1                        4x15    3.6s  ok
+  e1_grid v1 seed 2                        4x15    3.6s  ok
+  e1_grid v1 seed 3                        4x15    3.6s  ok
+  e1_grid v2 seed 1                        4x15    3.7s  ok
+  e1_grid v2 seed 2                        4x15    3.6s  ok
+  e1_grid v2 seed 3                        4x15    3.6s  ok
+  e1_grid v3 seed 1                        4x15    3.6s  ok
+  e1_grid v3 seed 2                        4x15    3.6s  ok
+  e1_grid v3 seed 3                        4x15    3.6s  ok
+  e1_grid v1 seed 1                        5x12    3.6s  ok
+  e1_grid v1 seed 2                        5x12    3.6s  ok
+  e1_grid v1 seed 3                        5x12    3.6s  ok
+  e1_grid v2 seed 1                        5x12    3.6s  ok
+  e1_grid v2 seed 2                        5x12    3.6s  ok
+  e1_grid v2 seed 3                        5x12    3.6s  ok
+  e1_grid v3 seed 1                        5x12    3.6s  ok
+  e1_grid v3 seed 2                        5x12    3.7s  ok
+  e1_grid v3 seed 3                        5x12    3.6s  ok
+  e1_grid v1 seed 1                        6x10    3.7s  ok
+  e1_grid v1 seed 2                        6x10    3.7s  ok
+  e1_grid v1 seed 3                        6x10    3.7s  ok
+  e1_grid v2 seed 1                        6x10    3.6s  ok
+  e1_grid v2 seed 2                        6x10    3.7s  ok
+  e1_grid v2 seed 3                        6x10    3.6s  ok
+  e1_grid v3 seed 1                        6x10    3.7s  ok
+  e1_grid v3 seed 2                        6x10    3.7s  ok
+  e1_grid v3 seed 3                        6x10    3.6s  ok
+  e1_grid v1 seed 1                        2x31    3.7s  ok
+  e1_grid v1 seed 2                        2x31    3.7s  ok
+  e1_grid v1 seed 3                        2x31    3.7s  ok
+  e1_grid v2 seed 1                        2x31    3.7s  ok
+  e1_grid v2 seed 2                        2x31    3.7s  ok
+  e1_grid v2 seed 3                        2x31    3.7s  ok
+  e1_grid v3 seed 1                        2x31    3.7s  ok
+  e1_grid v3 seed 2                        2x31    3.7s  ok
+  e1_grid v3 seed 3                        2x31    3.7s  ok
+  e1_grid v1 seed 1                        8x8     3.7s  ok
+  e1_grid v1 seed 2                        8x8     3.7s  ok
+  e1_grid v1 seed 3                        8x8     3.7s  ok
+  e1_grid v2 seed 1                        8x8     3.7s  ok
+  e1_grid v2 seed 2                        8x8     3.7s  ok
+  e1_grid v2 seed 3                        8x8     3.7s  ok
+  e1_grid v3 seed 1                        8x8     3.7s  ok
+  e1_grid v3 seed 2                        8x8     3.7s  ok
+  e1_grid v3 seed 3                        8x8     3.7s  ok
+== E2
+  e2_line v1 seed 1                        1x2     3.1s  ok
+  e2_line v1 seed 2                        1x2     3.1s  ok
+  e2_line v1 seed 3                        1x2     3.1s  ok
+  e2_line v2 seed 1                        1x2     3.1s  ok
+  e2_line v2 seed 2                        1x2     3.1s  ok
+  e2_line v2 seed 3                        1x2     3.1s  ok
+  e2_line v3 seed 1                        1x2     3.2s  ok
+  e2_line v3 seed 2                        1x2     3.2s  ok
+  e2_line v3 seed 3                        1x2     3.2s  ok
+  e2_line v1 seed 1                        1x4     3.1s  ok
+  e2_line v1 seed 2                        1x4     3.1s  ok
+  e2_line v1 seed 3                        1x4     3.1s  ok
+  e2_line v2 seed 1                        1x4     3.1s  ok
+  e2_line v2 seed 2                        1x4     3.1s  ok
+  e2_line v2 seed 3                        1x4     3.1s  ok
+  e2_line v3 seed 1                        1x4     3.2s  ok
+  e2_line v3 seed 2                        1x4     3.2s  ok
+  e2_line v3 seed 3                        1x4     3.2s  ok
+  e2_line v1 seed 1                        1x6     3.1s  ok
+  e2_line v1 seed 2                        1x6     3.1s  ok
+  e2_line v1 seed 3                        1x6     3.1s  ok
+  e2_line v2 seed 1                        1x6     3.1s  ok
+  e2_line v2 seed 2                        1x6     3.1s  ok
+  e2_line v2 seed 3                        1x6     3.1s  ok
+  e2_line v3 seed 1                        1x6     3.2s  ok
+  e2_line v3 seed 2                        1x6     3.2s  ok
+  e2_line v3 seed 3                        1x6     3.2s  ok
+  e2_line v1 seed 1                        1x8     3.1s  ok
+  e2_line v1 seed 2                        1x8     3.1s  ok
+  e2_line v1 seed 3                        1x8     3.1s  ok
+  e2_line v2 seed 1                        1x8     3.1s  ok
+  e2_line v2 seed 2                        1x8     3.1s  ok
+  e2_line v2 seed 3                        1x8     3.1s  ok
+  e2_line v3 seed 1                        1x8     3.2s  ok
+  e2_line v3 seed 2                        1x8     3.2s  ok
+  e2_line v3 seed 3                        1x8     3.2s  ok
+  e2_line v1 seed 1                        1x10    3.1s  ok
+  e2_line v1 seed 2                        1x10    3.2s  ok
+  e2_line v1 seed 3                        1x10    3.2s  ok
+  e2_line v2 seed 1                        1x10    3.1s  ok
+  e2_line v2 seed 2                        1x10    3.1s  ok
+  e2_line v2 seed 3                        1x10    3.1s  ok
+  e2_line v3 seed 1                        1x10    3.2s  ok
+  e2_line v3 seed 2                        1x10    3.2s  ok
+  e2_line v3 seed 3                        1x10    3.2s  ok
+  e2_line v1 seed 1                        1x12    3.2s  ok
+  e2_line v1 seed 2                        1x12    3.1s  ok
+  e2_line v1 seed 3                        1x12    3.2s  ok
+  e2_line v2 seed 1                        1x12    3.2s  ok
+  e2_line v2 seed 2                        1x12    3.2s  ok
+  e2_line v2 seed 3                        1x12    3.2s  ok
+  e2_line v3 seed 1                        1x12    3.2s  ok
+  e2_line v3 seed 2                        1x12    3.2s  ok
+  e2_line v3 seed 3                        1x12    3.2s  ok
+  e2_line v1 seed 1                        1x14    3.2s  ok
+  e2_line v1 seed 2                        1x14    3.2s  ok
+  e2_line v1 seed 3                        1x14    3.2s  ok
+  e2_line v2 seed 1                        1x14    3.2s  ok
+  e2_line v2 seed 2                        1x14    3.2s  ok
+  e2_line v2 seed 3                        1x14    3.2s  ok
+  e2_line v3 seed 1                        1x14    3.3s  ok
+  e2_line v3 seed 2                        1x14    3.3s  ok
+  e2_line v3 seed 3                        1x14    3.2s  ok
+  e2_line v1 seed 1                        1x16    3.2s  ok
+  e2_line v1 seed 2                        1x16    3.2s  ok
+  e2_line v1 seed 3                        1x16    3.2s  ok
+  e2_line v2 seed 1                        1x16    3.2s  ok
+  e2_line v2 seed 2                        1x16    3.2s  ok
+  e2_line v2 seed 3                        1x16    3.2s  ok
+  e2_line v3 seed 1                        1x16    3.3s  ok
+  e2_line v3 seed 2                        1x16    3.3s  ok
+  e2_line v3 seed 3                        1x16    3.3s  ok
+  e2_line v1 seed 1                        1x18    3.2s  ok
+  e2_line v1 seed 2                        1x18    3.3s  ok
+  e2_line v1 seed 3                        1x18    3.2s  ok
+  e2_line v2 seed 1                        1x18    3.2s  ok
+  e2_line v2 seed 2                        1x18    3.2s  ok
+  e2_line v2 seed 3                        1x18    3.3s  ok
+  e2_line v3 seed 1                        1x18    3.3s  ok
+  e2_line v3 seed 2                        1x18    3.3s  ok
+  e2_line v3 seed 3                        1x18    3.3s  ok
+  e2_line v1 seed 1                        1x20    3.2s  ok
+  e2_line v1 seed 2                        1x20    3.3s  ok
+  e2_line v1 seed 3                        1x20    3.3s  ok
+  e2_line v2 seed 1                        1x20    3.3s  ok
+  e2_line v2 seed 2                        1x20    3.3s  ok
+  e2_line v2 seed 3                        1x20    3.2s  ok
+  e2_line v3 seed 1                        1x20    3.3s  ok
+  e2_line v3 seed 2                        1x20    3.3s  ok
+  e2_line v3 seed 3                        1x20    3.3s  ok
+  e2_line v1 seed 1                        1x22    3.2s  ok
+  e2_line v1 seed 2                        1x22    3.3s  ok
+  e2_line v1 seed 3                        1x22    3.3s  ok
+  e2_line v2 seed 1                        1x22    3.3s  ok
+  e2_line v2 seed 2                        1x22    3.3s  ok
+  e2_line v2 seed 3                        1x22    3.3s  ok
+  e2_line v3 seed 1                        1x22    3.3s  ok
+  e2_line v3 seed 2                        1x22    3.3s  ok
+  e2_line v3 seed 3                        1x22    3.3s  ok
+  e2_line v1 seed 1                        1x24    3.3s  ok
+  e2_line v1 seed 2                        1x24    3.3s  ok
+  e2_line v1 seed 3                        1x24    3.3s  ok
+  e2_line v2 seed 1                        1x24    3.3s  ok
+  e2_line v2 seed 2                        1x24    3.2s  ok
+  e2_line v2 seed 3                        1x24    3.2s  ok
+  e2_line v3 seed 1                        1x24    3.3s  ok
+  e2_line v3 seed 2                        1x24    3.3s  ok
+  e2_line v3 seed 3                        1x24    3.3s  ok
+  e2_line v1 seed 1                        1x26    3.3s  ok
+  e2_line v1 seed 2                        1x26    3.3s  ok
+  e2_line v1 seed 3                        1x26    3.3s  ok
+  e2_line v2 seed 1                        1x26    3.4s  ok
+  e2_line v2 seed 2                        1x26    3.4s  ok
+  e2_line v2 seed 3                        1x26    3.3s  ok
+  e2_line v3 seed 1                        1x26    3.3s  ok
+  e2_line v3 seed 2                        1x26    3.4s  ok
+  e2_line v3 seed 3                        1x26    3.3s  ok
+  e2_line v1 seed 1                        1x28    3.4s  ok
+  e2_line v1 seed 2                        1x28    3.3s  ok
+  e2_line v1 seed 3                        1x28    3.3s  ok
+  e2_line v2 seed 1                        1x28    3.3s  ok
+  e2_line v2 seed 2                        1x28    3.4s  ok
+  e2_line v2 seed 3                        1x28    3.3s  ok
+  e2_line v3 seed 1                        1x28    3.4s  ok
+  e2_line v3 seed 2                        1x28    3.4s  ok
+  e2_line v3 seed 3                        1x28    3.4s  ok
+  e2_line v1 seed 1                        1x30    3.4s  ok
+  e2_line v1 seed 2                        1x30    3.3s  ok
+  e2_line v1 seed 3                        1x30    3.3s  ok
+  e2_line v2 seed 1                        1x30    3.3s  ok
+  e2_line v2 seed 2                        1x30    3.3s  ok
+  e2_line v2 seed 3                        1x30    3.4s  ok
+  e2_line v3 seed 1                        1x30    3.4s  ok
+  e2_line v3 seed 2                        1x30    3.4s  ok
+  e2_line v3 seed 3                        1x30    3.4s  ok
+  e2_line v1 seed 1                        1x32    3.4s  ok
+  e2_line v1 seed 2                        1x32    3.4s  ok
+  e2_line v1 seed 3                        1x32    3.4s  ok
+  e2_line v2 seed 1                        1x32    3.4s  ok
+  e2_line v2 seed 2                        1x32    3.4s  ok
+  e2_line v2 seed 3                        1x32    3.4s  ok
+  e2_line v3 seed 1                        1x32    3.4s  ok
+  e2_line v3 seed 2                        1x32    3.4s  ok
+  e2_line v3 seed 3                        1x32    3.4s  ok
+  e2_line v1 seed 1                        1x34    3.4s  ok
+  e2_line v1 seed 2                        1x34    3.4s  ok
+  e2_line v1 seed 3                        1x34    3.4s  ok
+  e2_line v2 seed 1                        1x34    3.4s  ok
+  e2_line v2 seed 2                        1x34    3.4s  ok
+  e2_line v2 seed 3                        1x34    3.3s  ok
+  e2_line v3 seed 1                        1x34    3.4s  ok
+  e2_line v3 seed 2                        1x34    3.4s  ok
+  e2_line v3 seed 3                        1x34    3.4s  ok
+  e2_line v1 seed 1                        1x36    3.4s  ok
+  e2_line v1 seed 2                        1x36    3.4s  ok
+  e2_line v1 seed 3                        1x36    3.4s  ok
+  e2_line v2 seed 1                        1x36    3.4s  ok
+  e2_line v2 seed 2                        1x36    3.3s  ok
+  e2_line v2 seed 3                        1x36    3.4s  ok
+  e2_line v3 seed 1                        1x36    3.4s  ok
+  e2_line v3 seed 2                        1x36    3.4s  ok
+  e2_line v3 seed 3                        1x36    3.4s  ok
+  e2_line v1 seed 1                        1x38    3.4s  ok
+  e2_line v1 seed 2                        1x38    3.4s  ok
+  e2_line v1 seed 3                        1x38    3.4s  ok
+  e2_line v2 seed 1                        1x38    3.4s  ok
+  e2_line v2 seed 2                        1x38    3.4s  ok
+  e2_line v2 seed 3                        1x38    3.4s  ok
+  e2_line v3 seed 1                        1x38    3.4s  ok
+  e2_line v3 seed 2                        1x38    3.5s  ok
+  e2_line v3 seed 3                        1x38    3.4s  ok
+  e2_line v1 seed 1                        1x40    3.4s  ok
+  e2_line v1 seed 2                        1x40    3.4s  ok
+  e2_line v1 seed 3                        1x40    3.5s  ok
+  e2_line v2 seed 1                        1x40    3.4s  ok
+  e2_line v2 seed 2                        1x40    3.5s  ok
+  e2_line v2 seed 3                        1x40    3.5s  ok
+  e2_line v3 seed 1                        1x40    3.5s  ok
+  e2_line v3 seed 2                        1x40    3.4s  ok
+  e2_line v3 seed 3                        1x40    3.4s  ok
+  e2_line v1 seed 1                        1x42    3.5s  ok
+  e2_line v1 seed 2                        1x42    3.5s  ok
+  e2_line v1 seed 3                        1x42    3.5s  ok
+  e2_line v2 seed 1                        1x42    3.4s  ok
+  e2_line v2 seed 2                        1x42    3.5s  ok
+  e2_line v2 seed 3                        1x42    3.4s  ok
+  e2_line v3 seed 1                        1x42    3.5s  ok
+  e2_line v3 seed 2                        1x42    3.5s  ok
+  e2_line v3 seed 3                        1x42    3.5s  ok
+  e2_line v1 seed 1                        1x44    3.5s  ok
+  e2_line v1 seed 2                        1x44    3.5s  ok
+  e2_line v1 seed 3                        1x44    3.5s  ok
+  e2_line v2 seed 1                        1x44    3.5s  ok
+  e2_line v2 seed 2                        1x44    3.5s  ok
+  e2_line v2 seed 3                        1x44    3.5s  ok
+  e2_line v3 seed 1                        1x44    3.5s  ok
+  e2_line v3 seed 2                        1x44    3.5s  ok
+  e2_line v3 seed 3                        1x44    3.5s  ok
+  e2_line v1 seed 1                        1x46    3.5s  ok
+  e2_line v1 seed 2                        1x46    3.5s  ok
+  e2_line v1 seed 3                        1x46    3.5s  ok
+  e2_line v2 seed 1                        1x46    3.5s  ok
+  e2_line v2 seed 2                        1x46    3.5s  ok
+  e2_line v2 seed 3                        1x46    3.5s  ok
+  e2_line v3 seed 1                        1x46    3.6s  ok
+  e2_line v3 seed 2                        1x46    3.6s  ok
+  e2_line v3 seed 3                        1x46    3.5s  ok
+  e2_line v1 seed 1                        1x48    3.5s  ok
+  e2_line v1 seed 2                        1x48    3.5s  ok
+  e2_line v1 seed 3                        1x48    3.5s  ok
+  e2_line v2 seed 1                        1x48    3.5s  ok
+  e2_line v2 seed 2                        1x48    3.5s  ok
+  e2_line v2 seed 3                        1x48    3.5s  ok
+  e2_line v3 seed 1                        1x48    3.5s  ok
+  e2_line v3 seed 2                        1x48    3.5s  ok
+  e2_line v3 seed 3                        1x48    3.5s  ok
+  e2_line v1 seed 1                        1x50    3.5s  ok
+  e2_line v1 seed 2                        1x50    3.6s  ok
+  e2_line v1 seed 3                        1x50    3.5s  ok
+  e2_line v2 seed 1                        1x50    3.5s  ok
+  e2_line v2 seed 2                        1x50    3.5s  ok
+  e2_line v2 seed 3                        1x50    3.6s  ok
+  e2_line v3 seed 1                        1x50    3.5s  ok
+  e2_line v3 seed 2                        1x50    3.5s  ok
+  e2_line v3 seed 3                        1x50    3.6s  ok
+  e2_line v1 seed 1                        1x52    3.6s  ok
+  e2_line v1 seed 2                        1x52    3.6s  ok
+  e2_line v1 seed 3                        1x52    3.6s  ok
+  e2_line v2 seed 1                        1x52    3.6s  ok
+  e2_line v2 seed 2                        1x52    3.5s  ok
+  e2_line v2 seed 3                        1x52    3.6s  ok
+  e2_line v3 seed 1                        1x52    3.6s  ok
+  e2_line v3 seed 2                        1x52    3.6s  ok
+  e2_line v3 seed 3                        1x52    3.6s  ok
+  e2_line v1 seed 1                        1x54    3.6s  ok
+  e2_line v1 seed 2                        1x54    3.6s  ok
+  e2_line v1 seed 3                        1x54    3.6s  ok
+  e2_line v2 seed 1                        1x54    3.6s  ok
+  e2_line v2 seed 2                        1x54    3.6s  ok
+  e2_line v2 seed 3                        1x54    3.6s  ok
+  e2_line v3 seed 1                        1x54    3.6s  ok
+  e2_line v3 seed 2                        1x54    3.6s  ok
+  e2_line v3 seed 3                        1x54    3.6s  ok
+  e2_line v1 seed 1                        1x56    3.6s  ok
+  e2_line v1 seed 2                        1x56    3.6s  ok
+  e2_line v1 seed 3                        1x56    3.6s  ok
+  e2_line v2 seed 1                        1x56    3.6s  ok
+  e2_line v2 seed 2                        1x56    3.6s  ok
+  e2_line v2 seed 3                        1x56    3.6s  ok
+  e2_line v3 seed 1                        1x56    3.6s  ok
+  e2_line v3 seed 2                        1x56    3.6s  ok
+  e2_line v3 seed 3                        1x56    3.6s  ok
+  e2_line v1 seed 1                        1x58    3.6s  ok
+  e2_line v1 seed 2                        1x58    3.7s  ok
+  e2_line v1 seed 3                        1x58    3.6s  ok
+  e2_line v2 seed 1                        1x58    3.6s  ok
+  e2_line v2 seed 2                        1x58    3.7s  ok
+  e2_line v2 seed 3                        1x58    3.6s  ok
+  e2_line v3 seed 1                        1x58    3.6s  ok
+  e2_line v3 seed 2                        1x58    3.6s  ok
+  e2_line v3 seed 3                        1x58    3.6s  ok
+  e2_line v1 seed 1                        1x60    3.6s  ok
+  e2_line v1 seed 2                        1x60    3.7s  ok
+  e2_line v1 seed 3                        1x60    3.7s  ok
+  e2_line v2 seed 1                        1x60    3.7s  ok
+  e2_line v2 seed 2                        1x60    3.6s  ok
+  e2_line v2 seed 3                        1x60    3.7s  ok
+  e2_line v3 seed 1                        1x60    3.7s  ok
+  e2_line v3 seed 2                        1x60    3.6s  ok
+  e2_line v3 seed 3                        1x60    3.7s  ok
+  e2_line v1 seed 1                        1x62    3.7s  ok
+  e2_line v1 seed 2                        1x62    3.7s  ok
+  e2_line v1 seed 3                        1x62    3.7s  ok
+  e2_line v2 seed 1                        1x62    3.7s  ok
+  e2_line v2 seed 2                        1x62    3.7s  ok
+  e2_line v2 seed 3                        1x62    3.7s  ok
+  e2_line v3 seed 1                        1x62    3.7s  ok
+  e2_line v3 seed 2                        1x62    3.7s  ok
+  e2_line v3 seed 3                        1x62    3.7s  ok
+  e2_line v1 seed 1                        1x64    3.6s  ok
+  e2_line v1 seed 2                        1x64    3.7s  ok
+  e2_line v1 seed 3                        1x64    3.7s  ok
+  e2_line v2 seed 1                        1x64    3.7s  ok
+  e2_line v2 seed 2                        1x64    3.7s  ok
+  e2_line v2 seed 3                        1x64    3.7s  ok
+  e2_line v3 seed 1                        1x64    3.8s  ok
+  e2_line v3 seed 2                        1x64    3.7s  ok
+  e2_line v3 seed 3                        1x64    3.7s  ok
+== E3
+  E3 bs v1 seed 1                          3x3     3.2s  ok
+  E3 bs v1 seed 2                          3x3     3.1s  ok
+  E3 bs v1 seed 3                          3x3     3.2s  ok
+  E3 bs v2 seed 1                          3x3     3.2s  ok
+  E3 bs v2 seed 2                          3x3     3.2s  ok
+  E3 bs v2 seed 3                          3x3     3.2s  ok
+  E3 bs v3 seed 1                          3x3     3.2s  ok
+  E3 bs v3 seed 2                          3x3     3.1s  ok
+  E3 bs v3 seed 3                          3x3     3.1s  ok
+  E3 bs v1 seed 1                          4x4     3.3s  ok
+  E3 bs v1 seed 2                          4x4     3.3s  ok
+  E3 bs v1 seed 3                          4x4     3.3s  ok
+  E3 bs v2 seed 1                          4x4     3.3s  ok
+  E3 bs v2 seed 2                          4x4     3.3s  ok
+  E3 bs v2 seed 3                          4x4     3.2s  ok
+  E3 bs v3 seed 1                          4x4     3.3s  ok
+  E3 bs v3 seed 2                          4x4     3.3s  ok
+  E3 bs v3 seed 3                          4x4     3.2s  ok
+  E3 bs v1 seed 1                          5x5     3.3s  ok
+  E3 bs v1 seed 2                          5x5     3.3s  ok
+  E3 bs v1 seed 3                          5x5     3.3s  ok
+  E3 bs v2 seed 1                          5x5     3.3s  ok
+  E3 bs v2 seed 2                          5x5     3.3s  ok
+  E3 bs v2 seed 3                          5x5     3.3s  ok
+  E3 bs v3 seed 1                          5x5     3.3s  ok
+  E3 bs v3 seed 2                          5x5     3.2s  ok
+  E3 bs v3 seed 3                          5x5     3.3s  ok
+  E3 bs v1 seed 1                          6x6     3.5s  ok
+  E3 bs v1 seed 2                          6x6     3.5s  ok
+  E3 bs v1 seed 3                          6x6     3.4s  ok
+  E3 bs v2 seed 1                          6x6     3.4s  ok
+  E3 bs v2 seed 2                          6x6     3.4s  ok
+  E3 bs v2 seed 3                          6x6     3.4s  ok
+  E3 bs v3 seed 1                          6x6     3.5s  ok
+  E3 bs v3 seed 2                          6x6     3.4s  ok
+  E3 bs v3 seed 3                          6x6     3.4s  ok
+  E3 bs v1 seed 1                          7x7     3.5s  ok
+  E3 bs v1 seed 2                          7x7     3.5s  ok
+  E3 bs v1 seed 3                          7x7     3.6s  ok
+  E3 bs v2 seed 1                          7x7     3.6s  ok
+  E3 bs v2 seed 2                          7x7     3.6s  ok
+  E3 bs v2 seed 3                          7x7     3.5s  ok
+  E3 bs v3 seed 1                          7x7     3.6s  ok
+  E3 bs v3 seed 2                          7x7     3.4s  ok
+  E3 bs v3 seed 3                          7x7     3.6s  ok
+  E3 bs v1 seed 1                          8x8     3.7s  ok
+  E3 bs v1 seed 2                          8x8     3.7s  ok
+  E3 bs v1 seed 3                          8x8     3.7s  ok
+  E3 bs v2 seed 1                          8x8     3.7s  ok
+  E3 bs v2 seed 2                          8x8     3.7s  ok
+  E3 bs v2 seed 3                          8x8     3.7s  ok
+  E3 bs v3 seed 1                          8x8     3.7s  ok
+  E3 bs v3 seed 2                          8x8     3.7s  ok
+  E3 bs v3 seed 3                          8x8     3.7s  ok
+== E4
+  E4 window 0.25 seed 1                    7x7     4.6s  ok
+  E4 window 0.25 seed 2                    7x7     4.5s  ok
+  E4 window 0.25 seed 3                    7x7     4.5s  ok
+  E4 window 0.5 seed 1                     7x7     4.6s  ok
+  E4 window 0.5 seed 2                     7x7     4.5s  ok
+  E4 window 0.5 seed 3                     7x7     4.4s  ok
+  E4 window 1 seed 1                       7x7     4.6s  ok
+  E4 window 1 seed 2                       7x7     4.6s  ok
+  E4 window 1 seed 3                       7x7     4.6s  ok
+  E4 window 2 seed 1                       7x7     4.6s  ok
+  E4 window 2 seed 2                       7x7     4.6s  ok
+  E4 window 2 seed 3                       7x7     4.6s  ok
+  E4 window 3 seed 1                       7x7     4.6s  ok
+  E4 window 3 seed 2                       7x7     4.5s  ok
+  E4 window 3 seed 3                       7x7     4.5s  ok
+  E4 window 4 seed 1                       7x7     4.6s  ok
+  E4 window 4 seed 2                       7x7     4.5s  ok
+  E4 window 4 seed 3                       7x7     4.6s  ok
+  E4 window 6 seed 1                       7x7     4.6s  ok
+  E4 window 6 seed 2                       7x7     4.5s  ok
+  E4 window 6 seed 3                       7x7     4.5s  ok
+  E4 window 8 seed 1                       7x7     4.5s  ok
+  E4 window 8 seed 2                       7x7     4.6s  ok
+  E4 window 8 seed 3                       7x7     4.4s  ok
+  E4 window 12 seed 1                      7x7     4.5s  ok
+  E4 window 12 seed 2                      7x7     4.5s  ok
+  E4 window 12 seed 3                      7x7     4.5s  ok
+  E4 window 20 seed 1                      7x7     4.5s  ok
+  E4 window 20 seed 2                      7x7     4.5s  ok
+  E4 window 20 seed 3                      7x7     4.5s  ok
+== E5
+  E5 poll 0 v1 seed 1                      4x4     3.2s  ok
+  E5 poll 0 v1 seed 2                      4x4     3.2s  ok
+  E5 poll 0 v1 seed 3                      4x4     3.2s  ok
+  E5 poll 0 v2 seed 1                      4x4     3.2s  ok
+  E5 poll 0 v2 seed 2                      4x4     3.2s  ok
+  E5 poll 0 v2 seed 3                      4x4     3.2s  ok
+  E5 poll 20 v1 seed 1                     4x4     3.2s  ok
+  E5 poll 20 v1 seed 2                     4x4     3.2s  ok
+  E5 poll 20 v1 seed 3                     4x4     3.2s  ok
+  E5 poll 20 v2 seed 1                     4x4     3.2s  ok
+  E5 poll 20 v2 seed 2                     4x4     3.2s  ok
+  E5 poll 20 v2 seed 3                     4x4     3.2s  ok
+  E5 poll 50 v1 seed 1                     4x4     3.2s  ok
+  E5 poll 50 v1 seed 2                     4x4     3.2s  ok
+  E5 poll 50 v1 seed 3                     4x4     3.2s  ok
+  E5 poll 50 v2 seed 1                     4x4     3.3s  ok
+  E5 poll 50 v2 seed 2                     4x4     3.2s  ok
+  E5 poll 50 v2 seed 3                     4x4     3.2s  ok
+  E5 poll 100 v1 seed 1                    4x4     3.2s  ok
+  E5 poll 100 v1 seed 2                    4x4     3.2s  ok
+  E5 poll 100 v1 seed 3                    4x4     3.2s  ok
+  E5 poll 100 v2 seed 1                    4x4     3.2s  ok
+  E5 poll 100 v2 seed 2                    4x4     3.2s  ok
+  E5 poll 100 v2 seed 3                    4x4     3.3s  ok
+  E5 poll 200 v1 seed 1                    4x4     3.3s  ok
+  E5 poll 200 v1 seed 2                    4x4     3.2s  ok
+  E5 poll 200 v1 seed 3                    4x4     3.3s  ok
+  E5 poll 200 v2 seed 1                    4x4     3.2s  ok
+  E5 poll 200 v2 seed 2                    4x4     3.3s  ok
+  E5 poll 200 v2 seed 3                    4x4     3.2s  ok
+  E5 poll 500 v1 seed 1                    4x4     3.3s  ok
+  E5 poll 500 v1 seed 2                    4x4     3.3s  ok
+  E5 poll 500 v1 seed 3                    4x4     3.3s  ok
+  E5 poll 500 v2 seed 1                    4x4     3.3s  ok
+  E5 poll 500 v2 seed 2                    4x4     3.3s  ok
+  E5 poll 500 v2 seed 3                    4x4     3.3s  ok
+  E5 poll 1000 v1 seed 1                   4x4     3.3s  ok
+  E5 poll 1000 v1 seed 2                   4x4     3.3s  ok
+  E5 poll 1000 v1 seed 3                   4x4     3.3s  ok
+  E5 poll 1000 v2 seed 1                   4x4     3.3s  ok
+  E5 poll 1000 v2 seed 2                   4x4     3.2s  ok
+  E5 poll 1000 v2 seed 3                   4x4     3.3s  ok
+  E5 poll 2000 v1 seed 1                   4x4     3.3s  ok
+  E5 poll 2000 v1 seed 2                   4x4     3.3s  ok
+  E5 poll 2000 v1 seed 3                   4x4     3.3s  ok
+  E5 poll 2000 v2 seed 1                   4x4     3.3s  ok
+  E5 poll 2000 v2 seed 2                   4x4     3.3s  ok
+  E5 poll 2000 v2 seed 3                   4x4     3.3s  ok
+all done in 40.6 min

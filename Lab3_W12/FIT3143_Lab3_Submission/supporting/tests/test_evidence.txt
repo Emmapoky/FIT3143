@@ -1,0 +1,49 @@
+FIT3143 Lab 3 - test evidence (run on 16 Oct 2026, MacBook, Open MPI 5.0.10, Apple clang 21 + libomp)
+Team: Erwyna Soo Wen Xin (36555789), Taabish Farooq Bhat (35473932)
+
+1. Every version combination finishes and shuts down cleanly (4x4, hotspot, 30 cycles)
+   logs/tests/v{1,2,3}_b{1,2,3}.log and logs/tests/versions.csv
+   node v1/v2/v3 x base station v1/v2/v3 = 9 runs, 9 exits with code 0, 16 of 16 ACKs each.
+
+2. Edge cases (node v2, base station v3)
+   1x1 grid  : 7 reports, all answered "no node in the grid is available" (no neighbours, nobody else)
+   1x8 line  : 6 reports, all answered with candidates
+   8x1 line  : same as 1x8 (the code does not assume rows <= cols)
+   2x7 grid  : 4 reports, all answered with candidates
+   saturated 3x3 : 63 reports -> 8 candidates, 43 "none nearby", 12 "none anywhere"
+                   (exercises all three base station answers)
+   idle 3x3  : 0 reports, 27 messages = 9 TERMINATE + 9 ACK + 9 SHUTDOWN only
+
+3. AddressSanitizer + UndefinedBehaviorSanitizer build
+   mpicc -O1 -g -fsanitize=address,undefined ... ; saturated 3x3, 15 cycles,
+   node v1/v2/v3 x base station v1/v3 = 6 runs: 0 ASan errors, 0 UBSan runtime errors.
+
+4. Leak check with macOS leaks --atExit (one per rank)
+   empty MPI program (MPI_Init_thread + MPI_Finalize only): 78 to 81 leaks per process
+   our 1x1 run                                               : 78 to 81 leaks per process (identical)
+   our 2x2 run, v1, v2, v3                                   : 119 to 122 per process
+   With MallocStackLogging every leak stack that passes through our binary goes through
+   main + 68 = MPI_Init_thread (32 of 32). None start in node.c, base_station.c or common.c.
+   Raw output: tests/leaks_2x2_v3_raw.txt
+   So the remaining "leaks" are Open MPI / PMIx start up allocations, not ours.
+
+5. Bugs found by testing and fixed (kept here because the Q&A may ask)
+   a) Base station spun at 100% CPU and never shut down: after the last ACK we stop
+      re-posting the ACK receive, and MPI_Test on MPI_REQUEST_NULL returns flag = true
+      every time, so phantom ACKs were counted forever. Fixed by testing only non-null.
+   b) Negative one way delays: Open MPI on macOS reports MPI_WTIME_IS_GLOBAL = 0 and each
+      process's MPI_Wtime has its own zero. Switched send stamps to the system real time
+      clock (wsn_now in common.c). Round trips are measured on one clock and never needed it.
+   c) Base station v3 answers were ~250 us slow: a persistent send started with MPI_Start
+      was only progressed at our next MPI call, one poll sleep later. Added one MPI_Test
+      straight after MPI_Start.
+   d) Node versions were not compared fairly: the cooldown and EV divert counters were
+      aged at the END of the cycle. In v1 the base station's answer arrives inside that
+      same cycle (blocking wait), in v2/v3 it arrives between cycles, so v1 got one cycle
+      less cooldown and divert and sent about twice the reports (29 vs 13 on a 4x4, same
+      seed). Both counters now age at the START of the cycle. After the fix the same seed
+      gives 11 / 11 / 11 reports for v1 / v2 / v3. Every result in results/ was re-run
+      AFTER this fix (the earlier runs were deleted, not mixed in).
+
+6. After fix (d): all 9 version pairs, 1x1, 1x8, 8x1, 2x7, saturated and idle re-run, all
+   exit 0; ASan + UBSan re-run for v1/v2/v3 on saturated 3x3: 0 errors.

@@ -28,7 +28,7 @@ Know without notes:
 ERWYNA: Task 2, base station + Task 3 analysis  (presents about 3:30)
 ----------------------------------------------------------------
 Files you own: base_station.c, common.c, scripts/ (experiments, graphs,
-diagrams, code cards), the Canva deck, the AI declaration, the upload.
+diagrams, code cards), the Canva deck.
 Slides you present: title, base station model, base station versions,
 logging + shutdown, Task 3 method, Task 3a grid, extra findings,
 limitations, Q&A.
@@ -56,4 +56,4 @@ BOTH
   oversubscription), no everyday analogies. Name the problem before the fix.
 - Never contradict our own slide. Know the limitations slide.
 - Two timed run throughs, target 6:30 to 6:50.
-- AI declaration: Erwyna does it separately.
+- AI declaration: Taabish prepares and adds it himself, it is not part of our shared files.

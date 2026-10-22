@@ -1,0 +1,47 @@
+==========================================================================
+ FIT3143 Lab 3 base station log
+ started            2026-10-16 23:25:29.813
+ grid               3 x 3 = 9 charging nodes + 1 base station (2D grid)
+ ports per node     6, congested when free <= 1
+ cycle              100 ms real = 10 s simulated, 20 cycles
+ window (period)    3.00 cycles = 0.300 s
+ load scenario      idle
+ versions           node 2 (nonblocking), base station 3 (persistent)
+ message sizes      report 176 B, answer 544 B
+==========================================================================
+
+==========================================================================
+ PER NODE
+ node  (x,y)  cycles congested queries local reports sent recv  query_rtt_ms report_rtt_ms blocked_s
+    0 ( 0, 0)     19         0       0     0       0     1     2         0.000         0.000    0.0000
+    1 ( 0, 1)     19         0       0     0       0     1     2         0.000         0.000    0.0000
+    2 ( 0, 2)     19         0       0     0       0     1     2         0.000         0.000    0.0000
+    3 ( 1, 0)     19         0       0     0       0     1     2         0.000         0.000    0.0000
+    4 ( 1, 1)     19         0       0     0       0     1     2         0.000         0.000    0.0000
+    5 ( 1, 2)     19         0       0     0       0     1     2         0.000         0.000    0.0000
+    6 ( 2, 0)     19         0       0     0       0     1     2         0.000         0.000    0.0000
+    7 ( 2, 1)     19         0       0     0       0     1     2         0.000         0.000    0.0000
+    8 ( 2, 2)     19         0       0     0       0     1     2         0.000         0.000    0.0000
+
+==========================================================================
+ SUMMARY
+ simulation time        2.001 s (20 cycles requested)
+ congested node cycles  0 of 171 sampled
+ neighbour exchanges    0 (0 solved locally by a neighbour with room)
+ alerts (reports)       0
+   answered with nodes  0
+   none nearby          0
+   none anywhere        0
+ messages / events      27 messages, 216 bytes in total
+   base station         9 in, 18 out (incl. 9 TERMINATE, 9 SHUTDOWN, 9 ACK)
+ clock                  system real time clock for stamps (MPI_Wtime global: no).
+                        One way delays are exact on one machine; across machines
+                        trust the round trips (query_rtt, report_rtt) first.
+
+ delay per message type   count     mean_us      min_us      max_us
+ terminate                    9      277.94      243.19      323.06
+
+ node comms thread blocked in MPI   0.0000 s per node on average
+ cycle start lateness              mean 0.137 ms, worst 0.259 ms
+ shutdown                          9 of 9 ACKs, all requests completed and freed
+==========================================================================
