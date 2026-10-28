@@ -14,7 +14,7 @@ ports inside each node (one thread per port, sharing one array).
 | Task 2, base station | Erwyna | `base_station.c`, `common.c` |
 | Shared message formats | both | `wsn.h` |
 | Task 3, communication analysis | Erwyna (3a), Taabish (3b) | `scripts/`, `results/`, `graphs/`, `logs/` |
-| Task 4, slides | both | Canva deck, exported to `Presentation_Slides.pdf` |
+| Task 4, slides | both | Canva deck, exported to `Presentation_Script.pdf`; recording in `Presentation_Video.mp4` |
 
 ---
 
@@ -64,7 +64,8 @@ waits for every node's ACK, then sends SHUTDOWN. No CTRL+C needed.
 | `graphs/slides/` | everything on the slides: `v*` diagrams, `c*` code cards, `l*` log cards, `g*` graphs, `a*` appendix graphs (all text at least 30 px on the slide) |
 | `graphs/graph*.png`, `graphs/per_type/` | earlier full size graphs, one per message type |
 | `scripts/` | `run_experiments.py` (E1 to E5), `make_slide_visuals.py` (every slide image), older `make_graphs.py`, `make_diagrams.py`, `make_code_cards.py` |
-| `Presentation_Script.txt` | timed talk script, same text as the Canva speaker notes (about 5:30, limit 7:00) |
+| `Presentation_Script.pdf`, `Presentation_Video.mp4` | the 26 slide deck, and the recorded talk (about 5:15) followed by the two Q&A answers |
+| `AI_Declaration.pdf` | AI use declaration and prompt records |
 | `caas/` | CAAS job files (see the CAAS section) |
 | `tests/test_evidence.txt` | edge cases, sanitizer and leak checks, bugs found |
 
