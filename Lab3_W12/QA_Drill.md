@@ -161,3 +161,13 @@ reliable delivery while real radios drop packets.
 Partition the base station (one per region) and measure the sync cost;
 run the full sweep on CAAS across nodes; acks and timeouts for lossy links;
 adaptive polling (spin briefly, then sleep).
+
+## Alternative assessment questions (set by Joen Kun, answers due 3 Nov 2026)
+
+These are slides 16 (Taabish, Q1) and 17 (Erwyna, Q2). The slide shows only the question; the answers are in the speaker notes and in `Alternative_Assessment_Answers.txt`, each as a simple version first and then a detailed one in class terms.
+
+**23. Two neighbouring nodes congested at the same time ask each other for availability. How do they avoid deadlock? (Taabish)**
+Verdict: never block while waiting. Mechanism: head to head `MPI_Send` then `MPI_Recv` is a circular wait, so use nonblocking `MPI_Irecv` first, `MPI_Isend`, then `MPI_Testall` (our version 2), or in the blocking version wait with `MPI_Probe` on `MPI_ANY_SOURCE` and serve any `TAG_REQ` that arrives while waiting (version 1). Also `MPI_Sendrecv`, rank ordering, or `MPI_Neighbor_allgather`. Evidence: saturated load, all 9 version pairs, clean exit.
+
+**24. Why `MPI_Iprobe` with `MPI_ANY_SOURCE` instead of `MPI_Recv` from a fixed rank at the base station? (Erwyna)**
+Verdict: reports arrive from any node in any order, and a fixed source `MPI_Recv` blocks on one sender (head of line blocking, hangs if that node never reports). Mechanism: `MPI_Iprobe` is nonblocking, returns a flag and a status with `MPI_SOURCE` and `MPI_TAG`, then `MPI_Recv` from that source cannot block; the same loop can also watch `TAG_ACK`. Our number: that is base station v1, 0.95 to 3.5 ms; v2 `MPI_Irecv(MPI_ANY_SOURCE)` 0.15 to 0.21 ms; v3 per node persistent receives with `MPI_Testsome` 0.27 to 0.31 ms. Rule: never block on one specific sender.

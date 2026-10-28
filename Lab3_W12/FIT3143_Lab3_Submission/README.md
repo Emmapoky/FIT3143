@@ -64,7 +64,7 @@ waits for every node's ACK, then sends SHUTDOWN. No CTRL+C needed.
 | `graphs/slides/` | everything on the slides: `v*` diagrams, `c*` code cards, `l*` log cards, `g*` graphs, `a*` appendix graphs (all text at least 30 px on the slide) |
 | `graphs/graph*.png`, `graphs/per_type/` | earlier full size graphs, one per message type |
 | `scripts/` | `run_experiments.py` (E1 to E5), `make_slide_visuals.py` (every slide image), older `make_graphs.py`, `make_diagrams.py`, `make_code_cards.py` |
-| `Presentation_Script.txt` | timed talk script, same text as the Canva speaker notes (about 6:44) |
+| `Presentation_Script.txt` | timed talk script, same text as the Canva speaker notes (about 5:30, limit 7:00) |
 | `caas/` | CAAS job files (see the CAAS section) |
 | `tests/test_evidence.txt` | edge cases, sanitizer and leak checks, bugs found |
 

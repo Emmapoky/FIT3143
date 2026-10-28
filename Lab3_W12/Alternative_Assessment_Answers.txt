@@ -1,0 +1,125 @@
+FIT3143 Lab #3 alternative assessment: the two questions and our answers
+Due 3 November 2026 (Joen Kun, FIT3143 Teaching Team).
+Q1 is Taabish's, Q2 is Erwyna's. The slides carry only the question; this is the answer.
+
+
+======================================================================
+Q1 (Taabish)
+Suppose two neighbouring EV charging nodes become congested simultaneously
+and request availability information from each other. How can the nodes
+communicate correctly without causing a deadlock?
+======================================================================
+
+SIMPLE VERSION
+
+Picture two full nodes asking each other for free ports at the exact same moment.
+
+If each one just stands there waiting for the other's reply, and nobody is
+listening to the other's question, both wait forever. That is a deadlock.
+
+The fix is simple: never just wait. While you wait for your own reply, keep
+listening and answer the other node's request. Then both replies arrive and
+both carry on.
+
+DETAILED VERSION (class terms)
+
+1. What goes wrong: a head to head blocking exchange.
+Both nodes call MPI_Send with the request, then MPI_Recv for the reply. A
+standard mode MPI_Send is allowed to block until the matching receive has been
+posted. So each node sits in MPI_Send waiting for the other to receive, and
+neither ever reaches its MPI_Recv. That is a circular wait, so a deadlock.
+(Our messages are 40 bytes, so Open MPI sends them eagerly and it probably
+would not hang in practice, but the MPI standard does not promise that, so we
+do not rely on it.)
+
+2. Fix one: nonblocking communication (our version 2, the one we chose).
+Post MPI_Irecv for the replies first, then MPI_Isend the requests, then keep
+calling MPI_Testall while the node carries on serving incoming requests.
+Nothing ever blocks, so there is no circular wait. Posting the receives before
+the sends also means a reply always has a buffer waiting for it.
+
+3. Fix two: blocking, but safe (our version 1).
+The wait is MPI_Probe on MPI_ANY_SOURCE and MPI_ANY_TAG. Whatever arrives gets
+handled: a TAG_REQ gets served (we send the reply), a TAG_REPLY gets collected.
+So while node A waits for its own reply, it still answers node B's request,
+and B does the same for A.
+
+4. Other standard fixes.
+MPI_Sendrecv does the send and the receive in one call. An ordering rule
+(lower rank sends first, higher rank receives first) breaks the symmetry. A
+collective like MPI_Neighbor_allgather (our version 3) has no pairwise order to
+get wrong.
+
+5. Small details that matter.
+Separate tags, TAG_REQ and TAG_REPLY, so a request is never mistaken for a
+reply. Only thread 0 calls MPI (MPI_THREAD_FUNNELED), so the same thread both
+asks and answers.
+
+6. How we know it works.
+We ran the saturated load, where every node is congested at the same time, with
+all nine node and base station version pairs, plus 1x1, 1x8, 8x1 and an idle
+run. Every run finished cleanly with no hang.
+
+Where it is in our code: node.c, the comment above blocking_wait (version 1)
+and start_nb_exchange (version 2).
+
+
+======================================================================
+Q2 (Erwyna)
+At the base station, why might you use MPI_Iprobe() with MPI_ANY_SOURCE
+instead of MPI_Recv() with a fixed source rank when receiving congestion
+reports from multiple EV charging nodes?
+======================================================================
+
+SIMPLE VERSION
+
+Reports can come from any node at any time, and the base station has no idea
+who is next.
+
+If it waits on one fixed node with MPI_Recv, it freezes on that node.
+Everyone else's report just sits there unread. And if that node is not
+congested, it never sends anything, so the base station waits forever.
+
+MPI_Iprobe with MPI_ANY_SOURCE just asks "has anything arrived from anybody?"
+and answers straight away. So the base station handles reports in the order
+they arrive, and can still do other jobs in between.
+
+DETAILED VERSION (class terms)
+
+1. The problem with a fixed source.
+MPI_Recv is blocking, and with a fixed source rank it only returns when a
+message from that exact rank arrives. Reports come in an unpredictable order,
+and only congested nodes send at all. So node 5's report waits behind node 2,
+even if node 2 never reports. That is head of line blocking, and in the worst
+case the base station hangs. Looping over ranks 0 to n minus 1 does not fix it,
+because each blocking receive can still stall the whole loop.
+
+2. What MPI_Iprobe gives us.
+It is nonblocking. MPI_Iprobe(MPI_ANY_SOURCE, tag, comm, &flag, &status)
+returns immediately. The flag says whether a matching message is waiting, and
+status holds MPI_SOURCE and MPI_TAG without receiving the message
+(MPI_Get_count would give its size). If the flag is set, we call MPI_Recv with
+status.MPI_SOURCE and that tag. That receive cannot block, because the message
+is already there.
+
+3. Why that suits the base station.
+Because Iprobe returns at once, we can do other work between checks: apply the
+window rule, write the log, send the answers, and watch for the termination
+ACKs on a different tag (TAG_ACK). One loop handles TAG_REPORT and TAG_ACK,
+where a fixed MPI_Recv can only wait for one thing. Reports are served first
+come first served, and the loop does not change with the number of nodes.
+
+4. What we actually measured (be honest here).
+This is our base station version 1 (MPI_Iprobe, then MPI_Recv from
+status.MPI_SOURCE). It works, but it is a serial queue: it handles one report at
+a time, with a blocking send and a log write for each answer, so report delay
+grew from about 1 to 3.5 ms by 64 nodes. Version 2 uses one MPI_Irecv on
+MPI_ANY_SOURCE and was fastest, 0.15 to 0.21 ms. Version 3, the one we kept,
+posts one persistent receive per node (so each has a fixed source) but checks
+them all together with MPI_Testsome, so it never blocks on any single node,
+0.27 to 0.31 ms.
+So the real rule is: never block on one specific sender. ANY_SOURCE with
+probing is the simplest way to follow it, and Testsome over per node receives
+is the fastest way we found.
+
+Where it is in our code: base_station.c, loop_probe (version 1).
